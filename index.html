@@ -338,25 +338,29 @@
         return showError("ip", "Isi IPK sebelumnya antara 0–4 dan total SKS sebelumnya dengan benar.");
       }
       const cumulativeSks = previousSks + totalSks;
-      const cumulativeGpa = cumulativeSks > 0 ? (previousGpa * previousSks + totalPoints) / cumulativeSks : 0;
+      const previousQualityPoints = previousGpa * previousSks;
+      const cumulativeQualityPoints = previousQualityPoints + totalPoints;
+      const cumulativeGpa = cumulativeSks > 0 ? cumulativeQualityPoints / cumulativeSks : 0;
       const result = document.getElementById("ip-result");
       result.innerHTML = `<div class="result-label">IP Semester (IPS)</div>
         <div class="big-number">${fmt(ip)}</div>
         <div class="stats"><div class="stat">SKS semester ini: <strong>${totalSks}</strong></div>
         <div class="stat">Jumlah MK: <strong>${rows.length}</strong></div>
-        <div class="stat">Mutu semester: <strong>${fmt(totalPoints)}</strong></div></div>
+        <div class="stat">Total mutu semester ini: <strong>${fmt(totalPoints)}</strong></div></div>
         <hr style="border:0;border-top:1px solid #bbf7d0;margin:18px 0">
         <div class="result-label">IPK setelah simulasi</div>
         <div class="big-number">${fmt(cumulativeGpa)}</div>
         <div class="stats"><div class="stat">SKS sebelumnya: <strong>${previousSks}</strong></div>
         <div class="stat">Total SKS setelah simulasi: <strong>${cumulativeSks}</strong></div>
-        <div class="stat">IPK awal: <strong>${fmt(previousGpa)}</strong></div></div>
-        <p class="hint" style="margin-top:12px">IPK simulasi dihitung dari mutu kumulatif sebelumnya ditambah mutu semester ini. Hasil dapat sedikit berbeda jika IPK awal 3,55 sudah dibulatkan.</p>
+        <div class="stat">IPK awal: <strong>${fmt(previousGpa)}</strong></div>
+        <div class="stat">Mutu keseluruhan sebelum semester ini: <strong>${fmt(previousQualityPoints)}</strong></div>
+        <div class="stat">Total mutu keseluruhan: <strong>${fmt(cumulativeQualityPoints)}</strong></div></div>
+        <p class="hint" style="margin-top:12px">Total mutu keseluruhan = (IPK sebelumnya × SKS sebelumnya) + total mutu semester ini. IPK simulasi = total mutu keseluruhan ÷ total SKS setelah simulasi. Hasil dapat sedikit berbeda jika IPK awal 3,55 sudah dibulatkan.</p>
         <div class="btn-row"><button class="btn btn-outline" id="copy-ip">Salin rekap nilai</button></div>`;
       result.classList.add("show");
       document.getElementById("ip-error").className = "message";
       document.getElementById("copy-ip").addEventListener("click", async () => {
-        const text = `REKAP NILAI SEMESTER\\n${rows.map(r => `${r.name}: ${r.sks} SKS, nilai ${r.grade}, bobot ${r.point}`).join("\\n")}\\nIPK sebelumnya: ${fmt(previousGpa)} dari ${previousSks} SKS\\nSKS semester ini: ${totalSks}\\nTotal SKS setelah simulasi: ${cumulativeSks}\\nTotal mutu semester: ${fmt(totalPoints)}\\nIPS: ${fmt(ip)}\\nIPK setelah simulasi: ${fmt(cumulativeGpa)}`;
+        const text = `REKAP NILAI SEMESTER\\n${rows.map(r => `${r.name}: ${r.sks} SKS, nilai ${r.grade}, bobot ${r.point}`).join("\\n")}\\nIPK sebelumnya: ${fmt(previousGpa)} dari ${previousSks} SKS\\nSKS semester ini: ${totalSks}\\nTotal SKS setelah simulasi: ${cumulativeSks}\\nTotal mutu semester ini: ${fmt(totalPoints)}\\nMutu keseluruhan sebelum semester ini: ${fmt(previousQualityPoints)}\\nTotal mutu keseluruhan: ${fmt(cumulativeQualityPoints)}\\nIPS: ${fmt(ip)}\\nIPK setelah simulasi: ${fmt(cumulativeGpa)}`;
         await copyText(text, document.getElementById("copy-ip"));
       });
     });
