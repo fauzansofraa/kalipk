@@ -4,218 +4,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalkulator IP dan IPK Mahasiswa</title>
+<title>Simulasi IP Semester 3 dan IPK Setelah Semester 3</title>
 <style>
-:root {
-  --green:#168653;
-  --dark:#126641;
-  --bg:#f3f7f5;
-  --card:#ffffff;
-  --text:#1c2923;
-  --muted:#68766e;
-  --border:#dce7e0;
-  --red:#c62828;
-  --orange:#a45b00;
-}
-* {box-sizing:border-box}
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
-  line-height:1.5;
-}
-header {
-  background:linear-gradient(135deg,#126641,#20a46a);
-  color:white;
-  padding:28px 18px;
-}
-.header-inner, main {max-width:1100px;margin:auto}
-header h1 {margin:0 0 6px;font-size:27px}
-header p {margin:0;opacity:.9}
-main {padding:22px 16px 50px}
-.tabs {display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-button,.button {
-  border:0;border-radius:9px;padding:11px 15px;
-  cursor:pointer;font-weight:bold;font-size:14px;
-}
-.tab {background:#e2eee7;color:var(--dark)}
-.tab.active,.primary {background:var(--green);color:white}
-.secondary {background:#e6eee9;color:var(--dark)}
-.danger {background:#ffebee;color:var(--red)}
-button:disabled {opacity:.45;cursor:not-allowed}
-.panel {
-  background:var(--card);border:1px solid var(--border);
-  border-radius:15px;padding:20px;margin-bottom:18px;
-  box-shadow:0 3px 12px #153c2410;
-}
-h2 {font-size:20px;margin:0 0 14px}
-h3 {font-size:16px;margin:0 0 10px}
-p.help {font-size:13px;color:var(--muted);margin:5px 0 14px}
-.grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.field {display:flex;flex-direction:column;gap:5px}
-label {font-size:13px;font-weight:bold}
-input,select {
-  width:100%;min-width:0;padding:10px;
-  border:1px solid #cbd9d0;border-radius:8px;
-  background:white;font:inherit;color:var(--text);
-}
-input:focus,select:focus {outline:2px solid #91d6b1;border-color:var(--green)}
-.course-list {display:grid;gap:9px}
-.course {
-  display:grid;grid-template-columns:minmax(130px,1fr) 90px 120px;
-  gap:10px;align-items:center;padding:10px;
-  border:1px solid var(--border);border-radius:10px;
-}
-.course-name {font-weight:bold;font-size:14px}
-.course small {display:block;color:var(--muted);font-weight:normal}
-.result-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.metric {padding:15px;background:#edf7f0;border-radius:11px}
-.metric span {display:block;color:var(--muted);font-size:12px}
-.metric strong {font-size:25px;color:var(--dark)}
-.notice {padding:13px 15px;border-radius:10px;margin:12px 0;font-size:14px}
-.ok {background:#e8f6ed;border:1px solid #b4dfc2;color:#155b35}
-.warn {background:#fff4df;border:1px solid #f0d29b;color:#814900}
-.bad {background:#ffebee;border:1px solid #efb8bd;color:#982027}
-.info {background:#eaf3ff;border:1px solid #c7daf5;color:#174c83}
-.hidden {display:none!important}
-.actions {display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
-table {width:100%;border-collapse:collapse;font-size:13px}
-th,td {padding:9px;text-align:left;border-bottom:1px solid var(--border)}
-th {background:#f0f5f1}
-.alt-card {border:1px solid var(--border);border-radius:11px;padding:14px;margin:10px 0}
-.alt-card p {margin:5px 0}
-.tag {font-size:11px;background:#e5f3e9;color:#17633d;padding:3px 7px;border-radius:20px}
-footer {text-align:center;color:var(--muted);font-size:12px;padding:10px}
-@media(max-width:650px) {
-  .grid,.result-grid {grid-template-columns:1fr}
-  .course {grid-template-columns:minmax(0,1fr) 70px 95px;gap:6px;padding:8px}
-  .course-name {font-size:12px}
-  .course small {font-size:11px}
-  input,select {padding:8px;font-size:13px}
-  header h1 {font-size:22px}
-  .panel {padding:14px}
+:root{--g:#168653;--dark:#105f3b;--bg:#f3f7f5;--line:#dce7e0;--red:#a8212b;--orange:#875000}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#1d2b23;font-family:Arial,sans-serif;line-height:1.5}
+header{background:linear-gradient(135deg,#105f3b,#22a66b);color:white;padding:26px 18px}
+.wrap{max-width:1050px;margin:auto}
+header h1{margin:0 0 6px;font-size:25px}
+header p{margin:0}
+main{max-width:1050px;margin:auto;padding:18px 14px 40px}
+.card{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #173e2510}
+h2{font-size:19px;margin:0 0 12px}
+h3{font-size:16px;margin:0 0 8px}
+small,.help{font-size:13px;color:#65746b}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:13px;font-weight:bold}
+input,select{width:100%;padding:10px;border:1px solid #cbd8cf;border-radius:8px;background:white;font:inherit}
+button{padding:10px 14px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+.primary{background:var(--g);color:white}
+.secondary{background:#e7f0ea;color:var(--dark)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.course{display:grid;grid-template-columns:minmax(0,1fr) 80px 110px;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:9px}
+.course-name{font-size:13px;font-weight:bold}
+.course-list{display:grid;gap:8px}
+.notice{padding:12px 14px;border-radius:9px;margin:12px 0;font-size:14px}
+.ok{background:#e8f6ed;color:#155b35;border:1px solid #b4dfc2}
+.warn{background:#fff4df;color:#814900;border:1px solid #f0d29b}
+.bad{background:#ffebee;color:#982027;border:1px solid #efb8bd}
+.info{background:#eaf3ff;color:#174c83;border:1px solid #c7daf5}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.metric{background:#edf7f0;border-radius:10px;padding:14px}
+.metric span{display:block;font-size:12px;color:#65746b}
+.metric strong{display:block;font-size:25px;color:var(--dark)}
+.alt{border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
+.hidden{display:none!important}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line)}
+th{background:#f0f5f1}
+@media(max-width:600px){
+ .grid,.metrics{grid-template-columns:1fr}
+ .course{grid-template-columns:minmax(0,1fr) 62px 90px;gap:6px;padding:7px}
+ .course-name{font-size:12px}
+ input,select{padding:8px;font-size:13px}
+ .card{padding:13px}
+ header h1{font-size:21px}
 }
 </style>
 </head>
 <body>
 <header>
-  <div class="header-inner">
-    <h1>Kalkulator IP & IPK Mahasiswa</h1>
-    <p>Hitung nilai semester, cek target, dan cari skenario untuk mencapainya.</p>
-  </div>
+ <div class="wrap">
+  <h1>Simulasi IP Semester 3 & IPK Setelah Semester 3</h1>
+  <p>Hitung hasil semester 3, periksa target, dan cari alternatif nilai.</p>
+ </div>
 </header>
 
 <main>
-  <div class="tabs">
-    <button class="tab active" id="tabSemester" onclick="showTab('semester')">IP Semester & IPK</button>
-    <button class="tab" id="tabMK" onclick="showTab('mk')">Nilai Satu Mata Kuliah</button>
+ <div class="card">
+  <h2>1. Data sampai Semester 2</h2>
+  <div class="notice info">
+   Data awal adalah IPK kumulatif setelah semester 2. Kalkulator ini digunakan untuk menghitung hasil setelah semester 3.
   </div>
+  <div class="grid">
+   <div class="field">
+    <label for="oldGpa">IPK setelah semester 2</label>
+    <input id="oldGpa" type="number" min="0" max="4" step="0.01" value="3.55">
+   </div>
+   <div class="field">
+    <label for="oldSks">Total SKS sampai semester 2</label>
+    <input id="oldSks" type="number" min="0" step="1" value="40">
+   </div>
+  </div>
+ </div>
 
-  <section id="semesterSection">
-    <div class="panel">
-      <h2>1. Data IPK Sebelumnya</h2>
-      <div class="grid">
-        <div class="field">
-          <label for="oldGpa">IPK sebelum semester ini</label>
-          <input id="oldGpa" type="number" min="0" max="4" step="0.01" value="3.55">
-        </div>
-        <div class="field">
-          <label for="oldSks">Total SKS yang sudah ditempuh</label>
-          <input id="oldSks" type="number" min="0" step="1" value="40">
-        </div>
-      </div>
-      <p class="help">Contoh: IPK 3,55 dengan 40 SKS yang telah selesai.</p>
-    </div>
+ <div class="card">
+  <h2>2. Target Semester 3</h2>
+  <p class="help">Target IP adalah target untuk semester 3. Target IPK adalah target kumulatif setelah semester 3.</p>
+  <div class="grid">
+   <div class="field">
+    <label for="targetIP">Target IP semester 3</label>
+    <input id="targetIP" type="number" min="0" max="4" step="0.01" placeholder="Contoh: 3.80">
+   </div>
+   <div class="field">
+    <label for="targetIPK">Target IPK setelah semester 3</label>
+    <input id="targetIPK" type="number" min="0" max="4" step="0.01" placeholder="Contoh: 3.65">
+   </div>
+  </div>
+  <div id="targetStatus"></div>
+  <div class="actions">
+   <button class="primary" onclick="checkTargets()">Periksa Target</button>
+   <button class="secondary" onclick="clearTargets()">Hapus Target</button>
+  </div>
+ </div>
 
-    <div class="panel">
-      <h2>2. Target yang Ingin Dicapai</h2>
-      <p class="help">Target berarti nilai minimum yang ingin dicapai. Kosongkan target jika tidak ingin menggunakannya.</p>
-      <div class="grid">
-        <div class="field">
-          <label for="targetIP">Target IP semester</label>
-          <input id="targetIP" type="number" min="0" max="4" step="0.01" placeholder="Contoh: 3.80">
-        </div>
-        <div class="field">
-          <label for="targetIPK">Target IPK kumulatif</label>
-          <input id="targetIPK" type="number" min="0" max="4" step="0.01" placeholder="Contoh: 3.65">
-        </div>
-      </div>
-      <div id="targetWarnings"></div>
-      <div class="actions">
-        <button class="primary" onclick="validateTargets()">Periksa Target</button>
-        <button class="secondary" onclick="clearTargets()">Hapus Semua Target</button>
-      </div>
-      <p class="help">Jika target tidak mungkin dicapai, lu harus mengubah atau menghapus target tersebut sebelum dapat menghitung simulasi.</p>
-    </div>
+ <div class="card">
+  <h2>3. Nilai Mata Kuliah Semester 3</h2>
+  <p class="help">Total awal 24 SKS. Masukkan nilai huruf perkiraan atau nilai yang sudah diketahui.</p>
+  <div id="courses" class="course-list"></div>
+  <div class="actions">
+   <button class="primary" id="calcBtn" onclick="calculate()">Hitung IP Semester 3 & IPK Setelah Semester 3</button>
+   <button class="secondary" onclick="clearGrades()">Kosongkan Nilai</button>
+  </div>
+ </div>
 
-    <div class="panel">
-      <h2>3. Nilai Mata Kuliah Semester Ini</h2>
-      <p class="help">Pilih nilai yang diketahui atau perkiraan. SKS awal sudah diisi dan bisa diubah.</p>
-      <div id="courseList" class="course-list"></div>
-      <div class="actions">
-        <button class="primary" onclick="calculate()">Hitung IP dan IPK</button>
-        <button class="secondary" onclick="resetGrades()">Kosongkan Semua Nilai</button>
-      </div>
-    </div>
-
-    <div id="results" class="hidden">
-      <div class="panel">
-        <h2>4. Hasil Perhitungan</h2>
-        <div id="metrics" class="result-grid"></div>
-        <div id="resultMessage"></div>
-      </div>
-      <div class="panel">
-        <h2>5. Saran untuk Mencapai Target</h2>
-        <p class="help">Saran dihitung berdasarkan nilai yang lu masukkan, SKS, dan batas nilai A. Periksa kembali nilai yang masih berupa perkiraan.</p>
-        <div id="suggestions"></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="mkSection" class="hidden">
-    <div class="panel">
-      <h2>Kalkulator Nilai Akhir Mata Kuliah</h2>
-      <p class="help">Masukkan komponen dan bobot nilai. Total bobot harus 100%.</p>
-      <div class="field">
-        <label for="mkName">Nama mata kuliah</label>
-        <input id="mkName" placeholder="Contoh: Praktikum Database">
-      </div>
-      <div class="grid" style="margin-top:12px">
-        <div class="field">
-          <label for="mkTarget">Target nilai akhir</label>
-          <select id="mkTarget">
-            <option value="">Tidak ada target</option>
-            <option value="87">A (minimal 87)</option>
-            <option value="78">AB (minimal 78)</option>
-            <option value="69">B (minimal 69)</option>
-            <option value="60">BC (minimal 60)</option>
-            <option value="51">C (minimal 51)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="mkCount">Jumlah komponen</label>
-          <select id="mkCount" onchange="buildComponents()">
-            <option>3</option><option selected>4</option><option>5</option><option>6</option>
-          </select>
-        </div>
-      </div>
-      <div id="components" style="margin-top:16px"></div>
-      <div class="actions">
-        <button class="primary" onclick="calculateMK()">Hitung Nilai Akhir</button>
-      </div>
-      <div id="mkResult"></div>
-    </div>
-  </section>
+ <div id="results" class="hidden">
+  <div class="card">
+   <h2>4. Hasil Perhitungan Semester 3</h2>
+   <div id="metrics" class="metrics"></div>
+   <div id="summary"></div>
+   <div id="detail"></div>
+  </div>
+  <div class="card">
+   <h2>5. Saran Pencapaian Target</h2>
+   <p class="help">Alternatif berikut menunjukkan nilai yang perlu dinaikkan dari nilai pilihan saat ini. Ini simulasi, bukan jaminan nilai dari dosen.</p>
+   <div id="suggestions"></div>
+  </div>
+ </div>
 </main>
-<footer>Kalkulator simulasi akademik. Hasil resmi tetap mengikuti aturan dosen dan kampus.</footer>
 
 <script>
-const gradePoints = {A:4, AB:3.5, B:3, BC:2.5, C:2, D:1, E:0};
-const gradeOrder = ["E","D","C","BC","B","AB","A"];
-const gradeMinimum = {A:87,AB:78,B:69,BC:60,C:51,D:41,E:0};
-
-const initialCourses = [
+const point={A:4,AB:3.5,B:3,BC:2.5,C:2,D:1,E:0};
+const order=["E","D","C","BC","B","AB","A"];
+const data=[
  ["Database",1],["Praktikum Database",2],
  ["Komunikasi Data",1],["Praktikum Komunikasi Data",2],
  ["Struktur Data",1],["Praktikum Struktur Data",2],
@@ -225,401 +138,247 @@ const initialCourses = [
  ["E-Commerce",1],["Praktikum E-Commerce",2],
  ["Kewirausahaan",2],["Praktikum Kewirausahaan",1]
 ];
+let targetLocked=false;
 
-let lastResult = null;
-let locked = false;
-
-function showTab(tab) {
-  document.getElementById("semesterSection").classList.toggle("hidden",tab!=="semester");
-  document.getElementById("mkSection").classList.toggle("hidden",tab!=="mk");
-  document.getElementById("tabSemester").classList.toggle("active",tab==="semester");
-  document.getElementById("tabMK").classList.toggle("active",tab==="mk");
+function buildCourses(){
+ const root=document.getElementById("courses");
+ root.innerHTML="";
+ data.forEach((c,i)=>{
+  const el=document.createElement("div");
+  el.className="course";
+  el.innerHTML=`
+   <div class="course-name">${c[0]}<br><small>Semester 3</small></div>
+   <div><label for="sks${i}">SKS</label><input id="sks${i}" type="number" min="0" step="1" value="${c[1]}"></div>
+   <div><label for="grade${i}">Nilai</label>
+   <select id="grade${i}"><option value="">Belum tahu</option>
+   ${order.slice().reverse().map(g=>`<option value="${g}">${g} (${point[g]})</option>`).join("")}
+   </select></div>`;
+  root.appendChild(el);
+ });
 }
 
-function buildCourses() {
-  const root = document.getElementById("courseList");
-  root.innerHTML = "";
-  initialCourses.forEach((c,i) => {
-    const row = document.createElement("div");
-    row.className = "course";
-    row.innerHTML = `
-      <div class="course-name">${c[0]}<small>Nilai huruf</small></div>
-      <div><label for="sks${i}">SKS</label><input id="sks${i}" type="number" min="0" step="1" value="${c[1]}"></div>
-      <div><label for="grade${i}">Nilai</label>
-      <select id="grade${i}">
-        <option value="">Belum tahu</option>
-        ${gradeOrder.slice().reverse().map(g=>`<option value="${g}">${g} (${gradePoints[g]})</option>`).join("")}
-      </select></div>`;
-    root.appendChild(row);
-  });
+function readCourses(){
+ return data.map((c,i)=>({
+  name:c[0],
+  sks:Number(document.getElementById("sks"+i).value),
+  grade:document.getElementById("grade"+i).value
+ }));
 }
-
-function readCourses() {
-  return initialCourses.map((c,i)=>({
-    name:c[0],
-    sks:Number(document.getElementById("sks"+i).value),
-    grade:document.getElementById("grade"+i).value
-  }));
+function getInputs(){
+ return {
+  gpa:Number(document.getElementById("oldGpa").value),
+  oldSks:Number(document.getElementById("oldSks").value),
+  ipRaw:document.getElementById("targetIP").value.trim(),
+  ipkRaw:document.getElementById("targetIPK").value.trim(),
+  courses:readCourses()
+ };
 }
-
-function getBaseData() {
-  const oldGpa = Number(document.getElementById("oldGpa").value);
-  const oldSks = Number(document.getElementById("oldSks").value);
-  const courses = readCourses();
-  const validBase = Number.isFinite(oldGpa) && oldGpa>=0 && oldGpa<=4 &&
-    Number.isFinite(oldSks) && oldSks>=0 &&
-    courses.every(c=>Number.isFinite(c.sks)&&c.sks>=0);
-  return {oldGpa,oldSks,courses,validBase};
+function quality(courses,grades){
+ return courses.reduce((s,c,i)=>s+point[grades[i]]*c.sks,0);
 }
+function totalSks(courses){return courses.reduce((s,c)=>s+c.sks,0)}
+function maxQuality(courses){return courses.reduce((s,c)=>s+4*c.sks,0)}
 
-function semesterSks(courses) {
-  return courses.reduce((s,c)=>s+c.sks,0);
-}
+function targetCheck(){
+ const d=getInputs();
+ const errors=[];
+ const ip=d.ipRaw===""?null:Number(d.ipRaw);
+ const ipk=d.ipkRaw===""?null:Number(d.ipkRaw);
+ const sks=totalSks(d.courses);
+ const maxQ=maxQuality(d.courses);
 
-function maxSemesterQuality(courses) {
-  return courses.reduce((s,c)=>s+4*c.sks,0);
-}
+ if(!Number.isFinite(d.gpa)||d.gpa<0||d.gpa>4)
+  errors.push("IPK setelah semester 2 harus antara 0,00 dan 4,00.");
+ if(!Number.isFinite(d.oldSks)||d.oldSks<0)
+  errors.push("Total SKS sampai semester 2 tidak valid.");
+ if(d.courses.some(c=>!Number.isFinite(c.sks)||c.sks<0||!Number.isInteger(c.sks)))
+  errors.push("SKS setiap mata kuliah harus berupa bilangan bulat dan tidak negatif.");
+ if(sks<=0) errors.push("Total SKS semester 3 harus lebih dari 0.");
 
-function currentQuality(courses) {
-  return courses.reduce((s,c)=>s+(c.grade===""?0:gradePoints[c.grade]*c.sks),0);
-}
+ if(ip!==null&&(!Number.isFinite(ip)||ip<0||ip>4))
+  errors.push("Target IP semester 3 harus antara 0,00 dan 4,00.");
+ if(ipk!==null&&(!Number.isFinite(ipk)||ipk<0||ipk>4))
+  errors.push("Target IPK setelah semester 3 harus antara 0,00 dan 4,00.");
 
-function unknownSks(courses) {
-  return courses.reduce((s,c)=>s+(c.grade===""?c.sks:0),0);
-}
+ const impossible=[];
+ if(ip!==null&&Number.isFinite(ip)&&ip>=0&&ip<=4&&sks>0){
+  if(ip*sks>maxQ+1e-8)
+   impossible.push("Target IP semester 3 tidak mungkin dicapai. Bahkan jika semua mata kuliah mendapat A, IP maksimum hanya 4,00.");
+ }
+ if(ipk!==null&&Number.isFinite(ipk)&&ipk>=0&&ipk<=4&&sks>0&&d.oldSks>=0&&d.gpa>=0&&d.gpa<=4){
+  const maxIPK=(d.gpa*d.oldSks+maxQ)/(d.oldSks+sks);
+  if(ipk>maxIPK+1e-8)
+   impossible.push(`Target IPK setelah semester 3 tidak mungkin dicapai. Jika semua mata kuliah semester 3 mendapat A, IPK maksimum hanya ${maxIPK.toFixed(2)}.`);
+ }
 
-function targetRequirement() {
-  const d = getBaseData();
-  const warnings = [];
-  const tIPraw = document.getElementById("targetIP").value.trim();
-  const tIPKraw = document.getElementById("targetIPK").value.trim();
-  const tIP = tIPraw===""?null:Number(tIPraw);
-  const tIPK = tIPKraw===""?null:Number(tIPKraw);
-  const totalSks = semesterSks(d.courses);
-  const qualityNow = currentQuality(d.courses);
-  const remaining = unknownSks(d.courses);
-  const maxQ = qualityNow + 4*remaining;
-  const currentSemesterAvg = totalSks>0?qualityNow/totalSks:0;
-
-  if (!d.validBase) warnings.push("Data IPK sebelumnya atau SKS tidak valid. Periksa kembali input.");
-  if (tIP!==null && (!Number.isFinite(tIP)||tIP<0||tIP>4))
-    warnings.push("Target IP harus berada antara 0,00 sampai 4,00.");
-  if (tIPK!==null && (!Number.isFinite(tIPK)||tIPK<0||tIPK>4))
-    warnings.push("Target IPK harus berada antara 0,00 sampai 4,00.");
-  if ((tIP!==null||tIPK!==null) && totalSks<=0)
-    warnings.push("Total SKS semester harus lebih dari 0 agar target bisa diperiksa.");
-
-  let needIP = null, needIPK = null;
-  if (tIP!==null && Number.isFinite(tIP) && tIP>=0 && tIP<=4 && totalSks>0)
-    needIP = tIP*totalSks;
-  if (tIPK!==null && Number.isFinite(tIPK) && tIPK>=0 && tIPK<=4 && totalSks>0) {
-    const totalAllSks = d.oldSks+totalSks;
-    if (totalAllSks<=0) warnings.push("Total SKS kumulatif harus lebih dari 0.");
-    else needIPK = tIPK*totalAllSks-d.oldGpa*d.oldSks;
+ // Kedua target merupakan batas minimum untuk mutu semester yang sama.
+ // Karena itu, target bersamaan mungkin jika kebutuhan mutu tertinggi masih
+ // berada di bawah mutu maksimum. Pemeriksaan ini juga dibuat eksplisit.
+ if(ip!==null&&ipk!==null&&Number.isFinite(ip)&&Number.isFinite(ipk)&&sks>0&&d.oldSks>=0&&d.gpa>=0&&d.gpa<=4){
+  const needIP=ip*sks;
+  const needIPK=ipk*(d.oldSks+sks)-d.gpa*d.oldSks;
+  if(Math.max(needIP,needIPK)>maxQ+1e-8 && impossible.length===0){
+   impossible.push("Target IP dan IPK tidak dapat dipenuhi secara bersamaan dengan SKS dan batas nilai yang tersedia. Ubah atau hapus salah satu target.");
   }
-
-  const impossible = [];
-  if (needIP!==null && needIP>maxQ+1e-8)
-    impossible.push(`Target IP ${tIP.toFixed(2)} mustahil. Rata-rata maksimum semester hanya 4,00; periksa target atau SKS.`);
-  if (needIPK!==null && needIPK>maxQ+1e-8)
-    impossible.push(`Target IPK ${tIPK.toFixed(2)} mustahil dicapai. Bahkan jika semua nilai yang belum diketahui A, IPK maksimum belum cukup.`);
-  if (needIPK!==null && needIPK<qualityNow-1e-8)
-    warnings.push("Target IPK sudah terlampaui berdasarkan nilai yang sudah dipilih, dengan asumsi nilai tersebut benar.");
-
-  // Dua target minimum harus memenuhi kebutuhan semester terbesar.
-  const required = Math.max(needIP||0,needIPK||0);
-  const jointImpossible = (needIP!==null || needIPK!==null) && required>maxQ+1e-8;
-
-  return {d,tIP,tIPK,totalSks,qualityNow,remaining,maxQ,needIP,needIPK,required,warnings,impossible,jointImpossible};
+ }
+ return {d,ip,ipk,sks,maxQ,errors,impossible};
 }
 
-function validateTargets() {
-  const t = targetRequirement();
-  const box = document.getElementById("targetWarnings");
-  const issues = [...t.warnings,...t.impossible];
-  locked = issues.length>0 || t.jointImpossible;
-  if (t.jointImpossible && !t.impossible.length)
-    issues.push("Target IP dan IPK tidak dapat dipenuhi secara bersamaan dengan batas nilai dan SKS yang tersedia.");
+function checkTargets(){
+ const t=targetCheck();
+ const box=document.getElementById("targetStatus");
+ const problems=[...t.errors,...t.impossible];
+ targetLocked=problems.length>0;
+ document.getElementById("calcBtn").disabled=targetLocked;
+ document.getElementById("results").classList.add("hidden");
 
-  if (issues.length) {
-    box.innerHTML = `<div class="notice bad"><strong>Target perlu diperbaiki</strong><ul>${issues.map(x=>`<li>${x}</li>`).join("")}</ul><p>Ganti target yang bermasalah atau hapus target tersebut. Perhitungan dikunci sampai input target valid.</p></div>`;
-  } else {
-    box.innerHTML = `<div class="notice ok"><strong>Target lolos pemeriksaan batas maksimum.</strong><br>Target belum tentu tercapai dengan nilai yang dipilih saat ini, tetapi masih mungkin secara matematis. Tekan Hitung IP dan IPK untuk melihat hasil serta saran.</div>`;
-  }
-  document.getElementById("results").classList.add("hidden");
-  return !locked;
+ if(problems.length){
+  box.innerHTML=`<div class="notice bad"><b>Target tidak valid atau tidak mungkin dicapai.</b><ul>${problems.map(p=>`<li>${p}</li>`).join("")}</ul>Lu harus mengganti atau menghapus target yang bermasalah sebelum menghitung hasil.</div>`;
+ }else{
+  box.innerHTML=`<div class="notice ok"><b>Pemeriksaan target berhasil.</b><br>IPK yang dihitung adalah IPK kumulatif setelah semester 3. Target masih perlu dibandingkan dengan nilai mata kuliah yang lu masukkan.</div>`;
+ }
+ return !targetLocked;
 }
 
-function clearTargets() {
-  document.getElementById("targetIP").value="";
-  document.getElementById("targetIPK").value="";
-  document.getElementById("targetWarnings").innerHTML="";
-  locked=false;
-  document.getElementById("results").classList.add("hidden");
+function clearTargets(){
+ document.getElementById("targetIP").value="";
+ document.getElementById("targetIPK").value="";
+ document.getElementById("targetStatus").innerHTML="";
+ targetLocked=false;
+ document.getElementById("calcBtn").disabled=false;
+ document.getElementById("results").classList.add("hidden");
 }
 
-function gradeForQuality(q) {
-  if(q>=4) return "A";
-  if(q>=3.5) return "AB";
-  if(q>=3) return "B";
-  if(q>=2.5) return "BC";
-  if(q>=2) return "C";
-  if(q>=1) return "D";
-  return "E";
+function clearGrades(){
+ data.forEach((c,i)=>document.getElementById("grade"+i).value="");
+ document.getElementById("results").classList.add("hidden");
 }
 
-function evaluateGrades(courses, grades) {
-  const q = courses.reduce((s,c,i)=>s+gradePoints[grades[i]]*c.sks,0);
-  const sks = semesterSks(courses);
-  const ip = sks?q/sks:0;
-  return {q,sks,ip};
+function resultFor(grades,courses,base){
+ const q=quality(courses,grades);
+ const sks=totalSks(courses);
+ const ip=sks?q/sks:0;
+ const ipk=(base.gpa*base.oldSks+q)/(base.oldSks+sks);
+ return {q,sks,ip,ipk};
+}
+function meets(grades,t){
+ const r=resultFor(grades,t.d.courses,t.d);
+ return {
+  ok:(t.ip===null||r.ip+1e-8>=t.ip)&&
+     (t.ipk===null||r.ipk+1e-8>=t.ipk),
+  ...r
+ };
 }
 
-function meetsTargets(courses, grades, t) {
-  const r = evaluateGrades(courses,grades);
-  const ipk = t.d.oldSks+ r.sks>0
-    ?(t.d.oldGpa*t.d.oldSks+r.q)/(t.d.oldSks+r.sks):0;
-  const okIP = t.tIP===null || r.ip+1e-8>=t.tIP;
-  const okIPK = t.tIPK===null || ipk+1e-8>=t.tIPK;
-  return {ok:okIP&&okIPK,okIP,okIPK,ip:r.ip,ipk,q:r.q};
-}
+function findSuggestions(t,currentGrades){
+ if(t.ip===null&&t.ipk===null)return {already:false,items:[],noTarget:true};
+ if(meets(currentGrades,t).ok)return {already:true,items:[]};
 
-function findSuggestions(t) {
-  const courses = t.d.courses;
-  const active = courses.map((c,i)=>({...c,index:i,grade:c.grade||"E"})).filter(c=>c.sks>0);
-  const baseline = courses.map(c=>c.grade||"E");
-  const original = meetsTargets(courses,baseline,t);
-  if(original.ok) return {already:true,items:[]};
+ // Beberapa urutan pencarian alternatif: mata kuliah berbobot SKS besar,
+ // nilai paling rendah, dan urutan SKS berbeda.
+ const base=t.d.courses;
+ const strategies=[
+  base.map((c,i)=>i).sort((a,b)=>base[b].sks-base[a].sks),
+  base.map((c,i)=>i).sort((a,b)=>point[currentGrades[a]]-point[currentGrades[b]]||base[b].sks-base[a].sks),
+  base.map((c,i)=>i).sort((a,b)=>base[a].sks-base[b].sks)
+ ];
+ const found=[];
+ const seen=new Set();
 
-  // Build alternatives by upgrading the lowest grades first, using different orders.
-  const orderings = [
-    active.slice().sort((a,b)=>b.sks-a.sks || gradePoints[a.grade]-gradePoints[b.grade]),
-    active.slice().sort((a,b)=>gradePoints[a.grade]-gradePoints[b.grade] || b.sks-a.sks),
-    active.slice().sort((a,b)=>b.sks-a.sks || a.index-b.index).reverse()
-  ];
-  const results = [];
-  const seen = new Set();
-
-  for (const order of orderings) {
-    let grades = baseline.slice();
-    let steps = [];
-    for (const item of order) {
-      const i=item.index;
-      const start=gradePoints[grades[i]];
-      for (const g of gradeOrder) {
-        if(gradePoints[g]>start) {
-          grades[i]=g;
-          steps.push({name:courses[i].name,from:baseline[i],to:g,sks:courses[i].sks});
-          const check=meetsTargets(courses,grades,t);
-          if(check.ok) {
-            const key=grades.join("|");
-            if(!seen.has(key)) {
-              seen.add(key);
-              results.push({steps:steps.slice(),check,grades:grades.slice()});
-            }
-            break;
-          }
-        }
-      }
-      if(meetsTargets(courses,grades,t).ok) break;
+ for(const strategy of strategies){
+  let grades=currentGrades.slice();
+  let steps=[];
+  for(const i of strategy){
+   if(base[i].sks<=0)continue;
+   for(const g of order){
+    if(point[g]<=point[grades[i]])continue;
+    grades[i]=g;
+    const check=meets(grades,t);
+    if(check.ok){
+     const key=grades.join(",");
+     if(!seen.has(key)){
+      seen.add(key);
+      found.push({grades:grades.slice(),steps:steps.concat([{i,from:currentGrades[i],to:g}]),check});
+     }
+     break;
     }
+   }
+   if(meets(grades,t).ok)break;
+   if(grades[i]!==currentGrades[i])
+    steps.push({i,from:currentGrades[i],to:grades[i]});
   }
-
-  // If greedy alternatives did not work, raise all grades progressively.
-  if(!results.length) {
-    for(const level of ["C","BC","B","AB","A"]) {
-      const grades=baseline.map(g=>gradePoints[g]<gradePoints[level]?level:g);
-      const check=meetsTargets(courses,grades,t);
-      if(check.ok) {
-        const steps=courses.map((c,i)=>({name:c.name,from:baseline[i],to:grades[i],sks:c.sks}))
-          .filter(s=>s.sks>0&&s.from!==s.to);
-        results.push({steps,check,grades});
-        break;
-      }
-    }
-  }
-  return {already:false,items:results.slice(0,3)};
+ }
+ return {already:false,items:found.slice(0,3)};
 }
 
-function calculate() {
-  if(!validateTargets()) return;
-  const t=targetRequirement();
-  const {d,totalSks}=t;
-  const incomplete=d.courses.filter(c=>c.grade==="");
-  if(!d.validBase) {
-    document.getElementById("targetWarnings").innerHTML +=
-      `<div class="notice bad">Data tidak valid. Perbaiki IPK sebelumnya dan SKS.</div>`;
-    return;
-  }
-  if(incomplete.length) {
-    document.getElementById("targetWarnings").innerHTML +=
-      `<div class="notice warn">Masih ada ${incomplete.length} mata kuliah yang belum dipilih nilainya. Pilih nilai untuk semua mata kuliah agar IP dan IPK akhir dapat dihitung. Saran target tetap dapat dibuat dari nilai yang sudah diketahui dengan nilai kosong dianggap E dalam simulasi.</div>`;
-    document.getElementById("results").classList.remove("hidden");
-    document.getElementById("metrics").innerHTML="";
-    document.getElementById("resultMessage").innerHTML="";
-    renderSuggestions(t);
-    return;
-  }
-  if(totalSks<=0) {
-    document.getElementById("targetWarnings").innerHTML =
-      `<div class="notice bad">Total SKS semester harus lebih dari 0.</div>`;
-    return;
-  }
-
-  const grades=d.courses.map(c=>c.grade);
-  const result=evaluateGrades(d.courses,grades);
-  const newIPK=(d.oldGpa*d.oldSks+result.q)/(d.oldSks+result.sks);
-  document.getElementById("results").classList.remove("hidden");
-  document.getElementById("metrics").innerHTML=`
-    <div class="metric"><span>IP Semester</span><strong>${result.ip.toFixed(2)}</strong></div>
-    <div class="metric"><span>IPK Baru</span><strong>${newIPK.toFixed(2)}</strong></div>
-    <div class="metric"><span>Total SKS Kumulatif</span><strong>${d.oldSks+result.sks}</strong></div>`;
-  let status=[];
-  if(t.tIP!==null) status.push(`Target IP ${t.tIP.toFixed(2)}: <b>${result.ip+1e-8>=t.tIP?"tercapai":"belum tercapai"}</b>.`);
-  if(t.tIPK!==null) status.push(`Target IPK ${t.tIPK.toFixed(2)}: <b>${newIPK+1e-8>=t.tIPK?"tercapai":"belum tercapai"}</b>.`);
-  document.getElementById("resultMessage").innerHTML=
-    `<div class="notice ${status.some(s=>s.includes("belum tercapai"))?"warn":"ok"}">${status.length?status.join("<br>"):"Tidak ada target aktif."}</div>
-    <table><thead><tr><th>Mata Kuliah</th><th>SKS</th><th>Nilai</th><th>Mutu</th></tr></thead>
-    <tbody>${d.courses.map(c=>`<tr><td>${c.name}</td><td>${c.sks}</td><td>${c.grade}</td><td>${(gradePoints[c.grade]*c.sks).toFixed(1)}</td></tr>`).join("")}</tbody></table>`;
-  lastResult={ip:result.ip,ipk:newIPK};
-  renderSuggestions(t);
+function renderSuggestions(t,grades){
+ const root=document.getElementById("suggestions");
+ if(t.ip===null&&t.ipk===null){
+  root.innerHTML='<div class="notice info">Lu belum memasukkan target IP atau IPK. Isi target untuk mendapatkan saran.</div>';return;
+ }
+ const suggestion=findSuggestions(t,grades);
+ if(suggestion.already){
+  root.innerHTML='<div class="notice ok">Nilai yang dipilih sudah memenuhi semua target aktif.</div>';return;
+ }
+ if(!suggestion.items.length){
+  root.innerHTML='<div class="notice bad"><b>Tidak ada opsi alternatif yang ditemukan oleh sistem.</b><br>Coba periksa kembali nilai, SKS, dan target. Jika target terlalu tinggi, pertimbangkan untuk menurunkannya.</div>';return;
+ }
+ root.innerHTML='<div class="notice info">Sistem menemukan skenario berikut. Nilai yang disarankan tetap harus realistis dan bisa diusahakan.</div>';
+ suggestion.items.forEach((s,j)=>{
+  const changes=s.steps.filter(x=>x.from!==x.to);
+  const div=document.createElement("div");
+  div.className="alt";
+  div.innerHTML=`<h3>Alternatif ${j+1}</h3>
+  ${changes.length?changes.map(x=>`<p>• <b>${baseName(x.i)}</b>: ${x.from} → <b>${x.to}</b></p>`).join(""):"<p>Tidak ada perubahan nilai.</p>"}
+  <p><b>IP semester 3:</b> ${s.check.ip.toFixed(2)}</p>
+  <p><b>IPK setelah semester 3:</b> ${s.check.ipk.toFixed(2)}</p>
+  <button class="primary" onclick='applyScenario(${JSON.stringify(s.grades)})'>Terapkan skenario</button>`;
+  root.appendChild(div);
+ });
+}
+function baseName(i){return data[i][0]}
+function applyScenario(grades){
+ grades.forEach((g,i)=>document.getElementById("grade"+i).value=g);
+ calculate();
+ window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function renderSuggestions(t) {
-  const root=document.getElementById("suggestions");
-  const targetsActive=t.tIP!==null||t.tIPK!==null;
-  if(!targetsActive) {
-    root.innerHTML='<div class="notice info">Masukkan target IP atau IPK untuk mendapatkan saran.</div>';
-    return;
-  }
-  if(t.impossible.length || t.jointImpossible) {
-    root.innerHTML=`<div class="notice bad"><strong>Saran belum dapat dibuat.</strong><br>Target harus diperbaiki dahulu karena target yang mustahil tidak bisa dicapai dengan perubahan nilai mata kuliah.</div>`;
-    return;
-  }
-  const suggestion=findSuggestions(t);
-  if(suggestion.already) {
-    root.innerHTML='<div class="notice ok">Nilai yang dipilih sudah memenuhi semua target aktif.</div>';
-    return;
-  }
-  if(!suggestion.items.length) {
-    root.innerHTML='<div class="notice bad"><strong>Tidak ada opsi saran lain yang ditemukan.</strong><br>Dengan data dan batas nilai yang digunakan, sistem belum menemukan kombinasi yang memenuhi target. Coba periksa nilai/SKS atau turunkan target.</div>';
-    return;
-  }
-  root.innerHTML='<div class="notice info">Nilai kosong dianggap E hanya untuk membuat skenario. Saran ini merupakan simulasi, bukan jaminan nilai akhir.</div>';
-  suggestion.items.forEach((item,i)=>{
-    const changes=item.steps.filter(s=>s.from!==s.to);
-    const card=document.createElement("div");
-    card.className="alt-card";
-    card.innerHTML=`<h3>Alternatif ${i+1} <span class="tag">Target tercapai dalam simulasi</span></h3>
-      ${changes.length?changes.map(s=>`<p>• <b>${s.name}</b> (${s.sks} SKS): ${s.from} → <b>${s.to}</b></p>`).join(""):"<p>Tidak perlu perubahan.</p>"}
-      <p><b>Perkiraan IP:</b> ${item.check.ip.toFixed(2)} &nbsp; <b>Perkiraan IPK:</b> ${item.check.ipk.toFixed(2)}</p>
-      <button class="primary" onclick='applyGrades(${JSON.stringify(item.grades)})'>Terapkan alternatif ini</button>`;
-    root.appendChild(card);
-  });
-}
+function calculate(){
+ if(!checkTargets())return;
+ const t=targetCheck();
+ const d=t.d;
+ if(d.courses.some(c=>c.grade==="")){
+  document.getElementById("targetStatus").innerHTML+=
+   '<div class="notice warn">Pilih nilai untuk semua mata kuliah semester 3 agar IP dan IPK akhir dapat dihitung.</div>';
+  return;
+ }
+ const grades=d.courses.map(c=>c.grade);
+ const r=resultFor(grades,d.courses,d);
+ const passedIP=t.ip===null||r.ip+1e-8>=t.ip;
+ const passedIPK=t.ipk===null||r.ipk+1e-8>=t.ipk;
+ const totalAfter=d.oldSks+r.sks;
 
-function applyGrades(grades) {
-  grades.forEach((g,i)=>document.getElementById("grade"+i).value=g);
-  calculate();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
+ document.getElementById("results").classList.remove("hidden");
+ document.getElementById("metrics").innerHTML=`
+ <div class="metric"><span>IP Semester 3</span><strong>${r.ip.toFixed(2)}</strong></div>
+ <div class="metric"><span>IPK Setelah Semester 3</span><strong>${r.ipk.toFixed(2)}</strong></div>
+ <div class="metric"><span>Total SKS Setelah Semester 3</span><strong>${totalAfter}</strong></div>`;
 
-function resetGrades() {
-  initialCourses.forEach((c,i)=>document.getElementById("grade"+i).value="");
-  document.getElementById("results").classList.add("hidden");
-  document.getElementById("targetWarnings").innerHTML="";
-}
+ let status=[];
+ if(t.ip!==null)status.push(`Target IP semester 3 (${t.ip.toFixed(2)}): <b>${passedIP?"TERCAPAI":"BELUM TERCAPAI"}</b>.`);
+ if(t.ipk!==null)status.push(`Target IPK setelah semester 3 (${t.ipk.toFixed(2)}): <b>${passedIPK?"TERCAPAI":"BELUM TERCAPAI"}</b>.`);
+ document.getElementById("summary").innerHTML=status.length?
+  `<div class="notice ${passedIP&&passedIPK?"ok":"warn"}">${status.join("<br>")}</div>`:
+  '<div class="notice info">Tidak ada target aktif. Hasil IP dan IPK tetap dihitung.</div>';
 
-function buildComponents() {
-  const n=Number(document.getElementById("mkCount").value);
-  const root=document.getElementById("components");
-  const names=["Kehadiran","Tugas","Kuis","UTS","UAS","Proyek"];
-  const defaultWeights={3:[20,30,50],4:[15,20,30,35],5:[10,15,20,25,30],6:[10,10,15,20,20,25]}[n];
-  root.innerHTML=`<div class="course" style="grid-template-columns:minmax(0,1fr) 90px 100px">
-    <b>Komponen</b><b>Bobot %</b><b>Nilai</b></div>`;
-  for(let i=0;i<n;i++){
-    const row=document.createElement("div");
-    row.className="course";
-    row.style.gridTemplateColumns="minmax(0,1fr) 90px 100px";
-    row.innerHTML=`<input id="compName${i}" value="${names[i]||"Komponen "+(i+1)}" aria-label="Nama komponen ${i+1}">
-      <input id="compWeight${i}" type="number" min="0" max="100" value="${defaultWeights[i]}" aria-label="Bobot komponen ${i+1}">
-      <input id="compScore${i}" type="number" min="0" max="100" placeholder="0–100" aria-label="Nilai komponen ${i+1}">`;
-    root.appendChild(row);
-  }
-  document.getElementById("mkResult").innerHTML="";
-}
+ document.getElementById("detail").innerHTML=`
+ <table><thead><tr><th>Mata Kuliah Semester 3</th><th>SKS</th><th>Nilai</th><th>Mutu</th></tr></thead>
+ <tbody>${d.courses.map(c=>`<tr><td>${c.name}</td><td>${c.sks}</td><td>${c.grade}</td><td>${(point[c.grade]*c.sks).toFixed(1)}</td></tr>`).join("")}</tbody></table>
+ <p class="help">Perhitungan IPK: (3,55 × 40 SKS + mutu semester 3) ÷ (40 SKS + 24 SKS). Rumus menyesuaikan jika data awal atau SKS diubah.</p>`;
 
-function calculateMK() {
-  const n=Number(document.getElementById("mkCount").value);
-  let totalWeight=0,score=0,filledWeight=0,missing=[];
-  const comps=[];
-  for(let i=0;i<n;i++){
-    const name=document.getElementById("compName"+i).value.trim()||("Komponen "+(i+1));
-    const weight=Number(document.getElementById("compWeight"+i).value);
-    const raw=document.getElementById("compScore"+i).value.trim();
-    const value=raw===""?null:Number(raw);
-    if(!Number.isFinite(weight)||weight<0||weight>100) {
-      document.getElementById("mkResult").innerHTML='<div class="notice bad">Bobot harus berada antara 0 sampai 100.</div>';return;
-    }
-    if(value!==null&&(!Number.isFinite(value)||value<0||value>100)){
-      document.getElementById("mkResult").innerHTML='<div class="notice bad">Nilai komponen harus berada antara 0 sampai 100.</div>';return;
-    }
-    totalWeight+=weight;
-    if(value!==null){score+=value*weight/100;filledWeight+=weight;}
-    else if(weight>0) missing.push({name,weight});
-    comps.push({name,weight,value});
-  }
-  if(Math.abs(totalWeight-100)>0.001){
-    document.getElementById("mkResult").innerHTML=`<div class="notice bad">Total bobot saat ini ${totalWeight}%. Total bobot wajib tepat 100%.</div>`;return;
-  }
-  const targetRaw=document.getElementById("mkTarget").value;
-  const target=targetRaw===""?null:Number(targetRaw);
-  const finalGrade=scoreGrade(score);
-  let html=`<div class="result-grid" style="margin-top:15px">
-    <div class="metric"><span>Nilai yang sudah terkumpul</span><strong>${score.toFixed(2)}</strong></div>
-    <div class="metric"><span>Bobot terisi</span><strong>${filledWeight}%</strong></div>
-    <div class="metric"><span>Predikat sementara</span><strong>${finalGrade}</strong></div></div>`;
-  if(missing.length) {
-    const max=score+missing.reduce((s,c)=>s+c.weight,0);
-    html+=`<div class="notice info">Masih ada komponen kosong. Nilai akhir belum pasti. Jika semua komponen kosong mendapat 100, nilai maksimum adalah ${max.toFixed(2)}.</div>`;
-  } else {
-    html+=`<div class="notice ok">Nilai akhir: <b>${score.toFixed(2)} (${finalGrade})</b>.</div>`;
-  }
-  if(target!==null) {
-    if(score>=target) {
-      html+=`<div class="notice ok">Target minimal ${target} sudah terpenuhi berdasarkan poin yang terkumpul.</div>`;
-    } else {
-      const remainingWeight=missing.reduce((s,c)=>s+c.weight,0);
-      const max=score+remainingWeight;
-      if(max+1e-8<target) {
-        html+=`<div class="notice bad">Target ${target} tidak mungkin dicapai dengan data ini. Bahkan jika semua komponen kosong mendapat 100, nilai maksimum hanya ${max.toFixed(2)}. Periksa target, bobot, atau nilai yang dimasukkan.</div>`;
-      } else if(remainingWeight>0) {
-        const required=(target-score)/remainingWeight*100;
-        html+=`<div class="notice warn">Untuk mencapai target ${target}, rata-rata nilai yang diperlukan pada komponen kosong adalah sekitar <b>${required.toFixed(2)}</b>. Ini berlaku jika bobot komponen yang belum diisi benar.</div>`;
-        missing.forEach(c=>{
-          const needed=(target-score)/c.weight*100;
-          html+=`<p>• Jika hanya <b>${c.name}</b> yang diandalkan dan komponen kosong lain bernilai 0, nilai yang diperlukan adalah ${needed.toFixed(2)}.</p>`;
-        });
-      } else {
-        html+=`<div class="notice bad">Target tidak tercapai dan tidak ada komponen kosong untuk diperbaiki. Ubah nilai yang diperkirakan atau target.</div>`;
-      }
-    }
-  }
-  document.getElementById("mkResult").innerHTML=html;
+ renderSuggestions(t,grades);
 }
-
-function scoreGrade(score) {
-  if(score>=87)return "A";
-  if(score>=78)return "AB";
-  if(score>=69)return "B";
-  if(score>=60)return "BC";
-  if(score>=51)return "C";
-  if(score>=41)return "D";
-  return "E";
-}
-
 buildCourses();
-buildComponents();
 </script>
 </body>
 </html>
