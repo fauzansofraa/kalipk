@@ -2,2177 +2,289 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GradeFlow — Academic Calculator</title>
-
-  <style>
-    :root {
-      --bg: #f5f7fb;
-      --surface: #ffffff;
-      --surface-soft: #f8fafc;
-      --text: #182230;
-      --muted: #758195;
-      --border: #e5eaf1;
-      --accent: #10a875;
-      --accent-hover: #07865c;
-      --accent-soft: #e6f8f0;
-      --danger: #dc5353;
-      --warning: #d28b22;
-      --shadow: 0 8px 28px rgba(24, 34, 48, 0.055);
-      --radius: 18px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      transition: background .25s, color .25s;
-    }
-
-    button, input, select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .app {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 245px;
-      padding: 25px 17px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      transition: background .25s;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 3px 10px 30px;
-    }
-
-    .brand-icon {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      color: white;
-      background: var(--accent);
-      border-radius: 14px;
-      font-size: 22px;
-      font-weight: 800;
-      box-shadow: 0 7px 17px color-mix(in srgb, var(--accent) 23%, transparent);
-    }
-
-    .brand-name {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -.6px;
-    }
-
-    .brand-subtitle {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 4px;
-    }
-
-    .nav-label {
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      padding: 0 12px;
-      margin: 6px 0 12px;
-    }
-
-    .nav {
-      display: grid;
-      gap: 7px;
-    }
-
-    .nav-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 1px solid transparent;
-      padding: 12px 13px;
-      border-radius: 12px;
-      background: transparent;
-      color: var(--muted);
-      text-align: left;
-      font-size: 13px;
-      font-weight: 650;
-      transition: .2s ease;
-    }
-
-    .nav-btn .nav-icon {
-      width: 23px;
-      text-align: center;
-      font-size: 17px;
-    }
-
-    .nav-btn:hover {
-      background: var(--accent-soft);
-      color: var(--accent-hover);
-      transform: translateX(3px);
-    }
-
-    .nav-btn.active {
-      background: var(--accent-soft);
-      border-color: color-mix(in srgb, var(--accent) 13%, transparent);
-      color: var(--accent-hover);
-    }
-
-    .sidebar-bottom {
-      margin-top: auto;
-      padding: 20px 10px 0;
-    }
-
-    .sidebar-note {
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      padding: 14px;
-      border-radius: 14px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .sidebar-note strong {
-      display: block;
-      color: var(--text);
-      margin-bottom: 5px;
-    }
-
-    .main {
-      min-width: 0;
-      flex: 1;
-      padding: 30px 34px 45px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .eyebrow {
-      color: var(--accent-hover);
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 9px;
-    }
-
-    h1 {
-      font-size: clamp(25px, 3vw, 32px);
-      letter-spacing: -1.1px;
-      line-height: 1.2;
-    }
-
-    .page-description {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 9px;
-      line-height: 1.65;
-    }
-
-    .top-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 13px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: 30px;
-      color: var(--muted);
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--accent);
-      border-radius: 50%;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 15px;
-      margin-bottom: 25px;
-      max-width: 700px;
-    }
-
-    .stat {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow);
-      transition: transform .2s, border-color .2s;
-    }
-
-    .stat:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .stat-value {
-      font-size: 29px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      margin: 12px 0 6px;
-    }
-
-    .stat-note {
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .page {
-      display: none;
-      animation: fadeIn .25s ease;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .section-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .section-heading h2 {
-      font-size: 17px;
-      letter-spacing: -.3px;
-    }
-
-    .section-heading p {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-      line-height: 1.5;
-    }
-
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 23px;
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
-      min-width: 0;
-      transition: border-color .2s, background .25s;
-    }
-
-    .panel:hover {
-      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-    }
-
-    .panel-title {
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .panel-description {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .field {
-      min-width: 0;
-      margin-bottom: 16px;
-    }
-
-    .field:last-child {
-      margin-bottom: 0;
-    }
-
-    .field label {
-      display: block;
-      font-size: 12px;
-      font-weight: 750;
-      margin-bottom: 8px;
-    }
-
-    .field input,
-    .field select {
-      display: block;
-      width: 100%;
-      min-width: 0;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: var(--surface-soft);
-      color: var(--text);
-      padding: 11px 12px;
-      outline: none;
-      font-size: 13px;
-      transition: border-color .2s, box-shadow .2s, background .2s;
-    }
-
-    .field input:focus,
-    .field select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
-    }
-
-    .field input[type="color"] {
-      height: 44px;
-      padding: 5px;
-      cursor: pointer;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
-      margin-top: 7px;
-    }
-
-    .btn {
-      border: 1px solid transparent;
-      background: var(--accent);
-      color: white;
-      border-radius: 11px;
-      padding: 11px 15px;
-      font-size: 12px;
-      font-weight: 750;
-      transition: background .2s, transform .2s, box-shadow .2s;
-    }
-
-    .btn:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 22%, transparent);
-    }
-
-    .btn:active {
-      transform: scale(.98);
-    }
-
-    .btn-secondary {
-      background: var(--surface);
-      border-color: var(--border);
-      color: var(--text);
-    }
-
-    .btn-secondary:hover {
-      background: var(--surface-soft);
-      color: var(--accent-hover);
-      border-color: var(--accent);
-      box-shadow: none;
-    }
-
-    .btn-danger {
-      background: #fff0f0;
-      color: #c13d3d;
-      border-color: #f6d5d5;
-    }
-
-    .btn-danger:hover {
-      background: #ffe0e0;
-      color: #a72b2b;
-      box-shadow: none;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 18px;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .result-box {
-      padding: 16px;
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      border-radius: 13px;
-      min-width: 0;
-    }
-
-    .result-label {
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 650;
-    }
-
-    .result-value {
-      font-size: 24px;
-      font-weight: 850;
-      letter-spacing: -.7px;
-      margin-top: 9px;
-      overflow-wrap: anywhere;
-    }
-
-    .result-caption {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 5px;
-      line-height: 1.5;
-    }
-
-    .notice {
-      border-radius: 12px;
-      padding: 13px 15px;
-      font-size: 12px;
-      line-height: 1.65;
-      margin-top: 14px;
-    }
-
-    .notice.success {
-      background: #eaf9f1;
-      color: #176943;
-      border: 1px solid #cceedd;
-    }
-
-    .notice.warning {
-      background: #fff7e8;
-      color: #865813;
-      border: 1px solid #f5e1b7;
-    }
-
-    .notice.danger {
-      background: #fff0f0;
-      color: #a72b2b;
-      border: 1px solid #f4d1d1;
-    }
-
-    .notice.info {
-      background: var(--accent-soft);
-      color: var(--accent-hover);
-      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-    }
-
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 650px;
-    }
-
-    th, td {
-      padding: 13px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-size: 12px;
-    }
-
-    th {
-      color: var(--muted);
-      background: var(--surface-soft);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: .7px;
-      white-space: nowrap;
-    }
-
-    tbody tr {
-      transition: background .18s;
-    }
-
-    tbody tr:hover {
-      background: var(--accent-soft);
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .grade-pill {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      min-width: 40px;
-      border-radius: 8px;
-      padding: 6px 9px;
-      font-weight: 800;
-      background: var(--accent-soft);
-      color: var(--accent-hover);
-    }
-
-    .weight-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .weight-row {
-      display: grid;
-      grid-template-columns: minmax(100px, 1fr) 100px 30px;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .weight-row label {
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .weight-row input {
-      width: 100%;
-      padding: 9px 10px;
-      border: 1px solid var(--border);
-      background: var(--surface-soft);
-      color: var(--text);
-      border-radius: 9px;
-      outline: none;
-    }
-
-    .weight-row input:focus {
-      border-color: var(--accent);
-    }
-
-    .weight-suffix {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .weight-total {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 10px;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 12px;
-      font-weight: 750;
-    }
-
-    .course-row {
-      display: grid;
-      grid-template-columns: minmax(150px, 2fr) minmax(65px, .7fr) minmax(85px, .8fr) 45px;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .course-row input,
-    .course-row select {
-      width: 100%;
-      min-width: 0;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-      background: var(--surface-soft);
-      color: var(--text);
-      outline: none;
-      font-size: 12px;
-    }
-
-    .course-row input:focus,
-    .course-row select:focus {
-      border-color: var(--accent);
-    }
-
-    .course-row .remove-course {
-      padding: 9px 0;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: 9px;
-      color: var(--danger);
-      font-weight: 800;
-    }
-
-    .course-row .remove-course:hover {
-      background: #fff0f0;
-      border-color: #f4d1d1;
-    }
-
-    .course-header {
-      display: grid;
-      grid-template-columns: minmax(150px, 2fr) minmax(65px, .7fr) minmax(85px, .8fr) 45px;
-      gap: 10px;
-      margin-bottom: 9px;
-      color: var(--muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: .5px;
-    }
-
-    .progress-track {
-      height: 9px;
-      background: var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0;
-      background: var(--accent);
-      border-radius: inherit;
-      transition: width .3s;
-    }
-
-    .empty-state {
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      padding: 24px 12px;
-      line-height: 1.7;
-    }
-
-    .small-muted {
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .footer {
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: 11px;
-      text-align: center;
-      line-height: 1.7;
-    }
-
-    .setting-preview {
-      padding: 20px;
-      border: 1px dashed var(--border);
-      border-radius: 15px;
-      background: var(--surface-soft);
-    }
-
-    .preview-button {
-      display: inline-block;
-      border: 0;
-      padding: 11px 17px;
-      border-radius: 10px;
-      background: var(--accent);
-      color: white;
-      font-size: 12px;
-      font-weight: 750;
-      margin-top: 12px;
-      transition: .2s;
-    }
-
-    .preview-button:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-    }
-
-    body.dark {
-      --bg: #111821;
-      --surface: #19232f;
-      --surface-soft: #202c39;
-      --text: #eef3f8;
-      --muted: #9ba9ba;
-      --border: #2c3a49;
-      --accent-soft: #193c33;
-      --shadow: 0 8px 28px rgba(0, 0, 0, .13);
-    }
-
-    body.dark .notice.success {
-      background: #193c2d;
-      color: #a6e8c1;
-      border-color: #285740;
-    }
-
-    body.dark .notice.warning {
-      background: #40331e;
-      color: #f5d391;
-      border-color: #5b4826;
-    }
-
-    body.dark .notice.danger {
-      background: #421f25;
-      color: #ffc0c0;
-      border-color: #633039;
-    }
-
-    body.dark .btn-danger {
-      background: #421f25;
-      color: #ffc0c0;
-      border-color: #633039;
-    }
-
-    @media (max-width: 1050px) {
-      .sidebar {
-        width: 215px;
-      }
-
-      .main {
-        padding: 25px 23px 35px;
-      }
-
-      .grid-3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 760px) {
-      .app {
-        display: block;
-      }
-
-      .sidebar {
-        width: 100%;
-        padding: 15px;
-        border-right: 0;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .brand {
-        padding: 0 5px 15px;
-      }
-
-      .nav-label,
-      .sidebar-bottom {
-        display: none;
-      }
-
-      .nav {
-        display: flex;
-        overflow-x: auto;
-        padding-bottom: 3px;
-      }
-
-      .nav-btn {
-        width: auto;
-        flex-shrink: 0;
-        padding: 10px 12px;
-        white-space: nowrap;
-      }
-
-      .nav-btn:hover {
-        transform: none;
-      }
-
-      .main {
-        padding: 22px 15px 32px;
-      }
-
-      .topbar {
-        flex-direction: column;
-      }
-
-      .grid-2,
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
-
-      .result-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .panel {
-        padding: 17px;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .stat {
-        padding: 15px;
-      }
-
-      .stat-value {
-        font-size: 24px;
-      }
-    }
-
-    @media (max-width: 440px) {
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      .course-header,
-      .course-row {
-        grid-template-columns: minmax(110px, 1.5fr) minmax(55px, .7fr) minmax(72px, .8fr) 35px;
-        gap: 6px;
-      }
-
-      .course-row input,
-      .course-row select {
-        padding: 9px 6px;
-        font-size: 11px;
-      }
-
-      .weight-row {
-        grid-template-columns: minmax(90px, 1fr) 80px 25px;
-      }
-
-      .top-chip {
-        white-space: normal;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GradeFlow — Academic Calculator</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--soft:#f8fafc;--text:#172334;--muted:#718096;--border:#e2e8f0;--accent:#10a875;--hover:#07865c;--pale:#e6f8f0;--shadow:0 8px 28px #1723340c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:235px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:12px;padding:0 8px 30px}
+.brand-icon{display:grid;place-items:center;width:43px;height:43px;border-radius:14px;background:var(--accent);color:white;font-size:23px;font-weight:900}
+.brand-name{font-size:19px;font-weight:850}.brand-subtitle{font-size:11px;color:var(--muted);margin-top:4px}
+.nav-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;font-weight:800;padding:0 12px;margin-bottom:12px}
+.nav{display:grid;gap:7px}
+.nav-btn{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);font-size:13px;font-weight:700;text-align:left;transition:.2s}
+.nav-btn:hover,.nav-btn.active{background:var(--pale);color:var(--hover)}.nav-btn:hover{transform:translateX(3px)}
+.nav-icon{width:22px;text-align:center;font-size:17px}
+.side-note{margin-top:auto;padding:15px 10px 0;color:var(--muted);font-size:12px;line-height:1.6}
+.main{flex:1;min-width:0;padding:30px 32px 40px}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:25px}
+.eyebrow{font-size:11px;color:var(--hover);font-weight:850;letter-spacing:1.4px;margin-bottom:8px}
+h1{font-size:clamp(25px,3vw,32px);letter-spacing:-1px}
+.page-description{font-size:13px;color:var(--muted);line-height:1.6;margin-top:8px}
+.chip{font-size:12px;color:var(--muted);padding:10px 13px;border:1px solid var(--border);background:var(--surface);border-radius:30px;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;max-width:700px;margin-bottom:25px}
+.stat,.panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);transition:border-color .2s}
+.stat{padding:20px}.stat:hover,.panel:hover{border-color:var(--accent)}
+.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-value{font-size:29px;font-weight:850;margin:12px 0 6px}.stat-note{font-size:11px;color:var(--muted)}
+.page{display:none;animation:fade .2s}.page.active{display:block}
+@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+.panel{padding:23px;margin-bottom:20px;min-width:0}
+.panel h2,.panel-title{font-size:16px;font-weight:850;margin-bottom:7px}
+.panel-desc{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:19px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field{margin-bottom:16px;min-width:0}.field label{display:block;font-size:12px;font-weight:750;margin-bottom:8px}
+.field input,.field select{width:100%;min-width:0;border:1px solid var(--border);border-radius:11px;background:var(--soft);color:var(--text);padding:11px 12px;outline:none;font-size:13px}
+.field input:focus,.field select:focus,.course-row input:focus,.course-row select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #10a87520}
+.field input[type=color]{height:44px;padding:5px}
+.hint,.muted{font-size:11px;color:var(--muted);line-height:1.6;margin-top:6px}
+.btn{background:var(--accent);color:white;border:1px solid transparent;border-radius:11px;padding:11px 15px;font-size:12px;font-weight:800;transition:.2s}
+.btn:hover{background:var(--hover);transform:translateY(-2px);box-shadow:0 6px 16px #10a87525}
+.btn.secondary{background:var(--surface);color:var(--text);border-color:var(--border)}.btn.secondary:hover{color:var(--hover);border-color:var(--accent);box-shadow:none}
+.button-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.result-box{padding:16px;border:1px solid var(--border);background:var(--soft);border-radius:13px;min-width:0}
+.result-label{font-size:11px;color:var(--muted);font-weight:700}.result-value{font-size:24px;font-weight:900;margin-top:9px;overflow-wrap:anywhere}.result-caption{font-size:11px;color:var(--muted);line-height:1.5;margin-top:5px}
+.notice{padding:13px 15px;margin-top:14px;border-radius:12px;font-size:12px;line-height:1.65}
+.success{background:#eaf9f1;color:#176943;border:1px solid #cceedd}.warning{background:#fff7e8;color:#865813;border:1px solid #f5e1b7}.info{background:var(--pale);color:var(--hover);border:1px solid #10a87530}.danger{background:#fff0f0;color:#a72b2b;border:1px solid #f4d1d1}
+.weight-list{display:grid;gap:10px}.weight-row{display:grid;grid-template-columns:minmax(100px,1fr) 100px 35px;align-items:center;gap:10px}.weight-row label{font-size:12px;font-weight:700}.weight-row input{width:100%;min-width:0;padding:10px;border:1px solid var(--border);border-radius:9px;background:var(--soft);color:var(--text)}.weight-total{display:flex;justify-content:space-between;padding:12px;margin-top:14px;border:1px solid var(--border);border-radius:10px;background:var(--soft);font-size:12px;font-weight:800}
+.course-header,.course-row{display:grid;grid-template-columns:minmax(140px,2fr) minmax(60px,.65fr) minmax(75px,.8fr) 38px;gap:9px;align-items:center}
+.course-header{font-size:10px;color:var(--muted);font-weight:850;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
+.course-row{margin-bottom:9px}.course-row input,.course-row select{width:100%;min-width:0;padding:10px 9px;border:1px solid var(--border);border-radius:9px;background:var(--soft);color:var(--text);font-size:12px;outline:none}
+.remove{border:1px solid var(--border);background:var(--surface);color:#c23d4b;border-radius:9px;padding:9px;font-weight:900}
+table{border-collapse:collapse;width:100%;min-width:570px}th,td{text-align:left;padding:13px;border-bottom:1px solid var(--border);font-size:12px}th{font-size:10px;color:var(--muted);background:var(--soft);letter-spacing:.5px;text-transform:uppercase}tbody tr:hover{background:var(--pale)}.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;margin-top:18px}
+.grade-pill{display:inline-block;padding:5px 9px;background:var(--pale);color:var(--hover);border-radius:8px;font-weight:850}
+.progress{height:9px;border-radius:20px;background:var(--border);overflow:hidden;margin-top:16px}.progress-fill{height:100%;background:var(--accent);width:0;transition:width .25s}
+.preview{padding:20px;border:1px dashed var(--border);border-radius:14px;background:var(--soft)}
+.footer{text-align:center;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px}
+body.dark{--bg:#111821;--surface:#19232f;--soft:#202c39;--text:#eef3f8;--muted:#9ba9ba;--border:#2c3a49;--pale:#193c33;--shadow:0 8px 28px #0002}
+body.dark .success{background:#193c2d;color:#a6e8c1;border-color:#285740}body.dark .warning{background:#40331e;color:#f5d391;border-color:#5b4826}body.dark .danger{background:#421f25;color:#ffc0c0;border-color:#633039}
+@media(max-width:1000px){.sidebar{width:210px}.main{padding:24px}}
+@media(max-width:760px){.app{display:block}.sidebar{width:100%;padding:14px;border-right:0;border-bottom:1px solid var(--border)}.brand{padding-bottom:15px}.nav-label,.side-note{display:none}.nav{display:flex;overflow-x:auto}.nav-btn{flex-shrink:0;white-space:nowrap}.nav-btn:hover{transform:none}.main{padding:20px 14px}.topbar{flex-direction:column}.grid2{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.panel{padding:17px}}
+@media(max-width:440px){.stats{grid-template-columns:1fr}.course-header,.course-row{grid-template-columns:minmax(100px,1.5fr) minmax(48px,.6fr) minmax(62px,.8fr) 30px;gap:5px}.course-row input,.course-row select{padding:9px 5px;font-size:11px}.weight-row{grid-template-columns:minmax(80px,1fr) 75px 28px}}
+</style>
 </head>
-
 <body>
 <div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-icon">G</div><div><div class="brand-name">GradeFlow</div><div class="brand-subtitle">Academic Calculator</div></div></div>
+  <div class="nav-label">MENU UTAMA</div>
+  <nav class="nav">
+    <button class="nav-btn active" data-page="dashboard">⌂ &nbsp;Ringkasan</button>
+    <button class="nav-btn" data-page="course">▤ &nbsp;Nilai 1 MK</button>
+    <button class="nav-btn" data-page="semester">◫ &nbsp;Simulasi IP/IPK</button>
+    <button class="nav-btn" data-page="settings">⚙ &nbsp;Kustomisasi</button>
+  </nav>
+  <div class="side-note">✦ Study smarter<br>Pantau nilai, hitung IPK, dan rencanakan target akademikmu.</div>
+</aside>
 
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-icon">G</div>
-      <div>
-        <div class="brand-name">GradeFlow</div>
-        <div class="brand-subtitle">Academic Calculator</div>
-      </div>
-    </div>
+<main class="main">
+<header class="topbar">
+ <div><div class="eyebrow">ACADEMIC PERFORMANCE</div><h1 id="pageTitle">Ringkasan Akademik</h1><p class="page-description" id="pageDescription">Pilih fitur untuk menghitung nilai atau menyimulasikan IP/IPK.</p></div>
+ <div class="chip">● GradeFlow siap digunakan</div>
+</header>
 
-    <div class="nav-label">MENU UTAMA</div>
+<!-- BAGIAN ATAS: HANYA DUA STATISTIK -->
+<section class="stats">
+ <div class="stat"><div class="stat-label">IPK Sebelumnya</div><div class="stat-value" id="statOld">3.55</div><div class="stat-note">IPK kumulatif sebelum semester ini</div></div>
+ <div class="stat"><div class="stat-label">Total SKS Sebelumnya</div><div class="stat-value" id="statOldSKS">40</div><div class="stat-note">Jumlah SKS yang telah diselesaikan</div></div>
+</section>
 
-    <nav class="nav">
-      <button class="nav-btn active" data-page="dashboard">
-        <span class="nav-icon">⌂</span> Ringkasan
-      </button>
-      <button class="nav-btn" data-page="course">
-        <span class="nav-icon">▤</span> Nilai 1 MK
-      </button>
-      <button class="nav-btn" data-page="semester">
-        <span class="nav-icon">◫</span> Simulasi IP/IPK
-      </button>
-      <button class="nav-btn" data-page="settings">
-        <span class="nav-icon">⚙</span> Kustomisasi
-      </button>
-    </nav>
+<!-- RINGKASAN: TIDAK ADA FORM TARGET, HANYA DUA TOMBOL -->
+<section class="page active" id="page-dashboard">
+ <div class="panel" style="padding:32px">
+  <div class="eyebrow">WELCOME TO GRADEFLOW</div>
+  <h2 style="font-size:25px;margin-bottom:10px">Halo! Siap menghitung nilai?</h2>
+  <p class="page-description" style="margin-bottom:24px">Pilih fitur untuk menghitung nilai mata kuliah atau menyimulasikan IP dan IPK Semester 3.</p>
+  <div class="button-row"><button class="btn" data-goto="semester">Simulasi IP/IPK →</button><button class="btn secondary" data-goto="course">Nilai 1 MK →</button></div>
+ </div>
+</section>
 
-    <div class="sidebar-bottom">
-      <div class="sidebar-note">
-        <strong>✦ Study smarter</strong>
-        Pantau nilai, hitung IPK, dan rencanakan target akademikmu.
-      </div>
-    </div>
-  </aside>
+<section class="page" id="page-course">
+ <div class="panel">
+  <div class="panel-title">Kalkulator Nilai Mata Kuliah</div><p class="panel-desc">Pilih preset untuk mengisi bobot otomatis, lalu masukkan nilai komponen.</p>
+  <div class="grid2">
+   <div class="field"><label for="coursePreset">Preset mata kuliah</label><select id="coursePreset">
+    <option value="pbwPrak">Praktikum PBW</option><option value="databasePrak">Praktikum Database</option><option value="gisPrak">Praktikum GIS</option><option value="siPrak">Praktikum Sistem Informasi</option><option value="strukturPrak">Praktikum Struktur Data</option><option value="komdatTeori">Komunikasi Data Teori</option><option value="sigTeori">SIG Teori</option><option value="ecommerceTeori">E-Commerce Teori</option><option value="siTeori">Sistem Informasi Teori</option><option value="databaseTeori">Database Teori</option><option value="ecommercePrak">Praktikum E-Commerce</option><option value="wirausahaPrak">Praktikum Kewirausahaan</option><option value="manual">Mode Manual</option>
+   </select></div>
+   <div class="field"><label for="courseName">Nama mata kuliah</label><input id="courseName" value="Praktikum PBW"></div>
+  </div>
+  <div class="field"><label for="targetGrade">Target nilai huruf</label><select id="targetGrade"><option value="A">A — 4.00</option><option value="AB">AB — 3.50</option><option value="B">B — 3.00</option><option value="BC">BC — 2.50</option><option value="C">C — 2.00</option><option value="D">D — 1.00</option><option value="E">E — 0.00</option></select><div class="hint">Pilih huruf nilai akhir yang ingin kau capai.</div></div>
+  <div class="panel-title" style="margin-top:24px">Komponen Penilaian</div><p class="panel-desc">Nilai komponen dari 0 sampai 100. Komponen yang belum diketahui boleh dibiarkan kosong.</p>
+  <div id="weightsContainer" class="weight-list"></div>
+  <div class="weight-total"><span>Total Bobot</span><span id="weightTotal">100%</span></div><div id="weightMessage"></div>
+  <div class="button-row"><button class="btn" id="calculateCourse">Hitung Nilai Akhir</button><button class="btn secondary" id="suggestScores">Saran Nilai yang Dibutuhkan</button><button class="btn secondary" id="resetCourse">Reset Nilai</button></div>
+  <div id="courseResult"></div><div id="courseAdvice"></div>
+ </div>
+</section>
 
-  <main class="main">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">Academic performance</div>
-        <h1 id="pageTitle">Ringkasan Akademik</h1>
-        <p class="page-description" id="pageDescription">
-          Pantau perkembangan nilai dan rencanakan target semester berikutnya.
-        </p>
-      </div>
-      <div class="top-chip">
-        <span class="live-dot"></span>
-        GradeFlow siap digunakan
-      </div>
-    </header>
+<section class="page" id="page-semester">
+ <div class="panel">
+  <div class="panel-title">Simulasi IP Semester dan IPK</div><p class="panel-desc">Semua 16 mata kuliah Semester 3 sudah terisi. Ubah nilai huruf untuk menghitung prediksi IP dan IPK.</p>
+  <div class="grid2">
+   <div class="field"><label for="previousIPK">IPK sebelumnya</label><input id="previousIPK" type="number" min="0" max="4" step=".01" value="3.55"></div>
+   <div class="field"><label for="previousSKS">Total SKS sebelumnya</label><input id="previousSKS" type="number" min="0" step="1" value="40"></div>
+   <div class="field"><label for="targetIP">Target IP semester</label><input id="targetIP" type="number" min="0" max="4" step=".01" value="3.80"></div>
+   <div class="field"><label for="targetIPK">Target IPK kumulatif</label><input id="targetIPK" type="number" min="0" max="4" step=".01" value="3.60"></div>
+  </div>
+  <div class="course-header"><span>Mata Kuliah</span><span>SKS</span><span>Nilai</span><span></span></div>
+  <div id="semesterCourses"></div>
+  <div class="button-row"><button class="btn" id="addCourse">+ Tambah Mata Kuliah</button><button class="btn secondary" id="resetSemester">Reset ke Daftar Semester 3</button><button class="btn" id="calculateSemester">Hitung IP dan IPK</button></div>
+  <div id="semesterMessage"></div>
+ </div>
+ <div class="panel">
+  <div class="panel-title">Hasil Simulasi</div><p class="panel-desc">IP dihitung dari mutu semester ini. IPK baru mempertimbangkan IPK dan SKS sebelumnya.</p>
+  <div class="result-grid">
+   <div class="result-box"><div class="result-label">IP Semester</div><div class="result-value" id="semesterIP">0.00</div><div class="result-caption">Rata-rata mutu semester ini</div></div>
+   <div class="result-box"><div class="result-label">IPK Baru</div><div class="result-value" id="semesterIPK">3.55</div><div class="result-caption">IPK setelah semester ini</div></div>
+   <div class="result-box"><div class="result-label">Total SKS Semester</div><div class="result-value" id="semesterSKS">24</div><div class="result-caption">Beban semester saat ini</div></div>
+  </div>
+  <div class="progress"><div class="progress-fill" id="targetProgress"></div></div><p class="muted" id="progressCaption"></p><div id="semesterTargetMessage"></div>
+  <div class="table-wrap"><table><thead><tr><th>Mata Kuliah</th><th>SKS</th><th>Nilai</th><th>Bobot Mutu</th><th>Mutu</th></tr></thead><tbody id="semesterResultBody"></tbody></table></div>
+ </div>
+</section>
 
-    <!-- BAGIAN ATAS: HANYA IPK SEBELUMNYA DAN TOTAL SKS SEBELUMNYA -->
-    <section class="stats">
-      <div class="stat">
-        <div class="stat-label">IPK Sebelumnya</div>
-        <div class="stat-value" id="statOld">3.55</div>
-        <div class="stat-note">IPK kumulatif sebelum semester ini</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-label">Total SKS Sebelumnya</div>
-        <div class="stat-value" id="statOldSKS">40</div>
-        <div class="stat-note">Jumlah SKS yang telah diselesaikan</div>
-      </div>
-    </section>
-
-    <!-- RINGKASAN -->
-    <section class="page active" id="page-dashboard">
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">Ringkasan Semester</div>
-          <div class="panel-description">
-            Atur data akademik sebelumnya untuk mendapatkan simulasi IP dan IPK yang sesuai.
-          </div>
-
-          <div class="field">
-            <label for="previousIPK">IPK sebelumnya</label>
-            <input type="number" id="previousIPK" min="0" max="4" step="0.01" value="3.55">
-          </div>
-
-          <div class="field">
-            <label for="previousSKS">Total SKS sebelumnya</label>
-            <input type="number" id="previousSKS" min="0" step="1" value="40">
-          </div>
-
-          <div class="field">
-            <label for="targetIP">Target IP semester</label>
-            <input type="number" id="targetIP" min="0" max="4" step="0.01" value="3.80">
-          </div>
-
-          <div class="field">
-            <label for="targetIPK">Target IPK kumulatif</label>
-            <input type="number" id="targetIPK" min="0" max="4" step="0.01" value="3.60">
-          </div>
-
-          <div class="button-row">
-            <button class="btn" id="saveAcademic">Simpan Pengaturan</button>
-          </div>
-          <div id="academicMessage"></div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title">Prediksi Akademik</div>
-          <div class="panel-description">
-            Hasil prediksi dihitung berdasarkan mata kuliah yang sudah dimasukkan pada simulasi semester.
-          </div>
-
-          <div class="result-grid">
-            <div class="result-box">
-              <div class="result-label">IP Semester</div>
-              <div class="result-value" id="dashboardIP">0.00</div>
-              <div class="result-caption">Prediksi semester ini</div>
-            </div>
-            <div class="result-box">
-              <div class="result-label">IPK Baru</div>
-              <div class="result-value" id="dashboardIPK">3.55</div>
-              <div class="result-caption">Prediksi kumulatif</div>
-            </div>
-            <div class="result-box">
-              <div class="result-label">SKS Semester</div>
-              <div class="result-value" id="dashboardSKS">0</div>
-              <div class="result-caption">Total SKS semester ini</div>
-            </div>
-          </div>
-
-          <div class="progress-track">
-            <div class="progress-fill" id="targetProgress"></div>
-          </div>
-          <div class="small-muted" id="progressCaption" style="margin-top:8px">
-            Masukkan mata kuliah untuk melihat progres target.
-          </div>
-
-          <div id="dashboardMessage"></div>
-
-          <div class="button-row">
-            <button class="btn" data-goto="semester">Buka Simulasi IP/IPK →</button>
-            <button class="btn btn-secondary" data-goto="course">Hitung Nilai MK →</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="section-heading">
-          <div>
-            <h2>Skala Nilai</h2>
-            <p>Konversi nilai akhir menjadi nilai huruf dan bobot mutu.</p>
-          </div>
-        </div>
-
-        <div class="table-wrap">
-          <table style="min-width:500px">
-            <thead>
-              <tr>
-                <th>Nilai Huruf</th>
-                <th>Rentang Nilai</th>
-                <th>Bobot Mutu</th>
-              </tr>
-            </thead>
-            <tbody id="gradeScaleBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- NILAI 1 MK -->
-    <section class="page" id="page-course">
-      <div class="panel">
-        <div class="section-heading">
-          <div>
-            <h2>Kalkulator Nilai Mata Kuliah</h2>
-            <p>Pilih mata kuliah untuk mengisi bobot otomatis atau gunakan mode manual.</p>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="field">
-            <label for="coursePreset">Preset mata kuliah</label>
-            <select id="coursePreset">
-              <option value="pbwPrak">Praktikum PBW</option>
-              <option value="databasePrak">Praktikum Database</option>
-              <option value="gisPrak">Praktikum GIS</option>
-              <option value="siPrak">Praktikum Sistem Informasi</option>
-              <option value="strukturPrak">Praktikum Struktur Data</option>
-              <option value="komdatTeori">Komunikasi Data Teori</option>
-              <option value="sigTeori">SIG Teori</option>
-              <option value="ecommerceTeori">E-Commerce Teori</option>
-              <option value="siTeori">Sistem Informasi Teori</option>
-              <option value="databaseTeori">Database Teori</option>
-              <option value="ecommercePrak">Praktikum E-Commerce</option>
-              <option value="wirausahaPrak">Praktikum Kewirausahaan</option>
-              <option value="manual">Mode Manual</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="courseName">Nama mata kuliah</label>
-            <input id="courseName" type="text" value="Praktikum PBW" placeholder="Nama mata kuliah">
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="targetGrade">Target nilai huruf</label>
-          <select id="targetGrade">
-            <option value="A" selected>A — 4.00</option>
-            <option value="AB">AB — 3.50</option>
-            <option value="B">B — 3.00</option>
-            <option value="BC">BC — 2.50</option>
-            <option value="C">C — 2.00</option>
-            <option value="D">D — 1.00</option>
-            <option value="E">E — 0.00</option>
-          </select>
-          <div class="hint">Pilih huruf nilai akhir yang ingin kau capai.</div>
-        </div>
-
-        <div class="section-heading" style="margin-top:25px">
-          <div>
-            <h2>Komponen Penilaian</h2>
-            <p>Isi nilai setiap komponen dari 0 sampai 100.</p>
-          </div>
-          <button class="btn btn-secondary" id="resetCourse">Reset Nilai</button>
-        </div>
-
-        <div id="weightsContainer" class="weight-list"></div>
-
-        <div class="weight-total">
-          <span>Total Bobot</span>
-          <span id="weightTotal">100%</span>
-        </div>
-        <div id="weightMessage"></div>
-
-        <div class="button-row">
-          <button class="btn" id="calculateCourse">Hitung Nilai Akhir</button>
-          <button class="btn btn-secondary" id="suggestScores">Saran Nilai yang Dibutuhkan</button>
-        </div>
-
-        <div id="courseResult"></div>
-        <div id="courseAdvice"></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Informasi Perhitungan</div>
-        <p class="panel-description" style="margin-top:9px;margin-bottom:0">
-          Nilai akhir dihitung dari jumlah nilai setiap komponen dikalikan bobotnya.
-          Pastikan total bobot adalah 100%. Saran nilai yang dibutuhkan merupakan estimasi
-          untuk komponen yang belum diisi, bukan jaminan nilai akhir dari dosen.
-        </p>
-      </div>
-    </section>
-
-    <!-- SIMULASI IP / IPK -->
-    <section class="page" id="page-semester">
-      <div class="panel">
-        <div class="section-heading">
-          <div>
-            <h2>Simulasi IP Semester dan IPK</h2>
-            <p>Masukkan mata kuliah, SKS, dan prediksi nilai huruf setiap mata kuliah.</p>
-          </div>
-          <button class="btn btn-secondary" id="resetSemester">Reset Semester</button>
-        </div>
-
-        <div class="course-header">
-          <span>Mata Kuliah</span>
-          <span>SKS</span>
-          <span>Nilai</span>
-          <span></span>
-        </div>
-
-        <div id="semesterCourses"></div>
-
-        <div class="button-row">
-          <button class="btn" id="addCourse">+ Tambah Mata Kuliah</button>
-          <button class="btn" id="calculateSemester">Hitung IP dan IPK</button>
-        </div>
-
-        <div id="semesterMessage"></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Hasil Simulasi</div>
-        <div class="panel-description">
-          Perubahan IPK dihitung menggunakan total mutu dari SKS sebelumnya dan semester ini.
-        </div>
-
-        <div class="result-grid">
-          <div class="result-box">
-            <div class="result-label">IP Semester</div>
-            <div class="result-value" id="semesterIP">0.00</div>
-            <div class="result-caption">Rata-rata mutu semester ini</div>
-          </div>
-          <div class="result-box">
-            <div class="result-label">IPK Baru</div>
-            <div class="result-value" id="semesterIPK">3.55</div>
-            <div class="result-caption">IPK setelah semester ini</div>
-          </div>
-          <div class="result-box">
-            <div class="result-label">Total SKS Baru</div>
-            <div class="result-value" id="semesterTotalSKS">40</div>
-            <div class="result-caption">SKS kumulatif</div>
-          </div>
-        </div>
-
-        <div class="table-wrap" style="margin-top:20px">
-          <table>
-            <thead>
-              <tr>
-                <th>Mata Kuliah</th>
-                <th>SKS</th>
-                <th>Nilai</th>
-                <th>Bobot</th>
-                <th>Mutu</th>
-              </tr>
-            </thead>
-            <tbody id="semesterResultBody">
-              <tr><td colspan="5" class="empty-state">Tambahkan mata kuliah untuk melihat hasil.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- KUSTOMISASI -->
-    <section class="page" id="page-settings">
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">Tampilan Aplikasi</div>
-          <p class="panel-description" style="margin-top:9px">
-            Sesuaikan tema dan warna GradeFlow sesuai seleramu.
-          </p>
-
-          <div class="field">
-            <label for="themeMode">Mode tampilan</label>
-            <select id="themeMode">
-              <option value="light">Light Mode</option>
-              <option value="dark">Dark Mode</option>
-              <option value="custom">Warna Kustom</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="backgroundColor">Warna latar belakang</label>
-            <input type="color" id="backgroundColor" value="#f5f7fb">
-          </div>
-
-          <div class="field">
-            <label for="buttonColor">Warna tombol utama</label>
-            <input type="color" id="buttonColor" value="#10a875">
-          </div>
-
-          <div class="field">
-            <label for="hoverColor">Warna hover tombol</label>
-            <input type="color" id="hoverColor" value="#07865c">
-          </div>
-
-          <div class="field">
-            <label for="accentColor">Warna aksen</label>
-            <input type="color" id="accentColor" value="#10a875">
-          </div>
-
-          <div class="button-row">
-            <button class="btn" id="applyTheme">Terapkan Tema</button>
-            <button class="btn btn-secondary" id="resetTheme">Kembalikan Default</button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title">Pratinjau</div>
-          <p class="panel-description" style="margin-top:9px">
-            Lihat tampilan warna yang dipilih.
-          </p>
-
-          <div class="setting-preview">
-            <div style="font-weight:800;font-size:16px">GradeFlow Preview</div>
-            <p class="small-muted" style="margin-top:8px">
-              Tampilan kartu dan tombol dengan warna pilihanmu.
-            </p>
-            <button class="preview-button">Tombol Contoh</button>
-          </div>
-
-          <div class="notice info">
-            Pengaturan warna akan diterapkan pada tampilan aplikasi. Data akademik dan hasil simulasi
-            tetap mengikuti nilai yang kau masukkan.
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Tentang GradeFlow</div>
-        <p class="panel-description" style="margin-top:9px;margin-bottom:0">
-          GradeFlow adalah kalkulator akademik sederhana untuk membantu menghitung nilai mata kuliah,
-          memprediksi IP semester, dan menyimulasikan perubahan IPK kumulatif.
-          Semua hasil merupakan simulasi berdasarkan data yang dimasukkan pengguna.
-        </p>
-      </div>
-    </section>
-
-    <footer class="footer">
-      GradeFlow Academic Calculator · Dibuat untuk membantu perencanaan akademik<br>
-      Hasil simulasi dapat berbeda dari nilai resmi kampus.
-    </footer>
-  </main>
+<section class="page" id="page-settings">
+ <div class="grid2">
+  <div class="panel"><div class="panel-title">Kustomisasi Tampilan</div><p class="panel-desc">Pilih mode dan warna GradeFlow.</p>
+   <div class="field"><label for="themeMode">Mode tampilan</label><select id="themeMode"><option value="light">Light Mode</option><option value="dark">Dark Mode</option><option value="custom">Warna Kustom</option></select></div>
+   <div class="field"><label for="backgroundColor">Warna latar belakang</label><input type="color" id="backgroundColor" value="#f4f7fb"></div>
+   <div class="field"><label for="buttonColor">Warna tombol utama</label><input type="color" id="buttonColor" value="#10a875"></div>
+   <div class="field"><label for="hoverColor">Warna hover tombol</label><input type="color" id="hoverColor" value="#07865c"></div>
+   <div class="field"><label for="accentColor">Warna aksen</label><input type="color" id="accentColor" value="#10a875"></div>
+   <div class="button-row"><button class="btn" id="applyTheme">Terapkan Tema</button><button class="btn secondary" id="resetTheme">Kembalikan Default</button></div>
+  </div>
+  <div class="panel"><div class="panel-title">Pratinjau</div><p class="panel-desc">Contoh tampilan warna yang dipilih.</p><div class="preview"><strong>GradeFlow Preview</strong><p class="muted">Kartu dan tombol dengan warna pilihanmu.</p><button class="btn" style="margin-top:12px">Tombol Contoh</button></div></div>
+ </div>
+ <div class="panel"><div class="panel-title">Tentang GradeFlow</div><p class="panel-desc">Kalkulator untuk menghitung nilai mata kuliah, memprediksi IP semester, dan menyimulasikan IPK kumulatif.</p></div>
+</section>
+<footer class="footer">GradeFlow Academic Calculator · Hasil simulasi mengikuti data yang dimasukkan dan dapat berbeda dari nilai resmi kampus.</footer>
+</main>
 </div>
 
 <script>
-  // ==========================================
-  // DATA SKALA NILAI
-  // ==========================================
-
-  const gradeScale = [
-    { letter: "A", min: 87, point: 4.0 },
-    { letter: "AB", min: 78, point: 3.5 },
-    { letter: "B", min: 69, point: 3.0 },
-    { letter: "BC", min: 60, point: 2.5 },
-    { letter: "C", min: 51, point: 2.0 },
-    { letter: "D", min: 41, point: 1.0 },
-    { letter: "E", min: 0, point: 0.0 }
-  ];
-
-  function getLetter(score) {
-    if (score >= 87) return "A";
-    if (score >= 78) return "AB";
-    if (score >= 69) return "B";
-    if (score >= 60) return "BC";
-    if (score >= 51) return "C";
-    if (score >= 41) return "D";
-    return "E";
-  }
-
-  function getPoint(letter) {
-    const found = gradeScale.find(item => item.letter === letter);
-    return found ? found.point : 0;
-  }
-
-  function getMinimumScore(letter) {
-    const found = gradeScale.find(item => item.letter === letter);
-    return found ? found.min : 0;
-  }
-
-  function fmt(number, decimals = 2) {
-    return Number(number).toFixed(decimals);
-  }
-
-  function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, character => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    })[character]);
-  }
-
-  // ==========================================
-  // NAVIGASI
-  // ==========================================
-
-  const pageInfo = {
-    dashboard: {
-      title: "Ringkasan Akademik",
-      description: "Pantau perkembangan nilai dan rencanakan target semester berikutnya."
-    },
-    course: {
-      title: "Kalkulator Nilai 1 MK",
-      description: "Hitung nilai akhir mata kuliah dan perkirakan nilai yang masih dibutuhkan."
-    },
-    semester: {
-      title: "Simulasi IP/IPK",
-      description: "Prediksi IP semester dan perubahan IPK kumulatif berdasarkan nilai mata kuliah."
-    },
-    settings: {
-      title: "Kustomisasi",
-      description: "Sesuaikan tampilan GradeFlow dengan tema dan warna pilihanmu."
-    }
-  };
-
-  function showPage(page) {
-    document.querySelectorAll(".page").forEach(section => {
-      section.classList.toggle("active", section.id === "page-" + page);
-    });
-
-    document.querySelectorAll(".nav-btn").forEach(button => {
-      button.classList.toggle("active", button.dataset.page === page);
-    });
-
-    document.getElementById("pageTitle").textContent = pageInfo[page].title;
-    document.getElementById("pageDescription").textContent = pageInfo[page].description;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  document.querySelectorAll(".nav-btn").forEach(button => {
-    button.addEventListener("click", () => showPage(button.dataset.page));
-  });
-
-  document.querySelectorAll("[data-goto]").forEach(button => {
-    button.addEventListener("click", () => showPage(button.dataset.goto));
-  });
-
-  // ==========================================
-  // PRESET BOBOT NILAI 1 MK
-  // ==========================================
-
-  const presets = {
-    pbwPrak: {
-      name: "Praktikum PBW",
-      weights: [
-        ["Kehadiran", 15],
-        ["Kuis", 10],
-        ["Tugas", 20],
-        ["UTS", 25],
-        ["UAS", 30]
-      ]
-    },
-    databasePrak: {
-      name: "Praktikum Database",
-      weights: [
-        ["Kuis", 15],
-        ["Tugas", 25],
-        ["UTS", 25],
-        ["UAS", 35]
-      ]
-    },
-    gisPrak: {
-      name: "Praktikum GIS",
-      weights: [
-        ["Kuis", 10],
-        ["Tugas", 25],
-        ["UTS", 30],
-        ["UAS", 35]
-      ]
-    },
-    siPrak: {
-      name: "Praktikum Sistem Informasi",
-      weights: [
-        ["Kehadiran", 20],
-        ["Tugas", 15],
-        ["UTS", 30],
-        ["UAS", 35]
-      ]
-    },
-    strukturPrak: {
-      name: "Praktikum Struktur Data",
-      weights: [
-        ["Kehadiran", 10],
-        ["Tugas", 15],
-        ["Kuis", 10],
-        ["UTS", 30],
-        ["UAS", 35]
-      ]
-    },
-    komdatTeori: {
-      name: "Komunikasi Data Teori",
-      weights: [
-        ["Tugas", 20],
-        ["Kuis", 20],
-        ["UTS", 30],
-        ["UAS", 30]
-      ]
-    },
-    sigTeori: {
-      name: "SIG Teori",
-      weights: [
-        ["Kuis", 15],
-        ["Tugas/Latihan", 25],
-        ["UTS", 25],
-        ["UAS", 35]
-      ]
-    },
-    ecommerceTeori: {
-      name: "E-Commerce Teori",
-      weights: [
-        ["Kuis", 15],
-        ["UTS", 35],
-        ["Proyek", 50]
-      ]
-    },
-    siTeori: {
-      name: "Sistem Informasi Teori",
-      weights: [
-        ["Tugas", 15],
-        ["Kuis", 10],
-        ["UTS", 35],
-        ["UAS", 40]
-      ]
-    },
-    databaseTeori: {
-      name: "Database Teori",
-      weights: [
-        ["Praktikum", 15],
-        ["Kuis", 15],
-        ["Tugas/Latihan", 20],
-        ["UTS", 25],
-        ["UAS", 25]
-      ]
-    },
-    ecommercePrak: {
-      name: "Praktikum E-Commerce",
-      weights: [
-        ["Kehadiran", 15],
-        ["Tugas", 15],
-        ["Kuis", 10],
-        ["UTS", 25],
-        ["UAS", 35]
-      ]
-    },
-    wirausahaPrak: {
-      name: "Praktikum Kewirausahaan",
-      weights: [
-        ["Absensi", 15],
-        ["Tugas/Kuis", 20],
-        ["UTS", 30],
-        ["UAS", 35]
-      ]
-    },
-    manual: {
-      name: "Mata Kuliah Manual",
-      weights: [
-        ["Komponen 1", 25],
-        ["Komponen 2", 25],
-        ["Komponen 3", 25],
-        ["Komponen 4", 25]
-      ]
-    }
-  };
-
-  const coursePreset = document.getElementById("coursePreset");
-  const courseName = document.getElementById("courseName");
-  const weightsContainer = document.getElementById("weightsContainer");
-  const weightTotal = document.getElementById("weightTotal");
-  const weightMessage = document.getElementById("weightMessage");
-  const courseResult = document.getElementById("courseResult");
-  const courseAdvice = document.getElementById("courseAdvice");
-  const targetGrade = document.getElementById("targetGrade");
-
-  let lastCourseResult = null;
-
-  function renderWeights(presetKey, keepValues = false) {
-    const preset = presets[presetKey] || presets.manual;
-    const oldValues = {};
-
-    if (keepValues) {
-      weightsContainer.querySelectorAll(".weight-row").forEach(row => {
-        const name = row.dataset.name;
-        const input = row.querySelector("input");
-        oldValues[name] = input.value;
-      });
-    }
-
-    weightsContainer.innerHTML = "";
-
-    preset.weights.forEach(([name, weight], index) => {
-      const row = document.createElement("div");
-      row.className = "weight-row";
-      row.dataset.name = name;
-
-      const oldValue = keepValues && oldValues[name] !== undefined
-        ? oldValues[name]
-        : "";
-
-      row.innerHTML = `
-        <label for="score-${index}">${escapeHTML(name)}</label>
-        <input
-          id="score-${index}"
-          class="component-score"
-          type="number"
-          min="0"
-          max="100"
-          step="0.01"
-          placeholder="Belum diisi"
-          value="${escapeHTML(oldValue)}"
-          data-weight="${weight}"
-        >
-        <span class="weight-suffix">${weight}%</span>
-      `;
-
-      weightsContainer.appendChild(row);
-    });
-
-    if (presetKey !== "manual") {
-      courseName.value = preset.name;
-    } else if (!keepValues) {
-      courseName.value = "";
-    }
-
-    weightsContainer.querySelectorAll(".component-score").forEach(input => {
-      input.addEventListener("input", () => {
-        updateWeightTotal();
-        clearCourseResults();
-      });
-    });
-
-    updateWeightTotal();
-    clearCourseResults();
-  }
-
-  function updateWeightTotal() {
-    const total = Array.from(
-      weightsContainer.querySelectorAll(".component-score")
-    ).reduce((sum, input) => sum + Number(input.dataset.weight || 0), 0);
-
-    weightTotal.textContent = fmt(total, 0) + "%";
-    weightTotal.style.color = Math.abs(total - 100) < 0.001
-      ? "var(--accent-hover)"
-      : "var(--danger)";
-
-    if (Math.abs(total - 100) >= 0.001) {
-      weightMessage.innerHTML = `
-        <div class="notice warning">
-          Total bobot saat ini ${fmt(total, 0)}%. Total bobot harus tepat 100% agar perhitungan dapat dilakukan.
-        </div>`;
-    } else {
-      weightMessage.innerHTML = "";
-    }
-  }
-
-  function clearCourseResults() {
-    courseResult.innerHTML = "";
-    courseAdvice.innerHTML = "";
-    lastCourseResult = null;
-  }
-
-  coursePreset.addEventListener("change", () => {
-    renderWeights(coursePreset.value);
-  });
-
-  document.getElementById("resetCourse").addEventListener("click", () => {
-    renderWeights(coursePreset.value);
-  });
-
-  function getCourseCalculation() {
-    const inputs = Array.from(
-      weightsContainer.querySelectorAll(".component-score")
-    );
-
-    const totalWeight = inputs.reduce(
-      (sum, input) => sum + Number(input.dataset.weight || 0), 0
-    );
-
-    if (Math.abs(totalWeight - 100) >= 0.001) {
-      return {
-        error: "Total bobot harus tepat 100% sebelum nilai dapat dihitung."
-      };
-    }
-
-    let earned = 0;
-    let possible = 0;
-    let remainingWeight = 0;
-    let hasInput = false;
-
-    const components = [];
-
-    for (const input of inputs) {
-      const weight = Number(input.dataset.weight);
-      const row = input.closest(".weight-row");
-      const name = row.dataset.name;
-      const isFilled = input.value.trim() !== "";
-
-      if (isFilled) {
-        const score = Number(input.value);
-
-        if (!Number.isFinite(score) || score < 0 || score > 100) {
-          return {
-            error: `Nilai ${name} harus berada di antara 0 dan 100.`
-          };
-        }
-
-        earned += score * weight / 100;
-        possible += score * weight / 100;
-        hasInput = true;
-        components.push({ name, weight, score, filled: true });
-      } else {
-        possible += 100 * weight / 100;
-        remainingWeight += weight;
-        components.push({ name, weight, score: null, filled: false });
-      }
-    }
-
-    if (!hasInput) {
-      return { error: "Isi setidaknya satu nilai komponen terlebih dahulu." };
-    }
-
-    const grade = getLetter(earned);
-    const selectedTarget = targetGrade.value;
-    const target = getMinimumScore(selectedTarget);
-
-    return {
-      earned,
-      possible,
-      remainingWeight,
-      target,
-      targetGrade: selectedTarget,
-      grade,
-      components
-    };
-  }
-
-  function calculateCourse() {
-    const result = getCourseCalculation();
-
-    if (result.error) {
-      courseResult.innerHTML = `
-        <div class="notice warning">${escapeHTML(result.error)}</div>`;
-      courseAdvice.innerHTML = "";
-      lastCourseResult = null;
-      return;
-    }
-
-    lastCourseResult = result;
-
-    const targetReached = result.earned >= result.target;
-    const maxCanReachTarget = result.possible >= result.target;
-
-    let notice = "";
-
-    if (targetReached) {
-      notice = `
-        <div class="notice success">
-          Target ${result.targetGrade} sudah tercapai berdasarkan nilai yang telah diisi.
-        </div>`;
-    } else if (!maxCanReachTarget) {
-      notice = `
-        <div class="notice danger">
-          Target ${result.targetGrade} tidak dapat dicapai jika komponen yang belum diisi
-          mendapat nilai maksimal 100. Nilai maksimum yang masih mungkin adalah
-          ${fmt(result.possible)}.
-        </div>`;
-    } else {
-      notice = `
-        <div class="notice info">
-          Nilai saat ini belum mencapai target ${result.targetGrade}.
-          Masih ada komponen berbobot ${fmt(result.remainingWeight, 0)}% yang belum diisi.
-        </div>`;
-    }
-
-    courseResult.innerHTML = `
-      <div class="result-grid">
-        <div class="result-box">
-          <div class="result-label">Nilai Saat Ini</div>
-          <div class="result-value">${fmt(result.earned)}</div>
-          <div class="result-caption">Berdasarkan komponen yang sudah diisi</div>
-        </div>
-        <div class="result-box">
-          <div class="result-label">Prediksi Huruf Saat Ini</div>
-          <div class="result-value">${result.grade}</div>
-          <div class="result-caption">Skala nilai GradeFlow</div>
-        </div>
-        <div class="result-box">
-          <div class="result-label">Target Nilai Huruf</div>
-          <div class="result-value">${result.targetGrade}</div>
-          <div class="result-caption">Minimal ${result.target} untuk target ini</div>
-        </div>
-      </div>
-      ${notice}
-    `;
-
-    courseAdvice.innerHTML = "";
-  }
-
-  function suggestCourseScores() {
-    if (!lastCourseResult) {
-      calculateCourse();
-    }
-
-    if (!lastCourseResult) return;
-
-    const {
-      earned,
-      possible,
-      target,
-      targetGrade,
-      remainingWeight,
-      components
-    } = lastCourseResult;
-
-    if (earned >= target) {
-      courseAdvice.innerHTML = `
-        <div class="notice success">
-          Target ${targetGrade} sudah tercapai berdasarkan komponen yang diisi.
-          Nilai saat ini ${fmt(earned)} dengan prediksi huruf ${getLetter(earned)}.
-        </div>`;
-      return;
-    }
-
-    if (possible + 0.0001 < target) {
-      courseAdvice.innerHTML = `
-        <div class="notice danger">
-          Target ${targetGrade} tidak mungkin dicapai dengan komponen yang tersisa.
-          Nilai maksimum yang masih mungkin adalah ${fmt(possible)}.
-          Periksa kembali nilai komponen yang telah dimasukkan.
-        </div>`;
-      return;
-    }
-
-    if (remainingWeight <= 0) {
-      courseAdvice.innerHTML = `
-        <div class="notice warning">
-          Semua komponen sudah diisi, tetapi nilai akhir belum mencapai target ${targetGrade}.
-        </div>`;
-      return;
-    }
-
-    const requiredAverage = ((target - earned) / remainingWeight) * 100;
-
-    let adviceHTML = `
-      <div class="notice info">
-        Untuk mencapai target ${targetGrade}, rata-rata nilai pada seluruh komponen
-        yang belum diisi perlu sekitar <strong>${fmt(requiredAverage)}</strong>.
-      </div>
-    `;
-
-    adviceHTML += `
-      <div class="panel" style="margin-top:15px;margin-bottom:0;box-shadow:none">
-        <div class="panel-title">Estimasi Nilai Komponen yang Belum Diisi</div>
-        <p class="panel-description" style="margin-top:7px">
-          Estimasi berikut mengasumsikan nilai komponen yang belum diisi sama rata.
-        </p>
-        <div class="table-wrap">
-          <table style="min-width:400px">
-            <thead>
-              <tr>
-                <th>Komponen</th>
-                <th>Bobot</th>
-                <th>Estimasi Nilai</th>
-              </tr>
-            </thead>
-            <tbody>
-    `;
-
-    components.filter(component => !component.filled).forEach(component => {
-      adviceHTML += `
-        <tr>
-          <td>${escapeHTML(component.name)}</td>
-          <td>${component.weight}%</td>
-          <td><strong>${fmt(Math.min(100, requiredAverage))}</strong></td>
-        </tr>`;
-    });
-
-    adviceHTML += `
-            </tbody>
-          </table>
-        </div>
-      </div>`;
-
-    courseAdvice.innerHTML = adviceHTML;
-  }
-
-  document.getElementById("calculateCourse").addEventListener("click", calculateCourse);
-  document.getElementById("suggestScores").addEventListener("click", suggestCourseScores);
-  targetGrade.addEventListener("change", () => {
-    if (lastCourseResult) calculateCourse();
-  });
-
-  // ==========================================
-  // SIMULASI SEMESTER
-  // ==========================================
-
-  const semesterCourses = document.getElementById("semesterCourses");
-  const semesterMessage = document.getElementById("semesterMessage");
-
-  let courseRowId = 0;
-
-  function addSemesterCourse(name = "", sks = 2, grade = "A") {
-    courseRowId++;
-
-    const row = document.createElement("div");
-    row.className = "course-row";
-    row.dataset.id = courseRowId;
-
-    const gradeOptions = gradeScale.map(item => `
-      <option value="${item.letter}" ${item.letter === grade ? "selected" : ""}>
-        ${item.letter}
-      </option>
-    `).join("");
-
-    row.innerHTML = `
-      <input
-        class="semester-name"
-        type="text"
-        placeholder="Nama mata kuliah"
-        value="${escapeHTML(name)}"
-        aria-label="Nama mata kuliah"
-      >
-      <input
-        class="semester-sks"
-        type="number"
-        min="1"
-        max="30"
-        step="1"
-        value="${sks}"
-        aria-label="Jumlah SKS"
-      >
-      <select class="semester-grade" aria-label="Nilai huruf">
-        ${gradeOptions}
-      </select>
-      <button type="button" class="remove-course" title="Hapus mata kuliah" aria-label="Hapus">×</button>
-    `;
-
-    row.querySelector(".remove-course").addEventListener("click", () => {
-      row.remove();
-      calculateSemester();
-    });
-
-    row.querySelectorAll("input, select").forEach(input => {
-      input.addEventListener("input", () => {
-        calculateSemester();
-      });
-
-      input.addEventListener("change", () => {
-        calculateSemester();
-      });
-    });
-
-    semesterCourses.appendChild(row);
-  }
-
-  function getPreviousValues() {
-    const previousIPK = Number(document.getElementById("previousIPK").value);
-    const previousSKS = Number(document.getElementById("previousSKS").value);
-    const targetIP = Number(document.getElementById("targetIP").value);
-    const targetIPK = Number(document.getElementById("targetIPK").value);
-
-    return { previousIPK, previousSKS, targetIP, targetIPK };
-  }
-
-  function validateAcademicSettings(values) {
-    if (!Number.isFinite(values.previousIPK) ||
-        values.previousIPK < 0 || values.previousIPK > 4) {
-      return "IPK sebelumnya harus berada di antara 0 dan 4.";
-    }
-
-    if (!Number.isInteger(values.previousSKS) || values.previousSKS < 0) {
-      return "Total SKS sebelumnya harus berupa bilangan bulat minimal 0.";
-    }
-
-    if (!Number.isFinite(values.targetIP) ||
-        values.targetIP < 0 || values.targetIP > 4) {
-      return "Target IP harus berada di antara 0 dan 4.";
-    }
-
-    if (!Number.isFinite(values.targetIPK) ||
-        values.targetIPK < 0 || values.targetIPK > 4) {
-      return "Target IPK harus berada di antara 0 dan 4.";
-    }
-
-    return "";
-  }
-
-  function calculateSemester() {
-    const previous = getPreviousValues();
-    const validation = validateAcademicSettings(previous);
-
-    if (validation) {
-      semesterMessage.innerHTML = `<div class="notice warning">${escapeHTML(validation)}</div>`;
-      return;
-    }
-
-    const rows = Array.from(semesterCourses.querySelectorAll(".course-row"));
-    let totalSKS = 0;
-    let totalMutu = 0;
-    let hasInvalidRow = false;
-    let resultRows = "";
-
-    rows.forEach(row => {
-      const name = row.querySelector(".semester-name").value.trim() || "Mata Kuliah";
-      const sks = Number(row.querySelector(".semester-sks").value);
-      const grade = row.querySelector(".semester-grade").value;
-
-      if (!Number.isInteger(sks) || sks < 1 || sks > 30) {
-        hasInvalidRow = true;
-        return;
-      }
-
-      const point = getPoint(grade);
-      const mutu = sks * point;
-
-      totalSKS += sks;
-      totalMutu += mutu;
-
-      resultRows += `
-        <tr>
-          <td>${escapeHTML(name)}</td>
-          <td>${sks}</td>
-          <td><span class="grade-pill">${grade}</span></td>
-          <td>${fmt(point)}</td>
-          <td>${fmt(mutu)}</td>
-        </tr>`;
-    });
-
-    if (hasInvalidRow) {
-      semesterMessage.innerHTML = `
-        <div class="notice warning">
-          Setiap mata kuliah harus memiliki SKS bilangan bulat antara 1 dan 30.
-        </div>`;
-      return;
-    }
-
-    const semesterIP = totalSKS > 0 ? totalMutu / totalSKS : 0;
-    const oldQuality = previous.previousIPK * previous.previousSKS;
-    const newTotalSKS = previous.previousSKS + totalSKS;
-    const newIPK = newTotalSKS > 0
-      ? (oldQuality + totalMutu) / newTotalSKS
-      : 0;
-
-    document.getElementById("semesterIP").textContent = fmt(semesterIP);
-    document.getElementById("semesterIPK").textContent = fmt(newIPK);
-    document.getElementById("semesterTotalSKS").textContent = newTotalSKS;
-
-    if (rows.length === 0) {
-      resultRows = `<tr><td colspan="5" class="empty-state">Belum ada mata kuliah.</td></tr>`;
-    }
-
-    document.getElementById("semesterResultBody").innerHTML = resultRows;
-    semesterMessage.innerHTML = "";
-
-    updateDashboard(semesterIP, newIPK, totalSKS, newTotalSKS, previous);
-    updateTopStats(previous);
-  }
-
-  function updateTopStats(previous = getPreviousValues()) {
-    document.getElementById("statOld").textContent = fmt(previous.previousIPK);
-    document.getElementById("statOldSKS").textContent = previous.previousSKS;
-  }
-
-  function updateDashboard(semesterIP, newIPK, semesterSKS, newTotalSKS, previous) {
-    document.getElementById("dashboardIP").textContent = fmt(semesterIP);
-    document.getElementById("dashboardIPK").textContent = fmt(newIPK);
-    document.getElementById("dashboardSKS").textContent = semesterSKS;
-
-    const targetIPK = previous.targetIPK;
-    let progress = 0;
-
-    if (targetIPK > previous.previousIPK) {
-      progress = ((newIPK - previous.previousIPK) /
-        (targetIPK - previous.previousIPK)) * 100;
-    } else {
-      progress = newIPK >= targetIPK ? 100 : 0;
-    }
-
-    progress = Math.max(0, Math.min(100, progress));
-    document.getElementById("targetProgress").style.width = progress + "%";
-
-    document.getElementById("progressCaption").textContent =
-      `Progres menuju target IPK ${fmt(targetIPK)}: ${fmt(progress, 0)}%. IPK simulasi saat ini ${fmt(newIPK)}.`;
-
-    const message = document.getElementById("dashboardMessage");
-
-    if (semesterSKS === 0) {
-      message.innerHTML = `
-        <div class="notice info">
-          Tambahkan mata kuliah pada menu Simulasi IP/IPK untuk menghitung prediksi IP dan IPK.
-        </div>`;
-    } else if (newIPK >= targetIPK) {
-      message.innerHTML = `
-        <div class="notice success">
-          Prediksi IPK ${fmt(newIPK)} sudah mencapai target IPK ${fmt(targetIPK)}.
-        </div>`;
-    } else {
-      message.innerHTML = `
-        <div class="notice warning">
-          Prediksi IPK ${fmt(newIPK)} belum mencapai target ${fmt(targetIPK)}.
-          Target IP semester yang diatur adalah ${fmt(previous.targetIP)}.
-        </div>`;
-    }
-  }
-
-  document.getElementById("addCourse").addEventListener("click", () => {
-    addSemesterCourse("", 2, "A");
-    calculateSemester();
-  });
-
-  document.getElementById("calculateSemester").addEventListener("click", calculateSemester);
-
-  document.getElementById("resetSemester").addEventListener("click", () => {
-    semesterCourses.innerHTML = "";
-    courseRowId = 0;
-    addSemesterCourse("", 2, "A");
-    calculateSemester();
-  });
-
-  document.getElementById("saveAcademic").addEventListener("click", () => {
-    const values = getPreviousValues();
-    const validation = validateAcademicSettings(values);
-
-    const message = document.getElementById("academicMessage");
-
-    if (validation) {
-      message.innerHTML = `<div class="notice warning">${escapeHTML(validation)}</div>`;
-      return;
-    }
-
-    updateTopStats(values);
-    calculateSemester();
-
-    message.innerHTML = `
-      <div class="notice success">
-        Pengaturan akademik berhasil diterapkan pada simulasi.
-      </div>`;
-  });
-
-  ["previousIPK", "previousSKS", "targetIP", "targetIPK"].forEach(id => {
-    document.getElementById(id).addEventListener("input", () => {
-      calculateSemester();
-    });
-  });
-
-  // ==========================================
-  // SKALA NILAI DI RINGKASAN
-  // ==========================================
-
-  function renderGradeScale() {
-    document.getElementById("gradeScaleBody").innerHTML = gradeScale.map((grade, index) => {
-      const max = index === 0 ? 100 : gradeScale[index - 1].min - 1;
-      const range = grade.letter === "E"
-        ? "Di bawah 41"
-        : `${grade.min}–${max}`;
-
-      return `
-        <tr>
-          <td><span class="grade-pill">${grade.letter}</span></td>
-          <td>${range}</td>
-          <td>${fmt(grade.point)}</td>
-        </tr>`;
-    }).join("");
-  }
-
-  // ==========================================
-  // KUSTOMISASI TEMA
-  // ==========================================
-
-  const themeMode = document.getElementById("themeMode");
-  const backgroundColor = document.getElementById("backgroundColor");
-  const buttonColor = document.getElementById("buttonColor");
-  const hoverColor = document.getElementById("hoverColor");
-  const accentColor = document.getElementById("accentColor");
-
-  const defaultTheme = {
-    bg: "#f5f7fb",
-    accent: "#10a875",
-    hover: "#07865c"
-  };
-
-  function applyTheme() {
-    const mode = themeMode.value;
-    const root = document.documentElement;
-
-    document.body.classList.remove("dark");
-
-    if (mode === "dark") {
-      document.body.classList.add("dark");
-      root.style.setProperty("--accent", buttonColor.value);
-      root.style.setProperty("--accent-hover", hoverColor.value);
-      root.style.setProperty("--bg", "#111821");
-      root.style.setProperty("--accent-soft", "#193c33");
-    } else if (mode === "custom") {
-      root.style.setProperty("--bg", backgroundColor.value);
-      root.style.setProperty("--accent", buttonColor.value);
-      root.style.setProperty("--accent-hover", hoverColor.value);
-      root.style.setProperty("--accent-soft", hexToRGBA(accentColor.value, 0.12));
-    } else {
-      root.style.setProperty("--bg", defaultTheme.bg);
-      root.style.setProperty("--accent", defaultTheme.accent);
-      root.style.setProperty("--accent-hover", defaultTheme.hover);
-      root.style.setProperty("--accent-soft", "#e6f8f0");
-      backgroundColor.value = defaultTheme.bg;
-      buttonColor.value = defaultTheme.accent;
-      hoverColor.value = defaultTheme.hover;
-      accentColor.value = defaultTheme.accent;
-    }
-  }
-
-  function hexToRGBA(hex, alpha) {
-    const clean = hex.replace("#", "");
-    const full = clean.length === 3
-      ? clean.split("").map(char => char + char).join("")
-      : clean;
-
-    const value = parseInt(full, 16);
-    const red = (value >> 16) & 255;
-    const green = (value >> 8) & 255;
-    const blue = value & 255;
-
-    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-  }
-
-  document.getElementById("applyTheme").addEventListener("click", applyTheme);
-
-  document.getElementById("resetTheme").addEventListener("click", () => {
-    themeMode.value = "light";
-    backgroundColor.value = defaultTheme.bg;
-    buttonColor.value = defaultTheme.accent;
-    hoverColor.value = defaultTheme.hover;
-    accentColor.value = defaultTheme.accent;
-    applyTheme();
-  });
-
-  // ==========================================
-  // INISIALISASI APLIKASI
-  // ==========================================
-
-  renderGradeScale();
-  renderWeights(coursePreset.value);
-  addSemesterCourse("", 2, "A");
-  calculateSemester();
+const scale=[["A",87,4],["AB",78,3.5],["B",69,3],["BC",60,2.5],["C",51,2],["D",41,1],["E",0,0]];
+const point=g=>scale.find(x=>x[0]===g)?.[2]??0;
+const minScore=g=>scale.find(x=>x[0]===g)?.[1]??0;
+const letter=n=>n>=87?"A":n>=78?"AB":n>=69?"B":n>=60?"BC":n>=51?"C":n>=41?"D":"E";
+const fmt=(n,d=2)=>Number(n).toFixed(d);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pages={dashboard:["Ringkasan Akademik","Pilih fitur untuk menghitung nilai atau menyimulasikan IP/IPK."],course:["Kalkulator Nilai 1 MK","Hitung nilai akhir mata kuliah dan perkirakan nilai yang dibutuhkan."],semester:["Simulasi IP/IPK","Prediksi IP semester dan perubahan IPK kumulatif Semester 3."],settings:["Kustomisasi","Sesuaikan tampilan GradeFlow dengan tema dan warna pilihanmu."]};
+function showPage(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="page-"+p));document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x.dataset.page===p));pageTitle.textContent=pages[p][0];pageDescription.textContent=pages[p][1];window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>showPage(b.dataset.goto));
+
+const presets={
+pbwPrak:["Praktikum PBW",[["Kehadiran",15],["Kuis",10],["Tugas",20],["UTS",25],["UAS",30]]],
+databasePrak:["Praktikum Database",[["Kuis",15],["Tugas",25],["UTS",25],["UAS",35]]],
+gisPrak:["Praktikum GIS",[["Kuis",10],["Tugas",25],["UTS",30],["UAS",35]]],
+siPrak:["Praktikum Sistem Informasi",[["Kehadiran",20],["Tugas",15],["UTS",30],["UAS",35]]],
+strukturPrak:["Praktikum Struktur Data",[["Kehadiran",10],["Tugas",15],["Kuis",10],["UTS",30],["UAS",35]]],
+komdatTeori:["Komunikasi Data Teori",[["Tugas",20],["Kuis",20],["UTS",30],["UAS",30]]],
+sigTeori:["SIG Teori",[["Kuis",15],["Tugas/Latihan",25],["UTS",25],["UAS",35]]],
+ecommerceTeori:["E-Commerce Teori",[["Kuis",15],["UTS",35],["Proyek",50]]],
+siTeori:["Sistem Informasi Teori",[["Tugas",15],["Kuis",10],["UTS",35],["UAS",40]]],
+databaseTeori:["Database Teori",[["Praktikum",15],["Kuis",15],["Tugas/Latihan",20],["UTS",25],["UAS",25]]],
+ecommercePrak:["Praktikum E-Commerce",[["Kehadiran",15],["Tugas",15],["Kuis",10],["UTS",25],["UAS",35]]],
+wirausahaPrak:["Praktikum Kewirausahaan",[["Absensi",15],["Tugas/Kuis",20],["UTS",30],["UAS",35]]],
+manual:["Mata Kuliah Manual",[["Komponen 1",25],["Komponen 2",25],["Komponen 3",25],["Komponen 4",25]]]
+};
+const preset=document.getElementById("coursePreset"),weights=document.getElementById("weightsContainer");
+function clearCourse(){courseResult.innerHTML="";courseAdvice.innerHTML="";lastCourse=null}
+function drawWeights(){
+ const p=presets[preset.value];weights.innerHTML="";
+ p[1].forEach(([name,w],i)=>{const r=document.createElement("div");r.className="weight-row";r.dataset.name=name;r.innerHTML=`<label>${esc(name)}</label><input class="score" type="number" min="0" max="100" step=".01" placeholder="Belum diisi" data-weight="${w}"><span class="muted">${w}%</span>`;weights.appendChild(r)});
+ courseName.value=preset.value==="manual"?"":p[0];
+ weights.querySelectorAll("input").forEach(i=>i.addEventListener("input",()=>{updateWeights();clearCourse()}));updateWeights();clearCourse()
+}
+function updateWeights(){const sum=[...weights.querySelectorAll(".score")].reduce((s,i)=>s+Number(i.dataset.weight),0);weightTotal.textContent=fmt(sum,0)+"%";weightMessage.innerHTML=sum!==100?`<div class="notice warning">Total bobot harus 100%. Saat ini ${fmt(sum,0)}%.</div>`:""}
+preset.onchange=drawWeights;resetCourse.onclick=drawWeights;
+let lastCourse=null;
+function calcCourseData(){
+ const inputs=[...weights.querySelectorAll(".score")],sum=inputs.reduce((s,i)=>s+Number(i.dataset.weight),0);if(sum!==100)return{error:"Total bobot harus tepat 100%."};
+ let earned=0,possible=0,remaining=0,has=false,parts=[];
+ for(const i of inputs){let w=Number(i.dataset.weight),name=i.closest(".weight-row").dataset.name;if(i.value.trim()!==""){let n=Number(i.value);if(n<0||n>100||!Number.isFinite(n))return{error:`Nilai ${name} harus 0–100.`};earned+=n*w/100;possible+=n*w/100;has=true;parts.push({name,w,filled:true})}else{possible+=w;remaining+=w;parts.push({name,w,filled:false})}}
+ if(!has)return{error:"Isi setidaknya satu nilai komponen."};
+ return{earned,possible,remaining,target:minScore(targetGrade.value),targetGrade:targetGrade.value,parts}
+}
+function calculateCourse(){
+ const r=calcCourseData();if(r.error){courseResult.innerHTML=`<div class="notice warning">${esc(r.error)}</div>`;courseAdvice.innerHTML="";lastCourse=null;return}
+ lastCourse=r;let msg=r.earned>=r.target?`<div class="notice success">Target ${r.targetGrade} sudah tercapai.</div>`:r.possible<r.target?`<div class="notice danger">Target ${r.targetGrade} tidak mungkin dicapai. Nilai maksimum ${fmt(r.possible)}.</div>`:`<div class="notice info">Target ${r.targetGrade} belum tercapai. Bobot komponen yang kosong ${fmt(r.remaining,0)}%.</div>`;
+ courseResult.innerHTML=`<div class="result-grid"><div class="result-box"><div class="result-label">Nilai Saat Ini</div><div class="result-value">${fmt(r.earned)}</div></div><div class="result-box"><div class="result-label">Prediksi Huruf</div><div class="result-value">${letter(r.earned)}</div></div><div class="result-box"><div class="result-label">Target Huruf</div><div class="result-value">${r.targetGrade}</div><div class="result-caption">Minimal ${r.target}</div></div></div>${msg}`;courseAdvice.innerHTML=""
+}
+function suggestScores(){
+ if(!lastCourse)calculateCourse();if(!lastCourse)return;const r=lastCourse;
+ if(r.earned>=r.target){courseAdvice.innerHTML=`<div class="notice success">Target ${r.targetGrade} sudah tercapai.</div>`;return}
+ if(r.possible<r.target){courseAdvice.innerHTML=`<div class="notice danger">Target ${r.targetGrade} tidak mungkin dicapai dengan komponen tersisa.</div>`;return}
+ if(!r.remaining){courseAdvice.innerHTML='<div class="notice warning">Semua komponen sudah diisi.</div>';return}
+ const needed=(r.target-r.earned)/r.remaining*100;
+ let html=`<div class="notice info">Rata-rata nilai yang dibutuhkan pada komponen kosong sekitar <b>${fmt(needed)}</b>.</div><div class="table-wrap"><table><thead><tr><th>Komponen</th><th>Bobot</th><th>Estimasi Nilai</th></tr></thead><tbody>`;
+ r.parts.filter(x=>!x.filled).forEach(x=>html+=`<tr><td>${esc(x.name)}</td><td>${x.w}%</td><td>${fmt(Math.min(100,needed))}</td></tr>`);
+ courseAdvice.innerHTML=html+"</tbody></table></div>"
+}
+calculateCourseBtn=document.getElementById("calculateCourse");calculateCourseBtn.onclick=calculateCourse;suggestScoresBtn=document.getElementById("suggestScores");suggestScoresBtn.onclick=suggestScores;targetGrade.onchange=()=>{if(lastCourse)calculateCourse()};
+
+// Seluruh 16 mata kuliah Semester 3 — total 24 SKS.
+const semester3=[
+["Database",1],["Praktikum Database",2],["Komunikasi Data",1],["Praktikum Komunikasi Data",2],
+["Struktur Data",1],["Praktikum Struktur Data",2],["Pemrograman Berbasis Web",1],["Praktikum Pemrograman Berbasis Web",2],
+["Sistem Informasi Geografis",1],["Praktikum Sistem Informasi Geografis",2],["Sistem Informasi",1],["Praktikum Sistem Informasi",2],
+["E-Commerce",1],["Praktikum E-Commerce",2],["Kewirausahaan",2],["Praktikum Kewirausahaan",1]
+];
+let rowId=0;
+function addSemesterCourse(name="",sks=2,grade="A"){
+ const row=document.createElement("div");row.className="course-row";row.dataset.id=++rowId;
+ const options=scale.map(g=>`<option value="${g[0]}" ${g[0]===grade?"selected":""}>${g[0]}</option>`).join("");
+ row.innerHTML=`<input class="mk-name" aria-label="Nama mata kuliah" placeholder="Nama mata kuliah" value="${esc(name)}"><input class="mk-sks" aria-label="SKS" type="number" min="1" max="30" step="1" value="${sks}"><select class="mk-grade" aria-label="Nilai huruf">${options}</select><button class="remove" type="button" title="Hapus">×</button>`;
+ row.querySelector(".remove").onclick=()=>{row.remove();calculateSemester()};
+ row.querySelectorAll("input,select").forEach(x=>{x.addEventListener("input",calculateSemester);x.addEventListener("change",calculateSemester)});
+ semesterCourses.appendChild(row)
+}
+function prev(){return{ipk:Number(previousIPK.value),sks:Number(previousSKS.value),tip:Number(targetIP.value),tipk:Number(targetIPK.value)}}
+function calculateSemester(){
+ const p=prev();let err="";
+ if(!Number.isFinite(p.ipk)||p.ipk<0||p.ipk>4)err="IPK sebelumnya harus 0–4.";
+ else if(!Number.isInteger(p.sks)||p.sks<0)err="Total SKS sebelumnya harus bilangan bulat minimal 0.";
+ else if(!Number.isFinite(p.tip)||p.tip<0||p.tip>4||!Number.isFinite(p.tipk)||p.tipk<0||p.tipk>4)err="Target IP dan IPK harus 0–4.";
+ if(err){semesterMessage.innerHTML=`<div class="notice warning">${err}</div>`;return}
+ let totalSks=0,totalMutu=0,invalid=false,html="";
+ [...semesterCourses.querySelectorAll(".course-row")].forEach(r=>{
+  const name=r.querySelector(".mk-name").value.trim()||"Mata Kuliah",sks=Number(r.querySelector(".mk-sks").value),g=r.querySelector(".mk-grade").value;
+  if(!Number.isInteger(sks)||sks<1||sks>30){invalid=true;return}
+  const mutu=sks*point(g);totalSks+=sks;totalMutu+=mutu;html+=`<tr><td>${esc(name)}</td><td>${sks}</td><td><span class="grade-pill">${g}</span></td><td>${fmt(point(g))}</td><td>${fmt(mutu)}</td></tr>`
+ });
+ if(invalid){semesterMessage.innerHTML='<div class="notice warning">SKS tiap mata kuliah harus bilangan bulat antara 1 dan 30.</div>';return}
+ const ip=totalSks?totalMutu/totalSks:0,newSks=p.sks+totalSks,newIpk=newSks?(p.ipk*p.sks+totalMutu)/newSks:0;
+ semesterIP.textContent=fmt(ip);semesterIPK.textContent=fmt(newIpk);semesterSKS.textContent=totalSks;
+ semesterMessage.innerHTML="";semesterResultBody.innerHTML=html||'<tr><td colspan="5">Belum ada mata kuliah.</td></tr>';
+ statOld.textContent=fmt(p.ipk);statOldSKS.textContent=p.sks;
+ let progress=p.tipk>p.ipk?(newIpk-p.ipk)/(p.tipk-p.ipk)*100:(newIpk>=p.tipk?100:0);progress=Math.max(0,Math.min(100,progress));
+ targetProgress.style.width=progress+"%";progressCaption.textContent=`Progres menuju target IPK ${fmt(p.tipk)}: ${fmt(progress,0)}%. IPK simulasi ${fmt(newIpk)}.`;
+ semesterTargetMessage.innerHTML=ip>=p.tip&&newIpk>=p.tipk?'<div class="notice success">Target IP semester dan IPK kumulatif tercapai.</div>':`<div class="notice warning">Prediksi IP ${fmt(ip)} ${ip>=p.tip?"mencapai":"belum mencapai"} target ${fmt(p.tip)}. Prediksi IPK ${fmt(newIpk)} ${newIpk>=p.tipk?"mencapai":"belum mencapai"} target ${fmt(p.tipk)}.</div>`
+}
+document.getElementById("addCourse").onclick=()=>{addSemesterCourse("",2,"A");calculateSemester()};
+document.getElementById("calculateSemester").onclick=calculateSemester;
+document.getElementById("resetSemester").onclick=()=>{semesterCourses.innerHTML="";rowId=0;semester3.forEach(([n,s])=>addSemesterCourse(n,s,"A"));calculateSemester()};
+["previousIPK","previousSKS","targetIP","targetIPK"].forEach(id=>document.getElementById(id).addEventListener("input",calculateSemester));
+
+// Kustomisasi tema
+function applyTheme(){
+ const mode=themeMode.value,root=document.documentElement;document.body.classList.toggle("dark",mode==="dark");
+ root.style.setProperty("--accent",buttonColor.value);root.style.setProperty("--hover",hoverColor.value);
+ if(mode==="dark"){root.style.setProperty("--bg","#111821");root.style.setProperty("--pale","#193c33")}
+ else{root.style.setProperty("--bg",mode==="light"?"#f4f7fb":backgroundColor.value);root.style.setProperty("--pale",accentColor.value+"22")}
+}
+document.getElementById("applyTheme").onclick=applyTheme;
+document.getElementById("resetTheme").onclick=()=>{themeMode.value="light";backgroundColor.value="#f4f7fb";buttonColor.value="#10a875";hoverColor.value="#07865c";accentColor.value="#10a875";applyTheme()};
+
+// Inisialisasi
+drawWeights();
+semester3.forEach(([name,sks])=>addSemesterCourse(name,sks,"A"));
+calculateSemester();
 </script>
 </body>
 </html>
