@@ -1,554 +1,171 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GradeFlow — Academic Calculator</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GradeFlow — Academic Planner</title>
 <style>
-:root{--bg:#f3f6fb;--surface:#fff;--soft:#f8fafc;--text:#182438;--muted:#728096;--border:#e1e8f0;--accent:#0eaa78;--hover:#07865d;--pale:#e6f8f0;--shadow:0 8px 26px #1723340a}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-button,input,select{font:inherit}button{cursor:pointer}
-.app{display:flex;min-height:100vh}
-.sidebar{width:225px;flex-shrink:0;padding:24px 14px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column}
-.brand{display:flex;align-items:center;gap:11px;padding:0 8px 28px}
-.logo{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:var(--accent);color:white;font-size:23px;font-weight:900}
-.brand-name{font-size:19px;font-weight:900}.brand-sub{font-size:11px;color:var(--muted);margin-top:3px}
-.nav-label{font-size:10px;font-weight:850;letter-spacing:1.4px;color:var(--muted);padding:0 12px;margin-bottom:12px}
-.nav{display:grid;gap:7px}
-.nav button{background:transparent;border:1px solid transparent;text-align:left;color:var(--muted);padding:12px;border-radius:11px;font-size:13px;font-weight:750;transition:.2s}
-.nav button:hover,.nav button.active{background:var(--pale);color:var(--hover)}
-.nav button:hover{transform:translateX(3px)}
-.side-note{margin-top:auto;padding:20px 10px 0;font-size:12px;line-height:1.7;color:var(--muted)}
-main{flex:1;min-width:0;padding:27px 28px 40px}
-.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:23px}
-.eyebrow{font-size:10px;font-weight:900;letter-spacing:1.5px;color:var(--hover);margin-bottom:8px}
-h1{font-size:clamp(24px,3vw,32px);letter-spacing:-.7px}
-.description{font-size:13px;line-height:1.65;color:var(--muted);margin-top:8px}
-.chip{font-size:11px;white-space:nowrap;border:1px solid var(--border);border-radius:30px;padding:10px 12px;background:var(--surface);color:var(--muted)}
-.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:700px;margin-bottom:22px}
-.stat,.panel{background:var(--surface);border:1px solid var(--border);border-radius:17px;box-shadow:var(--shadow);transition:border-color .2s}
-.stat{padding:19px}.stat:hover,.panel:hover{border-color:var(--accent)}
-.stat-label{font-size:12px;font-weight:750;color:var(--muted)}.stat-value{font-size:28px;font-weight:900;margin:12px 0 5px}.stat-note{font-size:11px;color:var(--muted)}
-.page{display:none;animation:fade .18s}.page.active{display:block}
-@keyframes fade{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}
-.panel{padding:23px;margin-bottom:18px;min-width:0}
-.panel h2,.panel-title{font-size:16px;font-weight:900;margin-bottom:7px}
-.panel-desc{font-size:12px;line-height:1.7;color:var(--muted);margin-bottom:18px}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.field{min-width:0;margin-bottom:15px}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:8px}
-.field input,.field select{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);color:var(--text);font-size:13px;outline:none}
-.field input:focus,.field select:focus,.score-input:focus,.mk-input:focus,.mk-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #10a8751c}
-.hint,.muted{font-size:11px;line-height:1.65;color:var(--muted);margin-top:6px}
-.btn{padding:11px 15px;border:1px solid transparent;border-radius:11px;background:var(--accent);color:white;font-size:12px;font-weight:850;transition:.2s}
-.btn:hover{background:var(--hover);transform:translateY(-2px);box-shadow:0 6px 15px #10a87520}
-.btn.secondary{background:var(--surface);color:var(--text);border-color:var(--border)}
-.btn.secondary:hover{border-color:var(--accent);color:var(--hover);box-shadow:none}
-.button-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
-.result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:17px}
-.result-box{padding:14px;background:var(--soft);border:1px solid var(--border);border-radius:12px;min-width:0}
-.result-label{font-size:11px;color:var(--muted);font-weight:750}.result-value{font-size:24px;font-weight:900;margin-top:9px;overflow-wrap:anywhere}.result-caption{font-size:11px;color:var(--muted);line-height:1.5;margin-top:5px}
-.notice{padding:13px 15px;border-radius:11px;font-size:12px;line-height:1.75;margin-top:12px}
-.info{background:var(--pale);color:var(--hover);border:1px solid #10a87535}
-.success{background:#eaf9f0;color:#176741;border:1px solid #ccebd9}
-.warning{background:#fff7e8;color:#875812;border:1px solid #f3e0b8}
-.danger{background:#fff0f0;color:#a52c36;border:1px solid #f1d0d4}
-.weight-list{display:grid;gap:10px}
-.weight-row{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--soft)}
-.weight-top{display:grid;grid-template-columns:minmax(0,1fr) 80px 42px;gap:9px;align-items:center}
-.weight-top label{font-size:12px;font-weight:800}
-.score-input{width:100%;min-width:0;padding:10px 8px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);outline:none}
-.weight-pct{text-align:right;font-size:11px;color:var(--muted)}
-.contribution{font-size:11px;color:var(--hover);font-weight:800;margin-top:8px;line-height:1.6}
-.weight-total{display:flex;justify-content:space-between;padding:12px;margin-top:12px;border:1px solid var(--border);border-radius:10px;background:var(--soft);font-size:12px;font-weight:850}
-.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:11px;margin-top:14px}
-table{border-collapse:collapse;width:100%;min-width:510px}
-th,td{padding:11px;text-align:left;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5}
-th{background:var(--soft);font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
-tbody tr:hover{background:var(--pale)}tbody tr:last-child td{border-bottom:0}
-.pill{display:inline-block;background:var(--pale);color:var(--hover);border-radius:7px;padding:4px 8px;font-weight:850}
-.course-header,.course-row{display:grid;grid-template-columns:minmax(125px,2fr) minmax(48px,.55fr) minmax(64px,.75fr) 29px;gap:8px;align-items:center}
-.course-header{font-size:10px;color:var(--muted);font-weight:850;letter-spacing:.4px;margin-bottom:10px}
-.course-row{margin-bottom:8px}
-.mk-input,.mk-select{width:100%;min-width:0;padding:10px 7px;border:1px solid var(--border);border-radius:9px;background:var(--soft);color:var(--text);font-size:12px;outline:none}
-.remove{padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:#c23d4b;font-weight:900}
-.progress{height:9px;border-radius:20px;background:var(--border);overflow:hidden;margin-top:16px}
-.progress-fill{height:100%;background:var(--accent);width:0;transition:width .25s}
-.recommendation{padding:15px;border:1px solid var(--border);border-radius:12px;margin-top:10px;background:var(--soft)}
-.recommendation h3{font-size:13px;margin-bottom:7px}
-.recommendation p{font-size:12px;line-height:1.7;color:var(--muted)}
-.recommendation .notice{margin-top:8px}
-.footer{text-align:center;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px}
-body.dark{--bg:#111821;--surface:#19232f;--soft:#202c39;--text:#eef3f8;--muted:#9ba9ba;--border:#2c3a49;--pale:#193c33;--shadow:0 8px 26px #0002}
-body.dark .success{background:#193c2d;color:#a6e8c1;border-color:#285740}
-body.dark .warning{background:#40331e;color:#f5d391;border-color:#5b4826}
-body.dark .danger{background:#421f25;color:#ffc0c0;border-color:#633039}
-@media(max-width:900px){.sidebar{width:195px}main{padding:20px}}
-@media(max-width:700px){.app{display:block}.sidebar{width:100%;padding:14px;border-right:0;border-bottom:1px solid var(--border)}.brand{padding-bottom:15px}.nav-label,.side-note{display:none}.nav{display:flex;overflow-x:auto}.nav button{flex-shrink:0}.nav button:hover{transform:none}main{padding:18px 13px}.topbar{flex-direction:column}.grid2{grid-template-columns:1fr}.panel{padding:17px}}
-@media(max-width:430px){.stats{grid-template-columns:1fr}.course-header,.course-row{grid-template-columns:minmax(100px,1.5fr) minmax(40px,.5fr) minmax(56px,.75fr) 25px;gap:5px}.mk-input,.mk-select{padding:9px 4px;font-size:11px}.weight-top{grid-template-columns:minmax(70px,1fr) 70px 35px}.result-grid{grid-template-columns:1fr}}
+:root{--bg:#f3f6fb;--card:#fff;--soft:#f8fafc;--ink:#172338;--muted:#718096;--line:#e1e8f0;--green:#0ba879;--green2:#087b59;--pale:#e5f8ef;--shadow:0 12px 35px #1a2b450a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,"Segoe UI",Arial,sans-serif}button,input,select{font:inherit}button{cursor:pointer}.app{display:flex;min-height:100vh}.sidebar{width:235px;flex-shrink:0;background:var(--card);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column}.brand{display:flex;gap:11px;align-items:center;padding:3px 8px 28px}.logo{height:42px;width:42px;border-radius:14px;background:var(--green);color:white;display:grid;place-items:center;font-size:23px;font-weight:900}.brand strong{display:block;font-size:19px;letter-spacing:-.5px}.brand small{color:var(--muted);font-size:11px}.navlabel{font-size:10px;letter-spacing:1.3px;color:var(--muted);font-weight:900;padding:0 12px 10px}.nav{display:grid;gap:6px}.nav button{border:1px solid transparent;background:transparent;color:var(--muted);text-align:left;border-radius:11px;padding:12px;font-weight:750;font-size:13px;transition:.18s}.nav button:hover{background:var(--soft);transform:translateX(2px)}.nav button.active{background:var(--pale);color:var(--green2)}.sidefoot{margin-top:auto;padding:20px 10px 0;color:var(--muted);font-size:11px;line-height:1.8}main{flex:1;min-width:0;padding:27px clamp(14px,2.5vw,32px) 40px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:23px}.eyebrow{font-size:10px;letter-spacing:1.5px;font-weight:900;color:var(--green2);margin-bottom:7px}h1{font-size:clamp(25px,3vw,33px);line-height:1.2;letter-spacing:-.8px;margin:0}.sub{color:var(--muted);font-size:13px;margin:8px 0 0;max-width:800px}.status{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:30px;padding:9px 12px;font-size:11px;white-space:nowrap}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:710px;margin-bottom:20px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);min-width:0}.stat{padding:17px 19px}.statlabel{font-size:12px;color:var(--muted);font-weight:750}.statvalue{font-size:28px;font-weight:900;margin:7px 0 3px}.statnote{font-size:11px;color:var(--muted)}.page{display:none;animation:show .18s}.page.active{display:block}@keyframes show{from{opacity:.55;transform:translateY(3px)}to{opacity:1;transform:none}}.panel{padding:22px;margin-bottom:17px}.panel h2{font-size:16px;margin:0 0 6px}.paneldesc{color:var(--muted);font-size:12px;line-height:1.7;margin:0 0 18px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field{min-width:0;margin-bottom:14px}.field label{display:block;font-weight:800;font-size:12px;margin-bottom:7px}.field input,.field select{width:100%;min-width:0;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:10px;padding:11px 12px;outline:none}.field input:focus,.field select:focus,.score:focus,.courseinput:focus,.courseselect:focus{border-color:var(--green);box-shadow:0 0 0 3px #0ba87920}.hint{font-size:11px;color:var(--muted);margin-top:5px}.btnrow{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}.btn{border:1px solid transparent;background:var(--green);color:white;border-radius:10px;padding:11px 15px;font-size:12px;font-weight:850;transition:.18s}.btn:hover{background:var(--green2);transform:translateY(-1px);box-shadow:0 6px 16px #0ba87920}.btn.ghost{background:var(--card);color:var(--ink);border-color:var(--line)}.btn.ghost:hover{color:var(--green2);border-color:var(--green);box-shadow:none}.results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}.result{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:13px;min-width:0}.rlabel{font-size:11px;color:var(--muted);font-weight:750}.rvalue{font-size:24px;font-weight:900;margin-top:6px;overflow-wrap:anywhere}.rnote{font-size:11px;color:var(--muted);margin-top:4px}.notice{padding:12px 14px;border-radius:11px;font-size:12px;line-height:1.7;margin-top:11px}.info{background:var(--pale);color:var(--green2);border:1px solid #0ba87930}.good{background:#eaf8ef;color:#17663d;border:1px solid #ccebd7}.warn{background:#fff7e8;color:#855715;border:1px solid #f1dfb7}.bad{background:#fff0f1;color:#9d2935;border:1px solid #f0d0d4}.component{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--soft);margin-bottom:9px}.componenttop{display:grid;grid-template-columns:minmax(0,1fr) 90px 48px;gap:10px;align-items:center}.componenttop label{font-weight:800;font-size:12px}.score{width:100%;padding:9px 8px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);outline:none}.weight{font-size:11px;text-align:right;color:var(--muted)}.contribution{font-size:11px;color:var(--green2);font-weight:800;margin-top:7px}.totalrow{display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--soft);font-size:12px;font-weight:850}.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;margin-top:13px}table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;padding:10px 11px;border-bottom:1px solid var(--line);font-size:12px}th{background:var(--soft);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.4px}tbody tr:hover{background:var(--pale)}tbody tr:last-child td{border-bottom:0}.coursehead,.courserow{display:grid;grid-template-columns:minmax(125px,2fr) minmax(48px,.5fr) minmax(65px,.75fr) 28px;gap:8px;align-items:center}.coursehead{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.4px;margin:18px 0 9px}.courserow{margin-bottom:8px}.courseinput,.courseselect{width:100%;min-width:0;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:9px 7px;font-size:12px;outline:none}.remove{border:1px solid var(--line);border-radius:8px;background:var(--card);color:#b52d3a;padding:8px;font-weight:900}.pill{display:inline-block;background:var(--pale);color:var(--green2);font-weight:900;border-radius:7px;padding:3px 7px}.progress{height:8px;border-radius:20px;background:var(--line);overflow:hidden;margin-top:15px}.progress div{height:100%;background:var(--green);width:0;transition:width .2s}.option{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--soft);margin-top:10px}.option h3{font-size:13px;margin:0 0 6px}.option p{font-size:12px;color:var(--muted);line-height:1.65;margin:0}.option .btn{margin-top:10px}.optionhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.tag{font-size:10px;font-weight:850;background:var(--pale);color:var(--green2);border-radius:20px;padding:4px 8px;white-space:nowrap}.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px;line-height:1.7}body.dark{--bg:#111821;--card:#19232f;--soft:#202c39;--ink:#eef3f8;--muted:#9ba9ba;--line:#2c3a49;--pale:#193c33;--shadow:0 12px 35px #0002}body.dark .good{background:#193c2d;color:#a6e8c1;border-color:#285740}body.dark .warn{background:#40331e;color:#f5d391;border-color:#5b4826}body.dark .bad{background:#421f25;color:#ffc0c0;border-color:#633039}@media(max-width:850px){.sidebar{width:200px}main{padding:20px 16px}}@media(max-width:680px){.app{display:block}.sidebar{width:100%;padding:13px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding-bottom:14px}.navlabel,.sidefoot{display:none}.nav{display:flex;overflow-x:auto}.nav button{white-space:nowrap}.top{flex-direction:column}.grid2{grid-template-columns:1fr}.panel{padding:16px}}@media(max-width:430px){.stats{grid-template-columns:1fr}.results{grid-template-columns:1fr}.coursehead,.courserow{grid-template-columns:minmax(95px,1.5fr) minmax(40px,.5fr) minmax(55px,.75fr) 24px;gap:5px}.courseinput,.courseselect{padding:8px 4px;font-size:11px}.componenttop{grid-template-columns:minmax(0,1fr) 75px 39px}}
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="sidebar">
- <div class="brand"><div class="logo">G</div><div><div class="brand-name">GradeFlow</div><div class="brand-sub">Academic Calculator</div></div></div>
- <div class="nav-label">MENU UTAMA</div>
- <nav class="nav">
-  <button class="active" data-page="dashboard">⌂ &nbsp;Ringkasan</button>
-  <button data-page="course">▤ &nbsp;Nilai 1 MK</button>
-  <button data-page="semester">◫ &nbsp;Simulasi IP/IPK</button>
-  <button data-page="settings">⚙ &nbsp;Kustomisasi</button>
- </nav>
- <div class="side-note">✦ Study smarter<br>Hitung nilai, cari alternatif, dan rencanakan target akademikmu.</div>
+ <div class="brand"><div class="logo">G</div><div><strong>GradeFlow</strong><small>Academic Planner</small></div></div>
+ <div class="navlabel">MENU UTAMA</div>
+ <nav class="nav"><button class="active" data-page="home">⌂ &nbsp;Ringkasan</button><button data-page="single">▤ &nbsp;Nilai 1 MK</button><button data-page="semester">◫ &nbsp;Simulasi IP/IPK</button><button data-page="settings">⚙ &nbsp;Kustomisasi</button></nav>
+ <div class="sidefoot">✦ Study smarter<br>Hitung nilai, cari alternatif, dan rencanakan target akademikmu.</div>
 </aside>
-
 <main>
-<header class="topbar">
- <div><div class="eyebrow">ACADEMIC PERFORMANCE</div><h1 id="pageTitle">Ringkasan Akademik</h1><p class="description" id="pageDescription">Pilih fitur yang ingin kau gunakan.</p></div>
- <div class="chip">● GradeFlow siap digunakan</div>
-</header>
+<header class="top"><div><div class="eyebrow">ACADEMIC PERFORMANCE</div><h1 id="title">Ringkasan Akademik</h1><p class="sub" id="subtitle">Semua perhitungan akademik dalam satu tempat.</p></div><div class="status">● GradeFlow siap digunakan</div></header>
+<section class="stats"><div class="stat"><div class="statlabel">IPK Sebelumnya</div><div class="statvalue" id="oldStat">3.55</div><div class="statnote">Sebelum semester ini</div></div><div class="stat"><div class="statlabel">Total SKS Sebelumnya</div><div class="statvalue" id="sksStat">40</div><div class="statnote">SKS yang telah diselesaikan</div></div></section>
 
-<section class="stats">
- <div class="stat"><div class="stat-label">IPK Sebelumnya</div><div class="stat-value" id="statOld">3.55</div><div class="stat-note">Sebelum semester ini</div></div>
- <div class="stat"><div class="stat-label">Total SKS Sebelumnya</div><div class="stat-value" id="statOldSKS">40</div><div class="stat-note">SKS yang telah diselesaikan</div></div>
-</section>
+<section class="page active" id="page-home"><div class="panel" style="padding:30px"><div class="eyebrow">WELCOME TO GRADEFLOW</div><h2 style="font-size:25px">Rencanakan nilai dengan lebih jelas.</h2><p class="sub" style="margin-bottom:20px">Sumbangan poin dihitung langsung, target boleh dikosongkan, dan opsi perbaikan ditampilkan saat target belum tercapai.</p><div class="btnrow"><button class="btn" data-go="semester">Buka Simulasi IP/IPK →</button><button class="btn ghost" data-go="single">Hitung Nilai 1 MK →</button></div></div></section>
 
-<section class="page active" id="page-dashboard">
- <div class="panel" style="padding:30px">
-  <div class="eyebrow">WELCOME TO GRADEFLOW</div><h2 style="font-size:25px;margin-bottom:10px">Halo! Siap menghitung nilai?</h2>
-  <p class="description" style="margin-bottom:22px">Hitung nilai per mata kuliah atau simulasi seluruh semester. Target bersifat opsional.</p>
-  <div class="button-row"><button class="btn" data-goto="semester">Simulasi IP/IPK →</button><button class="btn secondary" data-goto="course">Nilai 1 MK →</button></div>
- </div>
-</section>
-
-<section class="page" id="page-course">
- <div class="panel">
-  <div class="panel-title">Kalkulator Nilai 1 MK</div>
-  <p class="panel-desc">Sumbangan poin setiap komponen muncul langsung saat kau mengetik nilai. Pilih target huruf untuk mendapatkan rekomendasi otomatis.</p>
-  <div class="grid2">
-   <div class="field"><label for="coursePreset">Preset mata kuliah</label><select id="coursePreset">
-    <option value="pbwPrak">Praktikum PBW</option><option value="databasePrak">Praktikum Database</option>
-    <option value="gisPrak">Praktikum GIS</option><option value="siPrak">Praktikum Sistem Informasi</option>
-    <option value="strukturPrak">Praktikum Struktur Data</option><option value="komdatTeori">Komunikasi Data Teori</option>
-    <option value="sigTeori">SIG Teori</option><option value="ecommerceTeori">E-Commerce Teori</option>
-    <option value="siTeori">Sistem Informasi Teori</option><option value="databaseTeori">Database Teori</option>
-    <option value="ecommercePrak">Praktikum E-Commerce</option><option value="wirausahaPrak">Praktikum Kewirausahaan</option>
-    <option value="manual">Mode Manual</option>
-   </select></div>
-   <div class="field"><label for="courseName">Nama mata kuliah</label><input id="courseName" value="Praktikum PBW"></div>
-  </div>
-  <div class="field"><label for="targetGrade">Target nilai huruf (opsional)</label><select id="targetGrade">
-   <option value="">Tidak ada target</option><option value="A">A — minimal 87</option><option value="AB">AB — minimal 78</option><option value="B">B — minimal 69</option><option value="BC">BC — minimal 60</option><option value="C">C — minimal 51</option><option value="D">D — minimal 41</option><option value="E">E — minimal 0</option>
-  </select><div class="hint">Kosongkan jika belum ingin menentukan target nilai.</div></div>
-  <div class="panel-title" style="margin-top:20px">Komponen Penilaian</div>
-  <p class="panel-desc">Masukkan nilai 0–100. Nilai yang belum diketahui boleh dibiarkan kosong.</p>
-  <div id="weightsContainer" class="weight-list"></div>
-  <div class="weight-total"><span>Total Bobot</span><span id="weightTotal">100%</span></div>
-  <div id="weightMessage"></div>
-  <div class="button-row"><button class="btn" id="calculateCourse">Hitung Nilai Akhir</button><button class="btn secondary" id="resetCourse">Reset Nilai</button></div>
-  <div id="courseResult"></div><div id="courseAdvice"></div>
- </div>
-</section>
+<section class="page" id="page-single">
+<div class="panel"><h2>Nilai 1 MK</h2><p class="paneldesc">Masukkan nilai komponen. Sumbangan poin langsung muncul tepat di bawah kolom nilai. Kalau target gagal, aplikasi membuat banyak alternatif, dari satu komponen sampai kombinasi beberapa komponen.</p>
+<div class="grid2"><div class="field"><label for="preset">Preset mata kuliah</label><select id="preset"><option value="pbw">Praktikum PBW</option><option value="dbp">Praktikum Database</option><option value="gisp">Praktikum GIS</option><option value="sip">Praktikum Sistem Informasi</option><option value="stp">Praktikum Struktur Data</option><option value="komdat">Komunikasi Data Teori</option><option value="sig">SIG Teori</option><option value="ect">E-Commerce Teori</option><option value="sit">Sistem Informasi Teori</option><option value="dbt">Database Teori</option><option value="ecp">Praktikum E-Commerce</option><option value="kwp">Praktikum Kewirausahaan</option><option value="manual">Mode Manual</option></select></div><div class="field"><label for="singleName">Nama mata kuliah</label><input id="singleName" value="Praktikum PBW"></div></div>
+<div class="field"><label for="singleTarget">Target nilai huruf (opsional)</label><select id="singleTarget"><option value="">Belum menentukan target</option><option>A</option><option>AB</option><option>B</option><option>BC</option><option>C</option><option>D</option><option>E</option></select><div class="hint">Kalau target dikosongkan, kalkulator tetap menghitung poin tanpa menampilkan rekomendasi target.</div></div>
+<h2 style="margin:18px 0 6px">Komponen Penilaian</h2><p class="paneldesc">Nilai 0–100. Komponen yang belum diketahui boleh dibiarkan kosong.</p>
+<div id="components"></div><div class="totalrow"><span>Total bobot</span><span id="weightTotal">100%</span></div><div id="weightWarning"></div>
+<div class="btnrow"><button class="btn" id="calcSingle">Hitung dan Cari Opsi</button><button class="btn ghost" id="resetSingle">Reset Nilai</button></div>
+<div id="singleResult"></div><div id="singleOptions"></div>
+</div></section>
 
 <section class="page" id="page-semester">
- <div class="panel">
-  <div class="panel-title">Simulasi IP Semester dan IPK</div>
-  <p class="panel-desc">Masukkan nilai setiap mata kuliah. Jika target tidak tercapai, GradeFlow mencari perubahan nilai satu MK, dua MK, dan kombinasi beberapa MK yang bisa membantu memenuhi target.</p>
-  <div class="grid2">
-   <div class="field"><label for="previousIPK">IPK sebelumnya</label><input id="previousIPK" type="number" min="0" max="4" step=".01" value="3.55"></div>
-   <div class="field"><label for="previousSKS">Total SKS sebelumnya</label><input id="previousSKS" type="number" min="0" step="1" value="40"></div>
-   <div class="field"><label for="targetIP">Target IP semester (opsional)</label><input id="targetIP" type="number" min="0" max="4" step=".01" placeholder="Boleh dikosongkan"></div>
-   <div class="field"><label for="targetIPK">Target IPK kumulatif (opsional)</label><input id="targetIPK" type="number" min="0" max="4" step=".01" placeholder="Boleh dikosongkan"></div>
-  </div>
-  <div class="notice info">Rekomendasi menggunakan skala A = 4, AB = 3,5, B = 3, BC = 2,5, C = 2, D = 1, E = 0. Target kosong tidak akan dianggap gagal.</div>
-  <div class="course-header" style="margin-top:20px"><span>Mata Kuliah</span><span>SKS</span><span>Nilai</span><span></span></div>
-  <div id="semesterCourses"></div>
-  <div class="button-row"><button class="btn" id="addCourse">+ Tambah MK</button><button class="btn secondary" id="resetSemester">Reset Semester 3</button><button class="btn" id="calculateSemester">Hitung IP/IPK</button></div>
-  <div id="semesterMessage"></div>
- </div>
- <div class="panel">
-  <div class="panel-title">Hasil Simulasi</div><p class="panel-desc">Hasil berubah otomatis saat nilai, SKS, atau target diperbarui.</p>
-  <div class="result-grid">
-   <div class="result-box"><div class="result-label">IP Semester</div><div class="result-value" id="semesterIP">0.00</div><div class="result-caption">Prediksi semester ini</div></div>
-   <div class="result-box"><div class="result-label">IPK Baru</div><div class="result-value" id="semesterIPK">3.55</div><div class="result-caption">Prediksi kumulatif</div></div>
-   <div class="result-box"><div class="result-label">SKS Semester</div><div class="result-value" id="semesterSKS">24</div><div class="result-caption">Total SKS semester ini</div></div>
-  </div>
-  <div class="progress"><div class="progress-fill" id="targetProgress"></div></div><p class="muted" id="progressCaption">Isi target IP atau IPK untuk melihat progres.</p>
-  <div id="semesterTargetMessage"></div>
-  <div class="table-wrap"><table><thead><tr><th>Mata Kuliah</th><th>SKS</th><th>Nilai</th><th>Bobot Mutu</th><th>Mutu</th></tr></thead><tbody id="semesterResultBody"></tbody></table></div>
-  <div id="semesterAdvice"></div>
- </div>
+<div class="panel"><h2>Simulasi IP/IPK Semester 3</h2><p class="paneldesc">Masukkan nilai huruf setiap mata kuliah. Target IP dan IPK opsional. Jika target tidak tercapai, GradeFlow menampilkan banyak kombinasi nilai yang memenuhi target, termasuk perubahan satu, dua, atau beberapa mata kuliah.</p>
+<div class="grid2"><div class="field"><label for="oldIPK">IPK sebelumnya</label><input id="oldIPK" type="number" min="0" max="4" step=".01" value="3.55"></div><div class="field"><label for="oldSKS">Total SKS sebelumnya</label><input id="oldSKS" type="number" min="0" step="1" value="40"></div><div class="field"><label for="targetIP">Target IP semester (opsional)</label><input id="targetIP" type="number" min="0" max="4" step=".01" placeholder="Kosongkan jika tidak perlu"></div><div class="field"><label for="targetIPK">Target IPK kumulatif (opsional)</label><input id="targetIPK" type="number" min="0" max="4" step=".01" placeholder="Kosongkan jika tidak perlu"></div></div>
+<div class="notice info">Skala: A = 4.00, AB = 3.50, B = 3.00, BC = 2.50, C = 2.00, D = 1.00, E = 0.00.</div>
+<div class="coursehead"><span>Mata kuliah</span><span>SKS</span><span>Nilai</span><span></span></div><div id="courses"></div>
+<div class="btnrow"><button class="btn" id="addMK">+ Tambah MK</button><button class="btn ghost" id="resetSem">Reset Semester 3</button><button class="btn" id="calcSem">Hitung IP/IPK & Opsi</button></div><div id="semInputMessage"></div></div>
+<div class="panel"><h2>Hasil Simulasi</h2><p class="paneldesc">Nilai hasil perhitungan dan rekomendasi perubahan nilai akan muncul di sini.</p><div class="results"><div class="result"><div class="rlabel">IP Semester</div><div class="rvalue" id="ipValue">0.00</div><div class="rnote">Prediksi semester ini</div></div><div class="result"><div class="rlabel">IPK Baru</div><div class="rvalue" id="ipkValue">3.55</div><div class="rnote">Prediksi kumulatif</div></div><div class="result"><div class="rlabel">SKS Semester</div><div class="rvalue" id="semSKS">24</div><div class="rnote">Total SKS semester ini</div></div></div><div class="progress"><div id="progressFill"></div></div><p class="hint" id="progressText">Target opsional.</p><div id="semStatus"></div><div class="tablewrap"><table><thead><tr><th>Mata Kuliah</th><th>SKS</th><th>Nilai</th><th>Bobot Mutu</th><th>Mutu × SKS</th></tr></thead><tbody id="semTable"></tbody></table></div><div id="semOptions"></div></div>
 </section>
 
-<section class="page" id="page-settings">
- <div class="grid2">
-  <div class="panel"><div class="panel-title">Kustomisasi Tampilan</div><p class="panel-desc">Atur mode dan warna GradeFlow.</p>
-   <div class="field"><label for="themeMode">Mode tampilan</label><select id="themeMode"><option value="light">Light Mode</option><option value="dark">Dark Mode</option><option value="custom">Warna Kustom</option></select></div>
-   <div class="field"><label for="backgroundColor">Warna latar belakang</label><input type="color" id="backgroundColor" value="#f3f6fb"></div>
-   <div class="field"><label for="buttonColor">Warna tombol utama</label><input type="color" id="buttonColor" value="#0eaa78"></div>
-   <div class="field"><label for="hoverColor">Warna hover tombol</label><input type="color" id="hoverColor" value="#07865d"></div>
-   <div class="field"><label for="accentColor">Warna aksen</label><input type="color" id="accentColor" value="#0eaa78"></div>
-   <div class="button-row"><button class="btn" id="applyTheme">Terapkan Tema</button><button class="btn secondary" id="resetTheme">Default</button></div>
-  </div>
-  <div class="panel"><div class="panel-title">Pratinjau</div><p class="panel-desc">Contoh tampilan tombol dan kartu.</p><div class="result-box"><b>GradeFlow Preview</b><p class="muted">Tampilan mengikuti tema yang dipilih.</p><button class="btn" style="margin-top:12px">Tombol Contoh</button></div></div>
- </div>
-</section>
-<footer class="footer">GradeFlow Academic Calculator · Simulasi bukan nilai resmi dari kampus.</footer>
-</main>
-</div>
-
+<section class="page" id="page-settings"><div class="grid2"><div class="panel"><h2>Kustomisasi Tampilan</h2><p class="paneldesc">Pilih tema dan warna aplikasi.</p><div class="field"><label for="mode">Mode</label><select id="mode"><option value="light">Light</option><option value="dark">Dark</option><option value="custom">Custom background</option></select></div><div class="field"><label for="bgcolor">Warna latar</label><input type="color" id="bgcolor" value="#f3f6fb"></div><div class="field"><label for="maincolor">Warna tombol utama</label><input type="color" id="maincolor" value="#0ba879"></div><div class="field"><label for="hovercolor">Warna hover</label><input type="color" id="hovercolor" value="#087b59"></div><div class="btnrow"><button class="btn" id="applyTheme">Terapkan</button><button class="btn ghost" id="defaultTheme">Default</button></div></div><div class="panel"><h2>Tips penggunaan</h2><p class="paneldesc">Nilai kosong diperlakukan sebagai komponen yang belum diketahui, bukan nilai nol. Karena itu opsi target menggunakan asumsi nilai untuk komponen yang belum diisi dan menuliskan asumsi tersebut dengan jelas.</p></div></div></section>
+<footer class="footer">GradeFlow Academic Planner · Hasil simulasi bukan nilai resmi kampus.</footer>
+</main></div>
 <script>
 const $=id=>document.getElementById(id);
-const scale=[{g:"A",p:4,min:87},{g:"AB",p:3.5,min:78},{g:"B",p:3,min:69},{g:"BC",p:2.5,min:60},{g:"C",p:2,min:51},{g:"D",p:1,min:41},{g:"E",p:0,min:0}];
-const point=g=>scale.find(x=>x.g===g)?.p??0;
-const floorScore=g=>scale.find(x=>x.g===g)?.min??0;
-const letter=n=>scale.find(x=>n>=x.min)?.g??"E";
-const fmt=(n,d=2)=>Number(n).toFixed(d);
+const grades=[{g:"A",p:4,min:87},{g:"AB",p:3.5,min:78},{g:"B",p:3,min:69},{g:"BC",p:2.5,min:60},{g:"C",p:2,min:51},{g:"D",p:1,min:41},{g:"E",p:0,min:0}];
+const pts=g=>grades.find(x=>x.g===g).p, minScore=g=>grades.find(x=>x.g===g).min;
+const letter=n=>grades.find(x=>n>=x.min)?.g||"E", f=(n,d=2)=>Number(n).toFixed(d);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const pages={dashboard:["Ringkasan Akademik","Pilih fitur yang ingin kau gunakan."],course:["Kalkulator Nilai 1 MK","Sumbangan poin dan rekomendasi target nilai."],semester:["Simulasi IP/IPK","Hitung target dan cari berbagai alternatif nilai."],settings:["Kustomisasi","Sesuaikan tampilan GradeFlow."]};
-function showPage(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="page-"+p));document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p));$("pageTitle").textContent=pages[p][0];$("pageDescription").textContent=pages[p][1];window.scrollTo({top:0,behavior:"smooth"});}
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
-document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>showPage(b.dataset.goto));
-
-/* Preset bobot sesuai data yang diberikan */
+const pageInfo={home:["Ringkasan Akademik","Semua perhitungan akademik dalam satu tempat."],single:["Kalkulator Nilai 1 MK","Sumbangan poin langsung dan rekomendasi target nilai."],semester:["Simulasi IP/IPK","Simulasi nilai semester dan banyak alternatif pencapaian target."],settings:["Kustomisasi","Sesuaikan tampilan GradeFlow."]};
+function go(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="page-"+p));document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p));$("title").textContent=pageInfo[p][0];$("subtitle").textContent=pageInfo[p][1];window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
 const presets={
- pbwPrak:["Praktikum PBW",[["Kehadiran",15],["Kuis",10],["Tugas",20],["UTS",25],["UAS",30]]],
- databasePrak:["Praktikum Database",[["Kuis",15],["Tugas",25],["UTS",25],["UAS",35]]],
- gisPrak:["Praktikum GIS",[["Kuis",10],["Tugas",25],["UTS",30],["UAS",35]]],
- siPrak:["Praktikum Sistem Informasi",[["Kehadiran",20],["Tugas",15],["UTS",30],["UAS",35]]],
- strukturPrak:["Praktikum Struktur Data",[["Kehadiran",10],["Tugas",15],["Kuis",10],["UTS",30],["UAS",35]]],
- komdatTeori:["Komunikasi Data Teori",[["Tugas",20],["Kuis",20],["UTS",30],["UAS",30]]],
- sigTeori:["SIG Teori",[["Kuis",15],["Tugas/Latihan",25],["UTS",25],["UAS",35]]],
- ecommerceTeori:["E-Commerce Teori",[["Kuis",15],["UTS",35],["Proyek",50]]],
- siTeori:["Sistem Informasi Teori",[["Tugas",15],["Kuis",10],["UTS",35],["UAS",40]]],
- databaseTeori:["Database Teori",[["Praktikum",15],["Kuis",15],["Tugas/Latihan",20],["UTS",25],["UAS",25]]],
- ecommercePrak:["Praktikum E-Commerce",[["Kehadiran",15],["Tugas",15],["Kuis",10],["UTS",25],["UAS",35]]],
- wirausahaPrak:["Praktikum Kewirausahaan",[["Absensi",15],["Tugas/Kuis",20],["UTS",30],["UAS",35]]],
- manual:["Mata Kuliah Manual",[["Komponen 1",25],["Komponen 2",25],["Komponen 3",25],["Komponen 4",25]]]
+pbw:["Praktikum PBW",[["Kehadiran",15],["Kuis",10],["Tugas",20],["UTS",25],["UAS",30]]],
+dbp:["Praktikum Database",[["Kuis",15],["Tugas",25],["UTS",25],["UAS",35]]],
+gisp:["Praktikum GIS",[["Kuis",10],["Tugas",25],["UTS",30],["UAS",35]]],
+sip:["Praktikum Sistem Informasi",[["Kehadiran",20],["Tugas",15],["UTS",30],["UAS",35]]],
+stp:["Praktikum Struktur Data",[["Kehadiran",10],["Tugas",15],["Kuis",10],["UTS",30],["UAS",35]]],
+komdat:["Komunikasi Data Teori",[["Tugas",20],["Kuis",20],["UTS",30],["UAS",30]]],
+sig:["SIG Teori",[["Kuis",15],["Tugas/Latihan",25],["UTS",25],["UAS",35]]],
+ect:["E-Commerce Teori",[["Kuis",15],["UTS",35],["Proyek",50]]],
+sit:["Sistem Informasi Teori",[["Tugas",15],["Kuis",10],["UTS",35],["UAS",40]]],
+dbt:["Database Teori",[["Praktikum",15],["Kuis",15],["Tugas/Latihan",20],["UTS",25],["UAS",25]]],
+ecp:["Praktikum E-Commerce",[["Kehadiran",15],["Tugas",15],["Kuis",10],["UTS",25],["UAS",35]]],
+kwp:["Praktikum Kewirausahaan",[["Absensi",15],["Tugas/Kuis",20],["UTS",30],["UAS",35]]],
+manual:["Mata Kuliah Manual",[["Komponen 1",25],["Komponen 2",25],["Komponen 3",25],["Komponen 4",25]]]
 };
-let lastCourse=null;
-function resetCourseOutput(){lastCourse=null;$("courseResult").innerHTML="";$("courseAdvice").innerHTML="";}
-function drawWeights(){
- const preset=presets[$("coursePreset").value];$("weightsContainer").innerHTML="";
- preset[1].forEach(([name,w])=>{
-  const row=document.createElement("div");row.className="weight-row";row.dataset.name=name;
-  row.innerHTML=`<div class="weight-top"><label>${esc(name)}</label><input class="score-input" type="number" min="0" max="100" step=".01" placeholder="Nilai" aria-label="Nilai ${esc(name)}" data-weight="${w}"><span class="weight-pct">${w}%</span></div><div class="contribution" aria-live="polite">Sumbangan poin: belum diisi</div>`;
-  const input=row.querySelector("input");
-  input.addEventListener("input",()=>{updateContributionRows();resetCourseOutput();});
-  $("weightsContainer").appendChild(row);
- });
- $("courseName").value=$("coursePreset").value==="manual"?"":preset[0];
- updateWeightTotal();updateContributionRows();resetCourseOutput();
-}
-function updateWeightTotal(){
- const inputs=[...document.querySelectorAll(".score-input")];
- const total=inputs.reduce((s,i)=>s+Number(i.dataset.weight),0);
- $("weightTotal").textContent=fmt(total,0)+"%";
- $("weightMessage").innerHTML=total!==100?`<div class="notice warning">Total bobot harus 100%. Saat ini ${fmt(total,0)}%.</div>`:"";
-}
-function readCourse(){
- const rows=[...document.querySelectorAll("#weightsContainer .weight-row")];
- const total=rows.reduce((s,r)=>s+Number(r.querySelector("input").dataset.weight),0);
- if(total!==100)return{error:"Total bobot harus tepat 100%."};
- let earned=0,possible=0,remaining=0,filled=0,parts=[];
- for(const row of rows){
-  const input=row.querySelector("input"),w=Number(input.dataset.weight),name=row.dataset.name;
-  if(input.value.trim()===""){remaining+=w;possible+=w;parts.push({name,w,score:null});}
-  else{
-   const score=Number(input.value);
-   if(!Number.isFinite(score)||score<0||score>100)return{error:`Nilai ${name} harus di antara 0 dan 100.`};
-   earned+=score*w/100;possible+=score*w/100;filled+=w;parts.push({name,w,score});
-  }
+function clearSingle(){ $("singleResult").innerHTML="";$("singleOptions").innerHTML=""; }
+function drawComponents(){const key=$("preset").value;const [name,parts]=presets[key];$("singleName").value=key==="manual"?"":name;$("components").innerHTML="";
+parts.forEach(([label,w])=>{const d=document.createElement("div");d.className="component";d.dataset.label=label;d.innerHTML=`<div class="componenttop"><label>${esc(label)}</label><input class="score" type="number" min="0" max="100" step=".01" placeholder="Nilai" aria-label="Nilai ${esc(label)}" data-w="${w}"><span class="weight">${w}%</span></div><div class="contribution">Sumbangan poin: belum diisi · bobot ${w}%</div>`;d.querySelector("input").addEventListener("input",()=>{updateComponents();clearSingle()});$("components").appendChild(d)});updateComponents();clearSingle()}
+function readComponents(){const parts=[...document.querySelectorAll(".component")].map(el=>({name:el.dataset.label,w:+el.querySelector("input").dataset.w,raw:el.querySelector("input").value,score:el.querySelector("input").value.trim()===""?null:Number(el.querySelector("input").value)}));const total=parts.reduce((s,x)=>s+x.w,0);return{parts,total,earned:parts.reduce((s,x)=>s+(x.score===null?0:x.score*x.w/100),0),missing:parts.filter(x=>x.score===null)}}
+function updateComponents(){const d=readComponents();$("weightTotal").textContent=f(d.total,0)+"%";$("weightWarning").innerHTML=d.total!==100?'<div class="notice warn">Total bobot harus 100%.</div>':"";document.querySelectorAll(".component").forEach(el=>{const inp=el.querySelector("input"),w=+inp.dataset.w,out=el.querySelector(".contribution");if(inp.value.trim()==="")out.textContent=`Sumbangan poin: belum diisi · bobot ${w}%`;else{const n=+inp.value;out.textContent=n>=0&&n<=100?`Sumbangan poin: ${f(n*w/100)} poin (${f(n)} × ${w}% ÷ 100)`:"Nilai harus 0–100."}})}
+function singleCalc(){const d=readComponents(),target=$("singleTarget").value;if(d.total!==100){$("singleResult").innerHTML='<div class="notice warn">Total bobot harus tepat 100%.</div>';return}if(d.parts.some(x=>x.score!==null&&(!Number.isFinite(x.score)||x.score<0||x.score>100))){$("singleResult").innerHTML='<div class="notice warn">Semua nilai harus berada di rentang 0–100.</div>';return}if(!d.parts.some(x=>x.score!==null)){$("singleResult").innerHTML='<div class="notice warn">Isi setidaknya satu nilai komponen.</div>';return}
+const max=d.earned+d.missing.reduce((s,x)=>s+x.w,0);$("singleResult").innerHTML=`<div class="results"><div class="result"><div class="rlabel">Poin saat ini</div><div class="rvalue">${f(d.earned)}</div><div class="rnote">Jumlah sumbangan komponen yang diisi</div></div><div class="result"><div class="rlabel">Huruf sementara</div><div class="rvalue">${letter(d.earned)}</div><div class="rnote">Berdasarkan poin saat ini</div></div><div class="result"><div class="rlabel">Maksimum teoritis</div><div class="rvalue">${f(max)}</div><div class="rnote">Jika semua komponen kosong mendapat 100</div></div></div><div class="tablewrap"><table><thead><tr><th>Komponen</th><th>Nilai</th><th>Bobot</th><th>Sumbangan</th></tr></thead><tbody>${d.parts.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.score===null?"Belum diisi":f(x.score)}</td><td>${x.w}%</td><td>${x.score===null?"—":f(x.score*x.w/100)+" poin"}</td></tr>`).join("")}<tr><td colspan="3"><b>Total poin saat ini</b></td><td><b>${f(d.earned)}</b></td></tr></tbody></table></div>`;
+if(!target){$("singleOptions").innerHTML='<div class="notice info">Target nilai belum dipilih. Pilih target huruf jika ingin opsi pencapaiannya.</div>';return}
+const need=minScore(target);if(d.earned>=need){$("singleOptions").innerHTML=`<div class="notice good">Target ${target} sudah tercapai dari poin yang sudah terkumpul (${f(d.earned)}). ${d.missing.length?"Nilai masih sementara karena ada komponen belum diisi.":""}</div>`;return}
+if(max<need){$("singleOptions").innerHTML=`<div class="notice bad">Target ${target} tidak mungkin dicapai dengan nilai tersisa. Poin maksimum ${f(max)}, sedangkan target memerlukan ${need}.</div>`;return}
+const opts=[];const missing=d.missing;
+for(const assumption of [100,95,90,85,80,75,70,60,50,0]){
+ for(const targetPart of missing){
+  const other=missing.filter(x=>x!==targetPart).reduce((s,x)=>s+assumption*x.w/100,0);
+  const raw=(need-d.earned-other)/(targetPart.w/100);
+  if(raw<=100&&raw>=0){const required=Math.max(0,Math.ceil(raw-1e-8));opts.push({title:`${targetPart.name}: minimal ${required}`,detail:`Untuk mencapai ${target}, anggap semua komponen kosong lainnya mendapat ${assumption}.`,values:missing.map(x=>({name:x.name,score:x.name===targetPart.name?required:assumption})),assumption,required,targetName:targetPart.name});}
  }
- if(filled===0)return{error:"Masukkan setidaknya satu nilai komponen."};
- return{earned,remaining,possible:earned+remaining,parts};
 }
-function updateContributionRows(){
- updateWeightTotal();
- document.querySelectorAll("#weightsContainer .weight-row").forEach(row=>{
-  const input=row.querySelector("input"),el=row.querySelector(".contribution"),w=Number(input.dataset.weight);
-  if(input.value.trim()===""){el.textContent=`Sumbangan poin: belum diisi (bobot ${w}%)`;return;}
-  const score=Number(input.value);
-  el.textContent=Number.isFinite(score)&&score>=0&&score<=100?`Sumbangan poin: ${fmt(score*w/100)} poin (${fmt(score)} × ${w}% ÷ 100)`:"Nilai harus berada di antara 0 dan 100.";
- });
+// Enumerate pairs of missing components across plausible score values, with other missing components held at each assumption.
+const scoreLevels=[0,50,60,70,75,80,85,90,95,100];
+for(const assumption of [100,90,80,70]){
+ for(let i=0;i<missing.length;i++)for(let j=i+1;j<missing.length;j++){
+  const a=missing[i],b=missing[j],other=missing.filter((x,k)=>k!==i&&k!==j).reduce((s,x)=>s+assumption*x.w/100,0);
+  for(const va of scoreLevels){const raw=(need-d.earned-other-va*a.w/100)/(b.w/100);if(raw>=0&&raw<=100){const vb=Math.ceil(raw-1e-8);opts.push({title:`${a.name} ${va} + ${b.name} minimal ${vb}`,detail:`Kombinasi dua komponen; komponen kosong lainnya diasumsikan ${assumption}.`,values:missing.map(x=>({name:x.name,score:x.name===a.name?va:x.name===b.name?vb:assumption})),assumption,required:Math.max(va,vb),targetName:a.name+" + "+b.name});}}
+ }
 }
-function calculateCourse(){
- const d=readCourse();
- if(d.error){$("courseResult").innerHTML=`<div class="notice warning">${esc(d.error)}</div>`;$("courseAdvice").innerHTML="";lastCourse=null;return;}
- const target=$("targetGrade").value;lastCourse={...d,target:target?floorScore(target):null,targetGrade:target};
- const possibleMax=d.earned+d.remaining;
- let rows=d.parts.map(p=>`<tr><td>${esc(p.name)}</td><td>${p.score===null?"—":fmt(p.score)}</td><td>${p.w}%</td><td><b>${p.score===null?"Belum diisi":fmt(p.score*p.w/100)+" poin"}</b></td></tr>`).join("");
- $("courseResult").innerHTML=`<div class="result-grid">
- <div class="result-box"><div class="result-label">Poin Terkumpul</div><div class="result-value">${fmt(d.earned)}</div><div class="result-caption">Jumlah sumbangan dari nilai yang telah diisi</div></div>
- <div class="result-box"><div class="result-label">Nilai Saat Ini</div><div class="result-value">${letter(d.earned)}</div><div class="result-caption">Berdasarkan poin yang sudah masuk</div></div>
- <div class="result-box"><div class="result-label">Nilai Maksimum</div><div class="result-value">${fmt(possibleMax)}</div><div class="result-caption">Jika semua komponen kosong mendapat 100</div></div></div>
- <div class="notice info">Poin = nilai komponen × bobot ÷ 100. Nilai akhir sementara ${fmt(d.earned)}. Potensi maksimum ${fmt(possibleMax)}.</div>
- <div class="table-wrap"><table><thead><tr><th>Komponen</th><th>Nilai</th><th>Bobot</th><th>Sumbangan Poin</th></tr></thead><tbody>${rows}<tr><td colspan="2"><b>Total poin saat ini</b></td><td>100%</td><td><b>${fmt(d.earned)}</b></td></tr></tbody></table></div>`;
- if(!target){$("courseAdvice").innerHTML='<div class="notice info">Target nilai belum dipilih. Isi target huruf jika ingin mencari alternatif untuk mencapainya.</div>';return;}
- if(d.earned>=floorScore(target)){ $("courseAdvice").innerHTML=`<div class="notice success">Target ${target} sudah tercapai berdasarkan nilai yang terisi (${fmt(d.earned)} poin).`+(d.remaining?` Masih ada bobot ${d.remaining}% yang belum diisi, jadi hasil akhir belum final.`:"")+"</div>";return;}
- if(possibleMax<floorScore(target)){$("courseAdvice").innerHTML=`<div class="notice danger">Target ${target} tidak bisa dicapai dengan nilai komponen yang tersisa. Poin maksimum ${fmt(possibleMax)}, sementara target memerlukan ${floorScore(target)} poin. Coba periksa bobot atau nilai yang dimasukkan.</div>`;return;}
- const missing=d.parts.filter(p=>p.score===null);
- const targetScore=floorScore(target);
- let opts=[];
- // For each component, calculate required score assuming all other missing components are 100.
- missing.forEach(p=>{
-  const otherMax=missing.filter(x=>x!==p).reduce((s,x)=>s+x.w,0);
-  const need=(targetScore-d.earned-otherMax)/(p.w/100);
-  if(need<=100){
-   const required=Math.max(0,Math.ceil(need-1e-9));
-   opts.push({name:p.name,required,weight:p.w,other:"Nilai komponen kosong lainnya 100",order:required});
-  }
- });
- // Calculate a second set with other missing components at 90, 95, and 100.
- [90,95,100].forEach(assumed=>{
-  missing.forEach(p=>{
-   const other=missing.filter(x=>x!==p).reduce((s,x)=>s+assumed*x.w/100,0);
-   const need=(targetScore-d.earned-other)/(p.w/100);
-   if(need>=0&&need<=100){
-    const required=Math.ceil(need-1e-9);
-    if(!opts.some(o=>o.name===p.name&&o.required===required&&o.other===`Komponen kosong lain ${assumed}`))
-     opts.push({name:p.name,required,weight:p.w,other:`Komponen kosong lain ${assumed}`,order:required});
-   }
-  });
- });
- opts.sort((a,b)=>a.required-b.required||b.weight-a.weight);
- opts=opts.filter((o,i)=>opts.findIndex(x=>x.name===o.name&&x.required===o.required&&x.other===o.other)===i);
- $("courseAdvice").innerHTML=`<div class="panel" style="margin-top:18px;padding:18px">
- <div class="panel-title">Alternatif agar Target ${target} Tercapai</div>
- <p class="panel-desc">Berikut opsi nilai minimum untuk setiap komponen yang belum diisi. Asumsi nilai komponen lainnya ditampilkan agar jelas.</p>
- ${opts.length?opts.map((o,i)=>`<div class="recommendation"><h3>Opsi ${i+1}: ${esc(o.name)} minimal ${o.required}</h3><p>Bobot ${o.weight}%. ${esc(o.other)}.</p><div class="notice info">Jika asumsi tersebut terpenuhi, total poin diperkirakan mencapai minimal ${targetScore} sehingga memenuhi target ${target}.</div></div>`).join(""):'<div class="notice warning">Belum ditemukan opsi tunggal. Isi nilai komponen lain untuk menghitung alternatif yang lebih akurat.</div>'}
- <div class="notice warning">Rekomendasi satu komponen tidak menjamin target jika komponen lain mendapat nilai lebih rendah daripada asumsi. Masukkan nilai yang lebih pasti lalu hitung kembali.</div></div>`;
+const unique=new Map();opts.forEach(o=>{const k=o.title+"|"+o.detail;if(!unique.has(k))unique.set(k,o)});
+const sorted=[...unique.values()].sort((a,b)=>a.required-b.required||a.title.localeCompare(b.title));
+if(!sorted.length){$("singleOptions").innerHTML='<div class="notice warn">Belum ditemukan kombinasi dari nilai yang dimasukkan. Periksa bobot dan target.</div>';return}
+$("singleOptions").innerHTML=`<div style="margin-top:20px"><h2>Opsi agar target ${target} tercapai</h2><p class="paneldesc">Ditemukan ${sorted.length} skenario. Nilai komponen yang belum diketahui menggunakan asumsi yang tertulis di setiap opsi. Opsi paling realistis biasanya memakai asumsi yang sesuai perkiraan nilaimu.</p>${sorted.slice(0,100).map((o,i)=>`<div class="option"><div class="optionhead"><h3>Opsi ${i+1} — ${esc(o.title)}</h3><span class="tag">${o.assumption===100?"Target aman":o.assumption>=85?"Realistis":"Lebih berisiko"}</span></div><p>${esc(o.detail)}</p><div class="notice info">Nilai yang disarankan: ${o.values.map(v=>esc(v.name)+" "+v.score).join(" · ")}.</div><button class="btn ghost use-single" data-i="${i}">Isi nilai opsi ini</button></div>`).join("")}</div>`;
+document.querySelectorAll(".use-single").forEach(btn=>btn.onclick=()=>{const o=sorted[+btn.dataset.i];document.querySelectorAll(".component").forEach(el=>{const inp=el.querySelector("input"),v=o.values.find(x=>x.name===el.dataset.label);if(v)inp.value=v.score});updateComponents();singleCalc();});
 }
-$("coursePreset").addEventListener("change",drawWeights);
-$("resetCourse").addEventListener("click",drawWeights);
-$("calculateCourse").addEventListener("click",calculateCourse);
-$("targetGrade").addEventListener("change",()=>{if(lastCourse)calculateCourse();});
+$("preset").onchange=drawComponents;$("resetSingle").onclick=drawComponents;$("calcSingle").onclick=singleCalc;$("singleTarget").onchange=()=>{if($("singleResult").innerHTML)singleCalc()};
 
-/* Semester 3: 16 mata kuliah, total 24 SKS */
-const semester3=[
- ["Database",1],["Praktikum Database",2],["Komunikasi Data",1],["Praktikum Komunikasi Data",2],
- ["Struktur Data",1],["Praktikum Struktur Data",2],["Pemrograman Berbasis Web",1],["Praktikum Pemrograman Berbasis Web",2],
- ["Sistem Informasi Geografis",1],["Praktikum Sistem Informasi Geografis",2],["Sistem Informasi",1],["Praktikum Sistem Informasi",2],
- ["E-Commerce",1],["Praktikum E-Commerce",2],["Kewirausahaan",2],["Praktikum Kewirausahaan",1]
-];
-function addSemesterCourse(name="",sks=2,grade="A"){
- const row=document.createElement("div");row.className="course-row";
- row.innerHTML=`<input class="mk-input mk-name" aria-label="Nama mata kuliah" placeholder="Nama mata kuliah" value="${esc(name)}"><input class="mk-input mk-sks" aria-label="SKS" type="number" min="1" max="30" step="1" value="${sks}"><select class="mk-select mk-grade" aria-label="Nilai huruf">${scale.map(x=>`<option value="${x.g}" ${x.g===grade?"selected":""}>${x.g}</option>`).join("")}</select><button class="remove" type="button" aria-label="Hapus mata kuliah">×</button>`;
- row.querySelector(".remove").onclick=()=>{row.remove();calculateSemester();};
- row.querySelectorAll("input,select").forEach(el=>{el.addEventListener("input",calculateSemester);el.addEventListener("change",calculateSemester);});
- $("semesterCourses").appendChild(row);
-}
-function previousData(){
- const val=id=>$(id).value.trim()===""?null:Number($(id).value);
- return{ipk:val("previousIPK"),sks:val("previousSKS"),tip:val("targetIP"),tipk:val("targetIPK")};
-}
-function getSemesterRows(){
- return [...document.querySelectorAll("#semesterCourses .course-row")].map((r,i)=>({
-  name:r.querySelector(".mk-name").value.trim()||`Mata Kuliah ${i+1}`,
-  sks:Number(r.querySelector(".mk-sks").value),
-  grade:r.querySelector(".mk-grade").value,
-  row:r
- }));
-}
-function calcTotals(rows,p){
- const sks=rows.reduce((s,r)=>s+r.sks,0);
- const mutu=rows.reduce((s,r)=>s+r.sks*point(r.grade),0);
- const ip=sks?mutu/sks:0;
- const allSks=p.sks+sks;
- const ipk=allSks?(p.ipk*p.sks+mutu)/allSks:p.ipk;
- return{sks,mutu,ip,ipk,allSks};
-}
-function targetMet(t,p){
- return(p.tip===null||t.ip+1e-9>=p.tip)&&(p.tipk===null||t.ipk+1e-9>=p.tipk);
-}
-function targetGap(t,p){
- let gap=0;
- if(p.tip!==null)gap=Math.max(gap,p.tip*t.sks-t.mutu);
- if(p.tipk!==null)gap=Math.max(gap,p.tipk*(p.sks+t.sks)-p.ipk*p.sks-t.mutu);
- return Math.max(0,gap);
-}
-function validateSemester(p,rows){
- if(p.ipk===null||!Number.isFinite(p.ipk)||p.ipk<0||p.ipk>4)return"IPK sebelumnya harus diisi dengan angka 0 sampai 4.";
- if(p.sks===null||!Number.isInteger(p.sks)||p.sks<0)return"Total SKS sebelumnya harus berupa bilangan bulat minimal 0.";
- if(p.tip!==null&&(!Number.isFinite(p.tip)||p.tip<0||p.tip>4))return"Target IP harus 0 sampai 4 atau dikosongkan.";
- if(p.tipk!==null&&(!Number.isFinite(p.tipk)||p.tipk<0||p.tipk>4))return"Target IPK harus 0 sampai 4 atau dikosongkan.";
- if(rows.some(r=>!Number.isInteger(r.sks)||r.sks<1||r.sks>30))return"SKS setiap mata kuliah harus berupa bilangan bulat 1 sampai 30.";
- return"";
-}
-function makeSemesterOptions(rows,p){
- const targetsSet=p.tip!==null||p.tipk!==null;
- if(!targetsSet)return"";
- const current=calcTotals(rows,p);
- if(targetMet(current,p))return"";
- const currentGap=targetGap(current,p);
- const candidates=[];
- // Semua alternatif perubahan satu mata kuliah ke nilai huruf lebih tinggi.
- rows.forEach((r,i)=>{
-  const old=point(r.grade);
-  scale.filter(s=>s.p>old).forEach(s=>{
-   const changed=rows.map((x,j)=>j===i?{...x,grade:s.g}:x);
-   const t=calcTotals(changed,p);
-   if(targetMet(t,p))candidates.push({title:`${r.name}: ${r.grade} → ${s.g}`,detail:`Ubah satu MK saja; perubahan mutu +${fmt(r.sks*(s.p-old))}.`,rows:changed,t,changes:1,gain:r.sks*(s.p-old)});
-  });
- });
- // Alternatif pasangan mata kuliah yang berubah.
- for(let i=0;i<rows.length;i++){
-  for(let j=i+1;j<rows.length;j++){
-   for(const gi of scale.filter(s=>s.p>point(rows[i].grade))){
-    for(const gj of scale.filter(s=>s.p>point(rows[j].grade))){
-     const changed=rows.map((r,k)=>k===i?{...r,grade:gi.g}:k===j?{...r,grade:gj.g}:r);
-     const t=calcTotals(changed,p);
-     if(targetMet(t,p))candidates.push({title:`${rows[i].name}: ${rows[i].grade} → ${gi.g}; ${rows[j].name}: ${rows[j].grade} → ${gj.g}`,detail:"Ubah dua mata kuliah.",rows:changed,t,changes:2,gain:rows[i].sks*(gi.p-point(rows[i].grade))+rows[j].sks*(gj.p-point(rows[j].grade))});
-    }
-   }
+/* Semester data and calculations */
+const initialCourses=[["Database",1],["Praktikum Database",2],["Komunikasi Data",1],["Praktikum Komunikasi Data",2],["Struktur Data",1],["Praktikum Struktur Data",2],["Pemrograman Berbasis Web",1],["Praktikum Pemrograman Berbasis Web",2],["Sistem Informasi Geografis",1],["Praktikum Sistem Informasi Geografis",2],["Sistem Informasi",1],["Praktikum Sistem Informasi",2],["E-Commerce",1],["Praktikum E-Commerce",2],["Kewirausahaan",2],["Praktikum Kewirausahaan",1]];
+function addCourse(name="",sks=2,grade="AB"){const row=document.createElement("div");row.className="courserow";row.innerHTML=`<input class="courseinput cname" aria-label="Nama MK" placeholder="Nama mata kuliah" value="${esc(name)}"><input class="courseinput csks" aria-label="SKS" type="number" min="1" max="30" value="${sks}"><select class="courseselect cgrade" aria-label="Nilai">${grades.map(g=>`<option ${g.g===grade?"selected":""}>${g.g}</option>`).join("")}</select><button class="remove" aria-label="Hapus MK" type="button">×</button>`;row.querySelector(".remove").onclick=()=>{row.remove();calcSemester()};row.querySelectorAll("input,select").forEach(el=>{el.addEventListener("input",calcSemester);el.addEventListener("change",calcSemester)});$("courses").appendChild(row)}
+function getRows(){return [...document.querySelectorAll(".courserow")].map((el,i)=>({name:el.querySelector(".cname").value.trim()||`Mata Kuliah ${i+1}`,sks:+el.querySelector(".csks").value,grade:el.querySelector(".cgrade").value}))}
+function prior(){return{ipk:$("oldIPK").value.trim()===""?null:+$("oldIPK").value,sks:$("oldSKS").value.trim()===""?null:+$("oldSKS").value,ip:$("targetIP").value.trim()===""?null:+$("targetIP").value,ipkTarget:$("targetIPK").value.trim()===""?null:+$("targetIPK").value}}
+function totals(rows,p){const sks=rows.reduce((s,r)=>s+r.sks,0),mutu=rows.reduce((s,r)=>s+r.sks*pts(r.grade),0),ip=sks?mutu/sks:0,ipk=(p.sks+sks)?(p.ipk*p.sks+mutu)/(p.sks+sks):p.ipk;return{sks,mutu,ip,ipk}}
+function met(t,p){return(p.ip===null||t.ip+1e-9>=p.ip)&&(p.ipkTarget===null||t.ipk+1e-9>=p.ipkTarget)}
+function gap(t,p){let g=0;if(p.ip!==null)g=Math.max(g,p.ip*t.sks-t.mutu);if(p.ipkTarget!==null)g=Math.max(g,p.ipkTarget*(p.sks+t.sks)-p.ipk*p.sks-t.mutu);return Math.max(0,g)}
+function semesterOptions(rows,p){
+ const cur=totals(rows,p),opts=[],seen=new Set();
+ if(met(cur,p))return[];
+ function add(candidate){if(!met(candidate.t,p))return;const key=candidate.rows.map(r=>r.grade).join(",");if(seen.has(key))return;seen.add(key);opts.push(candidate)}
+ // All one-MK grade upgrades.
+ rows.forEach((r,i)=>grades.filter(g=>g.p>pts(r.grade)).forEach(g=>{const rr=rows.map((x,j)=>j===i?{...x,grade:g.g}:x);add({rows:rr,t:totals(rr,p),changes:1,gain:r.sks*(g.p-pts(r.grade)),title:`${r.name}: ${r.grade} → ${g.g}`,detail:"Perubahan satu mata kuliah."})}));
+ // All pair upgrades, including all higher letter grades.
+ for(let i=0;i<rows.length;i++)for(let j=i+1;j<rows.length;j++)for(const a of grades.filter(g=>g.p>pts(rows[i].grade)))for(const b of grades.filter(g=>g.p>pts(rows[j].grade))){
+  const rr=rows.map((r,k)=>k===i?{...r,grade:a.g}:k===j?{...r,grade:b.g}:r);
+  add({rows:rr,t:totals(rr,p),changes:2,gain:rows[i].sks*(a.p-pts(rows[i].grade))+rows[j].sks*(b.p-pts(rows[j].grade)),title:`${rows[i].name}: ${rows[i].grade} → ${a.g}; ${rows[j].name}: ${rows[j].grade} → ${b.g}`,detail:"Perubahan dua mata kuliah."});
+ }
+ // Greedy combinations with different prioritization strategies to produce diverse multi-MK solutions.
+ for(const strategy of ["leastGain","highCredit","largestGap"]){
+  const rr=rows.map(r=>({...r})),changes=[];
+  for(let step=0;step<rows.length*6&&!met(totals(rr,p),p);step++){
+   const t=totals(rr,p);let candidates=[];
+   rr.forEach((r,i)=>grades.filter(g=>g.p>pts(r.grade)).forEach(g=>{
+    const trial=rr.map((x,j)=>j===i?{...x,grade:g.g}:x),tt=totals(trial,p),improvement=gap(t,p)-gap(tt,p),gain=r.sks*(g.p-pts(r.grade));
+    if(improvement>0)candidates.push({i,g,trial,improvement,gain,sks:r.sks,delta:g.p-pts(r.grade)});
+   }));
+   if(!candidates.length)break;
+   candidates.sort((a,b)=>strategy==="highCredit"?(b.sks-a.sks||a.gain-b.gain):strategy==="largestGap"?(b.improvement-a.improvement||a.gain-b.gain):(a.gain-b.gain||b.improvement-a.improvement));
+   const c=candidates[0];changes.push(`${rr[c.i].name}: ${rr[c.i].grade} → ${c.g.g}`);rr[c.i]={...rr[c.i],grade:c.g.g};
   }
+  const t=totals(rr,p);if(met(t,p)&&changes.length)add({rows:rr,t,changes:changes.length,gain:t.mutu-cur.mutu,title:`Kombinasi ${changes.length} MK: ${changes.join("; ")}`,detail:`Strategi rekomendasi: ${strategy==="leastGain"?"perubahan mutu relatif kecil":strategy==="highCredit"?"memprioritaskan MK berbobot SKS lebih besar":"mengurangi kekurangan target paling cepat"}.`});
  }
- // Kumpulan kandidat satu MK dan pasangan, diurutkan dari perubahan terkecil.
- candidates.sort((a,b)=>a.changes-b.changes||a.gain-b.gain||a.title.localeCompare(b.title));
- const unique=new Set(),options=[];
- for(const c of candidates){
-  if(unique.has(c.title))continue;unique.add(c.title);options.push(c);
- }
- // Tambahkan kombinasi multi-MK yang ditingkatkan bertahap sampai target tercapai.
- // Pilih peningkatan dengan mutu paling efisien dan selisih nilai terkecil terlebih dahulu.
- const greedyRows=rows.map(r=>({...r}));
- let greedySteps=[];
- for(let step=0;step<rows.length*6;step++){
-  const t=calcTotals(greedyRows,p);
-  if(targetMet(t,p))break;
-  let best=null;
-  greedyRows.forEach((r,i)=>{
-   const next=scale.filter(s=>s.p>point(r.grade)).sort((a,b)=>a.p-b.p);
-   if(!next.length)return;
-   const s=next[0],gain=r.sks*(s.p-point(r.grade));
-   const trial=greedyRows.map((x,j)=>j===i?{...x,grade:s.g}:x);
-   const tt=calcTotals(trial,p);
-   const improvement=targetGap(t,p)-targetGap(tt,p);
-   if(improvement>0&&(!best||gain<best.gain||(gain===best.gain&&improvement>best.improvement)))best={i,s,trial,gain,improvement};
-  });
-  if(!best)break;
-  const r=greedyRows[best.i];
-  greedySteps.push(`${r.name}: ${r.grade} → ${best.s.g}`);
-  greedyRows[best.i]={...r,grade:best.s.g};
- }
- const greedyTotals=calcTotals(greedyRows,p);
- if(targetMet(greedyTotals,p)&&greedySteps.length){
-  const title="Kombinasi beberapa MK: "+greedySteps.join("; ");
-  if(!unique.has(title))options.push({title,detail:"Alternatif kombinasi bertahap; beberapa nilai mata kuliah dinaikkan satu tingkat sampai target tercapai.",rows:greedyRows,t:greedyTotals,changes:greedySteps.length,gain:greedyTotals.mutu-current.mutu});
- }
- if(!options.length){
-  const allA=rows.map(r=>({...r,grade:"A"})),max=calcTotals(allA,p);
-  if(!targetMet(max,p))return`<div class="notice danger">Target tidak dapat dicapai bahkan jika semua mata kuliah semester ini bernilai A. IP maksimum ${fmt(max.ip)} dan IPK maksimum ${fmt(max.ipk)}. Periksa target atau data IPK/SKS sebelumnya.</div>`;
-  return`<div class="notice warning">Belum ditemukan kombinasi yang memenuhi target dalam pencarian satu MK, dua MK, dan kombinasi bertahap. Coba ubah beberapa nilai ke A, lalu hitung kembali.</div>`;
- }
- const shown=options.slice(0,100);
- return`<div class="panel" style="margin-top:18px;padding:18px">
- <div class="panel-title">Alternatif agar Target IP/IPK Tercapai</div>
- <p class="panel-desc">Ditemukan ${options.length} alternatif yang memenuhi target. Ditampilkan hingga 100 opsi, diurutkan berdasarkan jumlah perubahan dan peningkatan mutu.</p>
- ${shown.map((o,i)=>`<div class="recommendation"><h3>Opsi ${i+1}: ${esc(o.title)}</h3><p>${esc(o.detail)}</p><div class="notice ${targetMet(o.t,p)?"success":"info"}">Prediksi IP ${fmt(o.t.ip)} · Prediksi IPK ${fmt(o.t.ipk)}${p.tip!==null?" · Target IP "+fmt(p.tip):""}${p.tipk!==null?" · Target IPK "+fmt(p.tipk):""}</div><button class="btn secondary apply-option" data-option="${i}" style="margin-top:10px">Terapkan opsi ini</button></div>`).join("")}
- </div>`;
+ opts.sort((a,b)=>a.changes-b.changes||a.gain-b.gain||a.title.localeCompare(b.title));
+ return opts;
 }
-function calculateSemester(){
- const p=previousData(),rows=getSemesterRows();
- const err=validateSemester(p,rows);
- if(err){$("semesterMessage").innerHTML=`<div class="notice warning">${esc(err)}</div>`;return;}
- const t=calcTotals(rows,p);
- $("semesterMessage").innerHTML="";
- $("semesterIP").textContent=fmt(t.ip);$("semesterIPK").textContent=fmt(t.ipk);$("semesterSKS").textContent=t.sks;
- $("statOld").textContent=fmt(p.ipk);$("statOldSKS").textContent=p.sks;
- $("semesterResultBody").innerHTML=rows.map(r=>`<tr><td>${esc(r.name)}</td><td>${r.sks}</td><td><span class="pill">${r.grade}</span></td><td>${fmt(point(r.grade))}</td><td>${fmt(r.sks*point(r.grade))}</td></tr>`).join("")||'<tr><td colspan="5">Belum ada mata kuliah.</td></tr>';
- const hasTargets=p.tip!==null||p.tipk!==null;
- if(!hasTargets){
-  $("targetProgress").style.width="0%";
-  $("progressCaption").textContent="Target IP dan IPK belum diisi. Simulasi tetap berjalan.";
-  $("semesterTargetMessage").innerHTML='<div class="notice info">Belum ada target. Isi target IP dan/atau IPK jika ingin mendapatkan opsi peningkatan nilai.</div>';
-  $("semesterAdvice").innerHTML="";return;
+let shownOptions=[];
+function calcSemester(){
+ const p=prior(),rows=getRows();
+ if(p.ipk===null||p.ipk<0||p.ipk>4||p.sks===null||!Number.isInteger(p.sks)||p.sks<0||rows.some(r=>!Number.isInteger(r.sks)||r.sks<1||r.sks>30)||[p.ip,p.ipkTarget].some(x=>x!==null&&(!Number.isFinite(x)||x<0||x>4))){
+  $("semInputMessage").innerHTML='<div class="notice warn">Periksa data: IPK 0–4, SKS sebelumnya bilangan bulat minimal 0, SKS MK 1–30, dan target 0–4. Target boleh kosong.</div>';return;
  }
- const checks=[];
- if(p.tip!==null)checks.push({name:"IP",value:t.ip,target:p.tip});
- if(p.tipk!==null)checks.push({name:"IPK",value:t.ipk,target:p.tipk});
- const achieved=checks.every(c=>c.value+1e-9>=c.target);
- const perc=checks.reduce((s,c)=>s+(c.target===0?100:Math.min(100,c.value/c.target*100)),0)/checks.length;
- $("targetProgress").style.width=Math.max(0,Math.min(100,perc))+"%";
- $("progressCaption").textContent=checks.map(c=>`${c.name} ${fmt(c.value)} / ${fmt(c.target)} (${fmt(c.target===0?100:Math.min(100,c.value/c.target*100),0)}%)`).join(" · ");
- $("semesterTargetMessage").innerHTML=`<div class="notice ${achieved?"success":"warning"}">${checks.map(c=>`${c.name} ${fmt(c.value)} ${c.value+1e-9>=c.target?"mencapai":"belum mencapai"} target ${fmt(c.target)}.`).join(" ")}</div>`;
- if(achieved){$("semesterAdvice").innerHTML='<div class="notice success">Semua target yang diisi sudah tercapai. Kau juga bisa mencoba mengubah nilai untuk melihat simulasi alternatif.</div>';return;}
- $("semesterAdvice").innerHTML=makeSemesterOptions(rows,p);
- // Bind apply buttons to their respective option results.
- const cards=[...$("semesterAdvice").querySelectorAll(".apply-option")];
- // Recompute the exact same option ordering used in the rendered list.
- const options=buildSemesterOptionsForApply(rows,p);
- cards.forEach(btn=>btn.addEventListener("click",()=>{
-  const option=options[Number(btn.dataset.option)];
-  if(!option)return;
-  const rowEls=[...document.querySelectorAll("#semesterCourses .course-row")];
-  option.rows.forEach((r,i)=>{if(rowEls[i])rowEls[i].querySelector(".mk-grade").value=r.grade;});
-  calculateSemester();
-  $("semesterMessage").innerHTML='<div class="notice success">Opsi rekomendasi diterapkan. Nilai di atas telah diperbarui; kau masih bisa mengubahnya lagi.</div>';
- }));
+ $("semInputMessage").innerHTML="";const t=totals(rows,p);$("oldStat").textContent=f(p.ipk);$("sksStat").textContent=p.sks;$("ipValue").textContent=f(t.ip);$("ipkValue").textContent=f(t.ipk);$("semSKS").textContent=t.sks;
+ $("semTable").innerHTML=rows.map(r=>`<tr><td>${esc(r.name)}</td><td>${r.sks}</td><td><span class="pill">${r.grade}</span></td><td>${f(pts(r.grade))}</td><td>${f(r.sks*pts(r.grade))}</td></tr>`).join("");
+ const hasTarget=p.ip!==null||p.ipkTarget!==null;
+ if(!hasTarget){$("progressFill").style.width="0";$("progressText").textContent="Target IP/IPK belum diisi; simulasi tetap berjalan.";$("semStatus").innerHTML='<div class="notice info">Target masih kosong. Isi salah satu target jika ingin melihat rekomendasi pencapaiannya.</div>';$("semOptions").innerHTML="";return}
+ const checks=[];if(p.ip!==null)checks.push({name:"IP",v:t.ip,target:p.ip});if(p.ipkTarget!==null)checks.push({name:"IPK",v:t.ipk,target:p.ipkTarget});
+ const ok=checks.every(c=>c.v+1e-9>=c.target),progress=checks.reduce((s,c)=>s+(c.target===0?100:Math.min(100,c.v/c.target*100)),0)/checks.length;
+ $("progressFill").style.width=Math.max(0,Math.min(100,progress))+"%";$("progressText").textContent=checks.map(c=>`${c.name}: ${f(c.v)} dari target ${f(c.target)}`).join(" · ");
+ $("semStatus").innerHTML=`<div class="notice ${ok?"good":"warn"}">${checks.map(c=>`${c.name} ${f(c.v)} ${c.v+1e-9>=c.target?"sudah memenuhi":"belum memenuhi"} target ${f(c.target)}.`).join(" ")}</div>`;
+ if(ok){$("semOptions").innerHTML='<div class="notice good">Semua target sudah tercapai. Ubah nilai huruf untuk membandingkan simulasi lain.</div>';return}
+ shownOptions=semesterOptions(rows,p);
+ const allA=totals(rows.map(r=>({...r,grade:"A"})),p);
+ if(!met(allA,p)){$("semOptions").innerHTML=`<div class="notice bad">Target tidak mungkin tercapai meskipun semua MK mendapat A. IP maksimum ${f(allA.ip)} dan IPK maksimum ${f(allA.ipk)}. Periksa target atau data awal.</div>`;return}
+ if(!shownOptions.length){$("semOptions").innerHTML='<div class="notice warn">Belum ditemukan alternatif yang valid. Coba periksa kembali nilai dan target.</div>';return}
+ $("semOptions").innerHTML=`<div style="margin-top:20px"><h2>Opsi untuk mencapai target</h2><p class="paneldesc">Ada ${shownOptions.length} kombinasi yang memenuhi target. Ditampilkan hingga 120 opsi, dari perubahan sedikit ke kombinasi lebih banyak. Klik Terapkan untuk mencoba salah satu simulasi.</p>${shownOptions.slice(0,120).map((o,i)=>`<div class="option"><div class="optionhead"><h3>Opsi ${i+1} — ${esc(o.title)}</h3><span class="tag">${o.changes} perubahan</span></div><p>${esc(o.detail)}</p><div class="notice info">Hasil: IP ${f(o.t.ip)} · IPK ${f(o.t.ipk)} · SKS ${o.t.sks}</div><button class="btn ghost applySem" data-i="${i}">Terapkan opsi ini</button></div>`).join("")}</div>`;
+ document.querySelectorAll(".applySem").forEach(b=>b.onclick=()=>{const opt=shownOptions[+b.dataset.i],els=[...document.querySelectorAll(".courserow")];opt.rows.forEach((r,i)=>{if(els[i])els[i].querySelector(".cgrade").value=r.grade});calcSemester();$("semInputMessage").innerHTML='<div class="notice good">Opsi diterapkan. Nilai sudah diperbarui dan bisa kau ubah lagi.</div>';});
 }
-function buildSemesterOptionsForApply(rows,p){
- const current=calcTotals(rows,p),candidates=[],unique=new Set();
- rows.forEach((r,i)=>scale.filter(s=>s.p>point(r.grade)).forEach(s=>{
-  const changed=rows.map((x,j)=>j===i?{...x,grade:s.g}:x),t=calcTotals(changed,p);
-  if(targetMet(t,p))candidates.push({title:`${r.name}: ${r.grade} → ${s.g}`,rows:changed,t,changes:1,gain:r.sks*(s.p-point(r.grade))});
- }));
- for(let i=0;i<rows.length;i++)for(let j=i+1;j<rows.length;j++){
-  for(const a of scale.filter(s=>s.p>point(rows[i].grade)))for(const b of scale.filter(s=>s.p>point(rows[j].grade))){
-   const changed=rows.map((r,k)=>k===i?{...r,grade:a.g}:k===j?{...r,grade:b.g}:r),t=calcTotals(changed,p);
-   if(targetMet(t,p))candidates.push({title:`${rows[i].name}: ${rows[i].grade} → ${a.g}; ${rows[j].name}: ${rows[j].grade} → ${b.g}`,rows:changed,t,changes:2,gain:rows[i].sks*(a.p-point(rows[i].grade))+rows[j].sks*(b.p-point(rows[j].grade))});
-  }
- }
- candidates.sort((a,b)=>a.changes-b.changes||a.gain-b.gain||a.title.localeCompare(b.title));
- for(const c of candidates){if(unique.has(c.title))continue;unique.add(c.title);}
- // Match the exact display order for single and paired options.
- const result=candidates.filter((c,i)=>candidates.findIndex(x=>x.title===c.title)===i);
- const greedy=rows.map(r=>({...r}));
- for(let step=0;step<rows.length*6;step++){
-  const t=calcTotals(greedy,p);if(targetMet(t,p))break;
-  let best=null;
-  greedy.forEach((r,i)=>scale.filter(s=>s.p>point(r.grade)).sort((a,b)=>a.p-b.p).slice(0,1).forEach(s=>{
-   const trial=greedy.map((x,j)=>j===i?{...x,grade:s.g}:x),tt=calcTotals(trial,p);
-   const improvement=targetGap(t,p)-targetGap(tt,p),gain=r.sks*(s.p-point(r.grade));
-   if(improvement>0&&(!best||gain<best.gain||(gain===best.gain&&improvement>best.improvement)))best={i,s,trial,gain,improvement};
-  }));
-  if(!best)break;greedy[best.i]={...greedy[best.i],grade:best.s.g};
- }
- const gt=calcTotals(greedy,p);
- if(targetMet(gt,p)){
-  const title="Kombinasi beberapa MK: "+rows.map((r,i)=>r.grade!==greedy[i].grade?`${r.name}: ${r.grade} → ${greedy[i].grade}`:null).filter(Boolean).join("; ");
-  if(title!=="Kombinasi beberapa MK: ")result.push({title,rows:greedy,t:gt});
- }
- return result;
-}
-$("addCourse").addEventListener("click",()=>{addSemesterCourse("",2,"A");calculateSemester()});
-$("resetSemester").addEventListener("click",()=>{
- $("semesterCourses").innerHTML="";
- semester3.forEach(([n,s])=>addSemesterCourse(n,s,"AB"));
- calculateSemester();
-});
-$("calculateSemester").addEventListener("click",calculateSemester);
-["previousIPK","previousSKS","targetIP","targetIPK"].forEach(id=>$(id).addEventListener("input",calculateSemester));
-
-/* Theme settings */
-function applyTheme(){
- const mode=$("themeMode").value,root=document.documentElement;
- document.body.classList.toggle("dark",mode==="dark");
- root.style.setProperty("--accent",$("buttonColor").value);
- root.style.setProperty("--hover",$("hoverColor").value);
- root.style.setProperty("--bg",mode==="dark"?"#111821":mode==="light"?"#f3f6fb":$("backgroundColor").value);
- root.style.setProperty("--pale",mode==="dark"?"#193c33":$("accentColor").value+"22");
-}
-$("applyTheme").addEventListener("click",applyTheme);
-$("resetTheme").addEventListener("click",()=>{
- $("themeMode").value="light";$("backgroundColor").value="#f3f6fb";$("buttonColor").value="#0eaa78";$("hoverColor").value="#07865d";$("accentColor").value="#0eaa78";applyTheme();
-});
-
-/* Initialize */
-drawWeights();
-semester3.forEach(([name,sks])=>addSemesterCourse(name,sks,"AB"));
-calculateSemester();
+function resetSemester(){ $("courses").innerHTML="";initialCourses.forEach(([n,s])=>addCourse(n,s,"AB"));calcSemester()}
+$("addMK").onclick=()=>{addCourse("",2,"AB");calcSemester()};$("resetSem").onclick=resetSemester;$("calcSem").onclick=calcSemester;["oldIPK","oldSKS","targetIP","targetIPK"].forEach(id=>$(id).addEventListener("input",calcSemester));
+function applyTheme(){const mode=$("mode").value;document.body.classList.toggle("dark",mode==="dark");document.documentElement.style.setProperty("--green",$("maincolor").value);document.documentElement.style.setProperty("--green2",$("hovercolor").value);document.documentElement.style.setProperty("--bg",mode==="dark"?"#111821":mode==="light"?"#f3f6fb":$("bgcolor").value)}
+$("applyTheme").onclick=applyTheme;$("defaultTheme").onclick=()=>{$("mode").value="light";$("bgcolor").value="#f3f6fb";$("maincolor").value="#0ba879";$("hovercolor").value="#087b59";applyTheme()};
+drawComponents();resetSemester();
 </script>
 </body>
 </html>
