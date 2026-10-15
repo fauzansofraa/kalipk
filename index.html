@@ -1,470 +1,874 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kalkulator Nilai Mahasiswa</title>
-  <style>
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --bg: #f4f7fb;
-      --card: #ffffff;
-      --text: #172033;
-      --muted: #667085;
-      --border: #e2e8f0;
-      --soft: #eff6ff;
-      --success: #15803d;
-      --danger: #b91c1c;
-      --radius: 16px;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.5;
-    }
-    .container { width: min(980px, calc(100% - 28px)); margin: 32px auto 56px; }
-    header { margin-bottom: 24px; }
-    .eyebrow { color: var(--primary); font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
-    h1 { font-size: clamp(1.7rem, 5vw, 2.35rem); line-height: 1.15; margin: 8px 0; }
-    .subtitle { color: var(--muted); margin: 0; max-width: 680px; }
-    .tabs { display: flex; gap: 8px; padding: 6px; background: #e9eef7; border-radius: 13px; margin: 24px 0 18px; }
-    .tab { flex: 1; border: 0; border-radius: 9px; padding: 12px 10px; background: transparent; color: #475467; font: inherit; font-weight: 700; cursor: pointer; }
-    .tab.active { background: white; color: var(--primary); box-shadow: 0 2px 7px #1d293910; }
-    .panel { display: none; }
-    .panel.active { display: block; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(17px, 4vw, 26px); margin-bottom: 18px; box-shadow: 0 5px 20px #17203308; }
-    .section-title { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
-    .section-icon { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 12px; background: var(--soft); font-size: 1.35rem; }
-    h2 { font-size: 1.25rem; margin: 0 0 3px; }
-    h3 { font-size: 1rem; margin: 0; }
-    .hint { color: var(--muted); font-size: .9rem; margin: 0; }
-    .course, .component { border: 1px solid var(--border); border-radius: 13px; padding: 16px; margin-bottom: 12px; }
-    .item-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 13px; }
-    .item-number { color: var(--muted); font-size: .8rem; font-weight: 700; }
-    .fields { display: grid; grid-template-columns: 1fr 150px 170px; gap: 12px; }
-    .fields.two { grid-template-columns: 1fr 1fr; }
-    .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-    label { font-size: .86rem; font-weight: 700; color: #344054; }
-    input, select {
-      width: 100%; min-width: 0; border: 1px solid #cfd7e4; border-radius: 9px;
-      padding: 11px 12px; color: var(--text); background: white; font: inherit; outline: none;
-    }
-    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px #2563eb1a; }
-    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-    button { font: inherit; }
-    .btn { border: 0; border-radius: 10px; padding: 11px 15px; font-weight: 750; cursor: pointer; transition: .15s ease; }
-    .btn:active { transform: translateY(1px); }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-outline { background: white; color: var(--primary); border: 1px solid #b9cdfb; }
-    .btn-outline:hover { background: var(--soft); }
-    .btn-remove { background: #fff1f2; color: var(--danger); padding: 7px 10px; font-size: .84rem; }
-    .btn-full { width: 100%; margin-top: 14px; }
-    .result { display: none; border-radius: 13px; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 18px; margin-top: 18px; }
-    .result.show { display: block; }
-    .result-label { color: #166534; font-size: .9rem; font-weight: 700; }
-    .big-number { color: #166534; font-size: 2.3rem; line-height: 1.2; font-weight: 850; margin: 5px 0 12px; letter-spacing: -.04em; }
-    .stats { display: flex; flex-wrap: wrap; gap: 10px; }
-    .stat { background: white; border: 1px solid #d9f3df; border-radius: 9px; padding: 9px 12px; font-size: .9rem; }
-    .message { display: none; margin-top: 12px; padding: 11px 12px; border-radius: 9px; font-size: .9rem; }
-    .message.error { display: block; color: var(--danger); background: #fff1f2; border: 1px solid #fecdd3; }
-    .scale { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: .9rem; }
-    .scale th, .scale td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
-    .scale th { color: var(--muted); font-size: .8rem; background: #f8fafc; }
-    .scale td:last-child, .scale th:last-child { text-align: right; }
-    .scale-wrap { overflow-x: auto; }
-    .weight-summary { padding: 14px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; margin-top: 14px; }
-    .weight-line { display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; margin-bottom: 9px; }
-    .progress { height: 7px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
-    .progress span { display: block; height: 100%; width: 0; background: var(--primary); transition: width .2s; }
-    .contribution { color: var(--muted); font-size: .82rem; margin-top: 10px; }
-    footer { color: var(--muted); text-align: center; font-size: .82rem; padding-top: 10px; }
-    @media (max-width: 680px) {
-      .container { margin-top: 22px; }
-      .fields { grid-template-columns: 1fr 1fr; }
-      .fields .field:first-child { grid-column: 1 / -1; }
-      .fields.two { grid-template-columns: 1fr 1fr; }
-      .tabs { position: sticky; top: 6px; z-index: 10; }
-      .tab { font-size: .88rem; }
-    }
-    @media (max-width: 390px) {
-      .fields, .fields.two { grid-template-columns: 1fr; }
-      .fields .field:first-child { grid-column: auto; }
-      .btn-row .btn { width: 100%; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Nilai Mahasiswa</title>
+<style>
+:root {
+  --primary: #167d63;
+  --primary-dark: #105c49;
+  --bg: #f3f7f6;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #dce5e1;
+  --danger: #dc2626;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+header {
+  background: linear-gradient(135deg, #12664f, #219879);
+  color: white;
+  padding: 30px 18px;
+  text-align: center;
+}
+header h1 { margin: 0 0 8px; font-size: 27px; }
+header p { margin: 0; opacity: .9; }
+.container { max-width: 1050px; margin: 24px auto; padding: 0 16px 40px; }
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn {
+  flex: 1;
+  min-width: 180px;
+  border: 1px solid var(--border);
+  padding: 13px;
+  border-radius: 10px;
+  background: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.panel {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 5px 18px #153c2d0b;
+}
+.panel.active { display: block; }
+h2 { margin-top: 0; font-size: 22px; }
+h3 { font-size: 17px; margin-bottom: 10px; }
+.description { color: var(--muted); font-size: 14px; margin-top: -8px; margin-bottom: 20px; }
+label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+input, select {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #cbd5d1;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  color: var(--text);
+}
+input:focus, select:focus { outline: 2px solid #8dd4bc; border-color: var(--primary); }
+input[readonly] { background: #edf3f0; color: #52645c; }
+.field { min-width: 0; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.course-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(75px, .65fr) minmax(110px, .8fr) 42px;
+  gap: 10px;
+  align-items: end;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  margin-bottom: 10px;
+  background: #fcfefd;
+}
+.component-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(85px, .65fr) minmax(100px, .8fr) 42px;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 9px;
+  background: #fcfefd;
+}
+.row-number { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: #e5f2ed; color: #145b47; }
+.btn-danger { background: #fee2e2; color: #b91c1c; padding: 10px; }
+.actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 15px; }
+.divider { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
+.result {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #edf8f2;
+  border: 1px solid #c5e8d5;
+  display: none;
+}
+.result.show { display: block; }
+.result h3 { margin-top: 0; }
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.metric {
+  background: white;
+  border: 1px solid #d9e9df;
+  border-radius: 10px;
+  padding: 13px;
+  min-width: 0;
+}
+.metric .name { color: var(--muted); font-size: 12px; margin-bottom: 5px; }
+.metric .value { font-size: 23px; font-weight: bold; overflow-wrap: anywhere; }
+.metric.featured { background: var(--primary); color: white; border-color: var(--primary); }
+.metric.featured .name { color: #d6f3e8; }
+.notice {
+  padding: 12px 14px;
+  border-radius: 9px;
+  background: #f0f6f4;
+  color: #426055;
+  font-size: 13px;
+  margin: 14px 0;
+}
+.warning {
+  padding: 12px 14px;
+  border-radius: 9px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  margin-top: 12px;
+  font-size: 14px;
+}
+.small { color: var(--muted); font-size: 12px; }
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+table { width: 100%; border-collapse: collapse; background: white; }
+th, td { border: 1px solid var(--border); padding: 9px; text-align: left; font-size: 13px; }
+th { background: #edf4f0; }
+.grade-pill {
+  display: inline-block; padding: 5px 12px; border-radius: 30px;
+  background: #d1fae5; color: #065f46; font-weight: bold;
+}
+@media(max-width: 700px) {
+  .container { padding: 0 10px 28px; margin-top: 14px; }
+  .panel { padding: 15px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .course-row, .component-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .course-row .field:first-child,
+  .component-row .field:first-child { grid-column: 1 / -1; }
+  .course-row .remove-cell,
+  .component-row .remove-cell { grid-column: 1 / -1; }
+  .remove-cell button { width: 100%; }
+  .result-grid { grid-template-columns: 1fr 1fr; }
+  header h1 { font-size: 22px; }
+}
+@media(max-width: 400px) {
+  .result-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-  <main class="container">
-    <header>
-      <div class="eyebrow">Student tools</div>
-      <h1>Kalkulator Nilai Mahasiswa</h1>
-      <p class="subtitle">Hitung IP semester atau nilai akhir satu mata kuliah dengan mudah. Bisa digunakan langsung dari HP maupun laptop.</p>
-    </header>
 
-    <nav class="tabs" aria-label="Pilih kalkulator">
-      <button class="tab active" data-tab="ip">📚 Kalkulator IP</button>
-      <button class="tab" data-tab="mk">🧮 Nilai 1 MK</button>
-    </nav>
+<header>
+  <h1>Kalkulator Nilai Mahasiswa</h1>
+  <p>Simulasi IPS, IPK kumulatif, dan nilai akhir mata kuliah</p>
+</header>
 
-    <section class="panel active" id="panel-ip">
-      <div class="card">
-        <div class="section-title">
-          <div class="section-icon">📚</div>
-          <div>
-            <h2>Input mata kuliah</h2>
-            <p class="hint">Pilih mata kuliah dari daftar. Jumlah SKS akan terisi otomatis; pilih nilai hurufnya saja.</p>
-          </div>
-        </div>
-        <div class="fields two" style="margin-bottom:16px">
-          <div class="field">
-            <label for="previous-gpa">IPK sebelumnya</label>
-            <input id="previous-gpa" type="number" min="0" max="4" step="0.01" value="3.55" placeholder="Contoh: 3.55">
-          </div>
-          <div class="field">
-            <label for="previous-sks">Total SKS sebelumnya</label>
-            <input id="previous-sks" type="number" min="0" step="1" value="40" placeholder="Contoh: 40">
-          </div>
-        </div>
-        <p class="hint" style="margin:-6px 0 16px">Nilai awal sudah diisi: IPK 3,55 dari 40 SKS. Ubah jika diperlukan.</p>
-        <div id="courses"></div>
-        <div class="btn-row">
-          <button class="btn btn-outline" id="add-course">＋ Tambah mata kuliah</button>
-          <button class="btn btn-primary" id="calculate-ip">Hitung IP semester</button>
-        </div>
-        <div id="ip-error" class="message" role="alert"></div>
-        <div id="ip-result" class="result" aria-live="polite"></div>
-      </div>
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="semester">1. Hitung IP Semester</button>
+    <button class="tab-btn" data-tab="mk">2. Hitung Nilai 1 MK</button>
+  </div>
 
-      <div class="card">
-        <h2>Skala nilai</h2>
-        <p class="hint">Nilai angka dikonversi ke huruf dan bobot sesuai skala berikut.</p>
-        <div class="scale-wrap">
-          <table class="scale">
-            <thead><tr><th>Nilai angka</th><th>Huruf</th><th>Bobot</th></tr></thead>
-            <tbody>
-              <tr><td>87–100</td><td><strong>A</strong></td><td>4,0</td></tr>
-              <tr><td>78–&lt;87</td><td><strong>AB</strong></td><td>3,5</td></tr>
-              <tr><td>69–&lt;78</td><td><strong>B</strong></td><td>3,0</td></tr>
-              <tr><td>60–&lt;69</td><td><strong>BC</strong></td><td>2,5</td></tr>
-              <tr><td>51–&lt;60</td><td><strong>C</strong></td><td>2,0</td></tr>
-              <tr><td>41–&lt;51</td><td><strong>D</strong></td><td>1,0</td></tr>
-              <tr><td>&lt;41</td><td><strong>E</strong></td><td>0</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+  <!-- FORM 1: IP SEMESTER DAN IPK -->
+  <section class="panel active" id="semester">
+    <h2>Hitung IP Semester dan IPK</h2>
+    <p class="description">Pilih mata kuliah, lalu SKS terisi otomatis. Masukkan nilai huruf untuk menghitung IPS dan IPK kumulatif.</p>
 
-    <section class="panel" id="panel-mk">
-      <div class="card">
-        <div class="section-title">
-          <div class="section-icon">🧮</div>
-          <div>
-            <h2>Kalkulator nilai satu MK</h2>
-            <p class="hint">Masukkan komponen penilaian, bobot, dan nilai yang diperoleh.</p>
-          </div>
-        </div>
-        <div class="field" style="margin-bottom:16px">
-          <label for="course-name">Nama mata kuliah</label>
-          <input id="course-name" placeholder="Contoh: Sistem Informasi">
-        </div>
-        <div id="components"></div>
-        <div class="weight-summary">
-          <div class="weight-line"><span>Total bobot</span><strong id="weight-total">100%</strong></div>
-          <div class="progress"><span id="weight-progress"></span></div>
-          <p class="hint" id="weight-hint" style="margin-top:9px">Pastikan total bobot tepat 100%.</p>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-outline" id="add-component">＋ Tambah komponen</button>
-          <button class="btn btn-primary" id="calculate-grade">Hitung nilai akhir</button>
-        </div>
-        <div id="grade-error" class="message" role="alert"></div>
-        <div id="grade-result" class="result" aria-live="polite"></div>
+    <div class="grid-2">
+      <div class="field">
+        <label for="previousGpa">IPK sebelumnya</label>
+        <input type="number" id="previousGpa" min="0" max="4" step="0.01" value="3.55">
       </div>
-      <div class="card">
-        <h2>Contoh komponen</h2>
-        <p class="hint">Contoh awal menggunakan Tugas 20%, UTS 30%, dan UAS 50%. Lu bebas mengubah atau menambah komponen seperti kehadiran, kuis, dan praktikum sesuai aturan dosen.</p>
-      </div>
-    </section>
-    <footer>Kalkulator sederhana untuk simulasi nilai. Ikuti ketentuan penilaian resmi dari dosen masing-masing.</footer>
-  </main>
-
-  <template id="course-template">
-    <div class="course">
-      <div class="item-head">
-        <div><div class="item-number">MATA KULIAH</div><h3 class="item-title">Mata Kuliah</h3></div>
-        <button type="button" class="btn btn-remove remove-course">Hapus</button>
-      </div>
-      <div class="fields">
-        <div class="field"><label>Nama MK</label>
-          <select class="c-name">
-            <option value="">Pilih mata kuliah</option>
-            <option value="Database" data-sks="1">Database (1 SKS)</option>
-            <option value="Praktikum Database" data-sks="2">Praktikum Database (2 SKS)</option>
-            <option value="Komunikasi Data" data-sks="1">Komunikasi Data (1 SKS)</option>
-            <option value="Praktikum Komunikasi Data" data-sks="2">Praktikum Komunikasi Data (2 SKS)</option>
-            <option value="Struktur Data" data-sks="1">Struktur Data (1 SKS)</option>
-            <option value="Praktikum Struktur Data" data-sks="2">Praktikum Struktur Data (2 SKS)</option>
-            <option value="Pemrograman Berbasis Web" data-sks="1">Pemrograman Berbasis Web (1 SKS)</option>
-            <option value="Praktikum Pemrograman Berbasis Web" data-sks="2">Praktikum Pemrograman Berbasis Web (2 SKS)</option>
-            <option value="Sistem Informasi Geografis" data-sks="1">Sistem Informasi Geografis (1 SKS)</option>
-            <option value="Praktikum Sistem Informasi Geografis" data-sks="2">Praktikum Sistem Informasi Geografis (2 SKS)</option>
-            <option value="Sistem Informasi" data-sks="1">Sistem Informasi (1 SKS)</option>
-            <option value="Praktikum Sistem Informasi" data-sks="2">Praktikum Sistem Informasi (2 SKS)</option>
-            <option value="E-Commerce" data-sks="1">E-Commerce (1 SKS)</option>
-            <option value="Praktikum E-Commerce" data-sks="2">Praktikum E-Commerce (2 SKS)</option>
-            <option value="Kewirausahaan" data-sks="2">Kewirausahaan (2 SKS)</option>
-            <option value="Praktikum Kewirausahaan" data-sks="1">Praktikum Kewirausahaan (1 SKS)</option>
-          </select>
-        </div>
-        <div class="field"><label>Jumlah SKS</label><input class="c-sks" type="number" min="1" step="1" placeholder="Otomatis" readonly></div>
-        <div class="field"><label>Nilai huruf</label>
-          <select class="c-grade">
-            <option value="A">A — 4,0</option><option value="AB">AB — 3,5</option>
-            <option value="B">B — 3,0</option><option value="BC">BC — 2,5</option>
-            <option value="C">C — 2,0</option><option value="D">D — 1,0</option>
-            <option value="E">E — 0</option>
-          </select>
-        </div>
+      <div class="field">
+        <label for="previousSks">Total SKS sebelumnya</label>
+        <input type="number" id="previousSks" min="0" step="1" value="40">
       </div>
     </div>
-  </template>
 
-  <template id="component-template">
-    <div class="component">
-      <div class="item-head">
-        <div><div class="item-number">KOMPONEN PENILAIAN</div><h3 class="component-title">Komponen</h3></div>
-        <button type="button" class="btn btn-remove remove-component">Hapus</button>
+    <hr class="divider">
+    <h3>Daftar mata kuliah semester ini</h3>
+    <div id="courseList"></div>
+
+    <div class="actions">
+      <button class="btn-secondary" id="addCourse">+ Tambah mata kuliah</button>
+      <button class="btn-primary" id="calculateSemester">Hitung IP Semester</button>
+    </div>
+
+    <div id="semesterError" class="warning" style="display:none"></div>
+    <div id="semesterResult" class="result">
+      <h3>Hasil Simulasi Semester</h3>
+      <div class="result-grid">
+        <div class="metric featured">
+          <div class="name">IP Semester (IPS)</div>
+          <div class="value" id="outIps">-</div>
+        </div>
+        <div class="metric featured">
+          <div class="name">IPK Setelah Simulasi</div>
+          <div class="value" id="outIpk">-</div>
+        </div>
+        <div class="metric">
+          <div class="name">Total mutu semester ini</div>
+          <div class="value" id="outTermQuality">-</div>
+        </div>
+        <div class="metric">
+          <div class="name">Mutu sebelumnya</div>
+          <div class="value" id="outPreviousQuality">-</div>
+        </div>
+        <div class="metric">
+          <div class="name">Total mutu keseluruhan</div>
+          <div class="value" id="outTotalQuality">-</div>
+        </div>
+        <div class="metric">
+          <div class="name">Total SKS keseluruhan</div>
+          <div class="value" id="outTotalSks">-</div>
+        </div>
       </div>
-      <div class="fields two">
-        <div class="field"><label>Nama komponen</label><input class="p-name" placeholder="Contoh: Tugas"></div>
-        <div class="field"><label>Bobot (%)</label><input class="p-weight" type="number" min="0" max="100" step="any" placeholder="Contoh: 20"></div>
-        <div class="field"><label>Nilai (0–100)</label><input class="p-score" type="number" min="0" max="100" step="any" placeholder="Contoh: 85"></div>
-        <div class="field"><label>Kontribusi nilai</label><input class="p-contribution" readonly placeholder="—"></div>
+      <div id="semesterDetails" class="table-wrap"></div>
+      <div class="actions">
+        <button class="btn-secondary" id="copySemester">Salin rekap hasil</button>
       </div>
     </div>
-  </template>
+  </section>
 
-  <script>
-    const gradePoints = { A: 4, AB: 3.5, B: 3, BC: 2.5, C: 2, D: 1, E: 0 };
-    const gradeScale = [
-      { grade: "A", min: 87, point: 4 },
-      { grade: "AB", min: 78, point: 3.5 },
-      { grade: "B", min: 69, point: 3 },
-      { grade: "BC", min: 60, point: 2.5 },
-      { grade: "C", min: 51, point: 2 },
-      { grade: "D", min: 41, point: 1 },
-      { grade: "E", min: 0, point: 0 }
-    ];
-    const fmt = (n, digits = 2) => n.toLocaleString("id-ID", { minimumFractionDigits: digits, maximumFractionDigits: digits });
-    const coursesEl = document.getElementById("courses");
-    const componentsEl = document.getElementById("components");
+  <!-- FORM 2: NILAI SATU MATA KULIAH -->
+  <section class="panel" id="mk">
+    <h2>Hitung Nilai Akhir 1 Mata Kuliah</h2>
+    <p class="description">Pilih mata kuliah yang tersedia untuk mengisi bobot otomatis, atau pilih Lainnya / Manual untuk mengatur komponen sendiri.</p>
 
-    // Tab navigation
-    document.querySelectorAll(".tab").forEach(button => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b === button));
-        document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === `panel-${button.dataset.tab}`));
-      });
+    <div class="field">
+      <label for="presetSelect">Pilih mata kuliah / template bobot</label>
+      <select id="presetSelect">
+        <option value="prak_pbw">1. Praktikum Pemrograman Berbasis Web</option>
+        <option value="prak_database">2. Praktikum Database</option>
+        <option value="prak_gis">3. Praktikum GIS</option>
+        <option value="prak_si">4. Praktikum Sistem Informasi</option>
+        <option value="prak_std">5. Praktikum Struktur Data</option>
+        <option value="komdat_teori">6. Komunikasi Data Teori</option>
+        <option value="sig_teori">7. SIG Teori</option>
+        <option value="ecommerce_teori">8. E-Commerce Teori</option>
+        <option value="si_teori">9. Sistem Informasi Teori</option>
+        <option value="database_teori">10. Database Teori</option>
+        <option value="ecommerce_prak">11. Praktikum E-Commerce</option>
+        <option value="wirausaha_prak">12. Praktikum Kewirausahaan</option>
+        <option value="manual">Lainnya / Manual — atur bobot sendiri</option>
+      </select>
+    </div>
+
+    <div class="notice" id="presetDescription">
+      Pilih template untuk menampilkan komponen dan bobot nilai secara otomatis.
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="mkName">Nama mata kuliah</label>
+        <input id="mkName" type="text" placeholder="Contoh: Praktikum Database">
+      </div>
+      <div class="field">
+        <label for="mkTarget">Target nilai akhir (opsional)</label>
+        <input id="mkTarget" type="number" min="0" max="100" step="0.1" placeholder="Contoh: 87">
+      </div>
+    </div>
+
+    <hr class="divider">
+    <h3>Komponen dan nilai</h3>
+    <p class="small">Bobot dalam persen. Isi nilai setiap komponen dari 0 sampai 100. Pada mode manual, nama dan bobot bisa diubah serta komponen bisa ditambahkan.</p>
+
+    <div id="componentList"></div>
+    <div class="actions">
+      <button class="btn-secondary" id="addComponent">+ Tambah komponen</button>
+      <button class="btn-primary" id="calculateMk">Hitung Nilai Akhir</button>
+    </div>
+    <div id="mkError" class="warning" style="display:none"></div>
+
+    <div id="mkResult" class="result">
+      <h3>Hasil Nilai Akhir</h3>
+      <div class="result-grid">
+        <div class="metric featured">
+          <div class="name">Nilai akhir</div>
+          <div class="value" id="outFinal">-</div>
+        </div>
+        <div class="metric featured">
+          <div class="name">Prediksi nilai huruf</div>
+          <div class="value" id="outLetter">-</div>
+        </div>
+        <div class="metric">
+          <div class="name">Total bobot</div>
+          <div class="value" id="outWeight">-</div>
+        </div>
+        <div class="metric">
+          <div class="name">Sisa / kelebihan bobot</div>
+          <div class="value" id="outWeightGap">-</div>
+        </div>
+      </div>
+      <div id="mkDetails" class="table-wrap"></div>
+      <div class="actions">
+        <button class="btn-secondary" id="copyMk">Salin rekap nilai</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =============================
+   DATA MATA KULIAH DAN SKS
+============================= */
+const courses = [
+  { name: "Database", sks: 1 },
+  { name: "Praktikum Database", sks: 2 },
+  { name: "Komunikasi Data", sks: 1 },
+  { name: "Praktikum Komunikasi Data", sks: 2 },
+  { name: "Struktur Data", sks: 1 },
+  { name: "Praktikum Struktur Data", sks: 2 },
+  { name: "Pemrograman Berbasis Web", sks: 1 },
+  { name: "Praktikum Pemrograman Berbasis Web", sks: 2 },
+  { name: "Sistem Informasi Geografis", sks: 1 },
+  { name: "Praktikum Sistem Informasi Geografis", sks: 2 },
+  { name: "Sistem Informasi", sks: 1 },
+  { name: "Praktikum Sistem Informasi", sks: 2 },
+  { name: "E-Commerce", sks: 1 },
+  { name: "Praktikum E-Commerce", sks: 2 },
+  { name: "Kewirausahaan", sks: 2 },
+  { name: "Praktikum Kewirausahaan", sks: 1 }
+];
+
+const gradePoints = {
+  "A": 4.0,
+  "AB": 3.5,
+  "B": 3.0,
+  "BC": 2.5,
+  "C": 2.0,
+  "D": 1.0,
+  "E": 0
+};
+
+const gradeOptions = ["A", "AB", "B", "BC", "C", "D", "E"];
+
+/* =============================
+   TEMPLATE BOBOT FORM 2
+============================= */
+const presets = {
+  prak_pbw: {
+    name: "Praktikum Pemrograman Berbasis Web",
+    description: "Kehadiran 15%, Kuis 10%, Tugas 20%, UTS 25%, UAS 30%.",
+    components: [
+      ["Kehadiran", 15], ["Kuis", 10], ["Tugas", 20],
+      ["UTS", 25], ["UAS", 30]
+    ]
+  },
+  prak_database: {
+    name: "Praktikum Database",
+    description: "Kuis 15%, Tugas 25%, UTS 25%, UAS 35%.",
+    components: [
+      ["Kuis", 15], ["Tugas", 25], ["UTS", 25], ["UAS", 35]
+    ]
+  },
+  prak_gis: {
+    name: "Praktikum GIS",
+    description: "Kuis 10%, Tugas 25%, UTS 30%, UAS 35%.",
+    components: [
+      ["Kuis", 10], ["Tugas", 25], ["UTS", 30], ["UAS", 35]
+    ]
+  },
+  prak_si: {
+    name: "Praktikum Sistem Informasi",
+    description: "Kehadiran 20%, Tugas 15%, UTS 30%, UAS 35%.",
+    components: [
+      ["Kehadiran", 20], ["Tugas", 15], ["UTS", 30], ["UAS", 35]
+    ]
+  },
+  prak_std: {
+    name: "Praktikum Struktur Data",
+    description: "Kehadiran 10%, Tugas 15%, Kuis 10%, UTS 30%, UAS 35%.",
+    components: [
+      ["Kehadiran", 10], ["Tugas", 15], ["Kuis", 10],
+      ["UTS", 30], ["UAS", 35]
+    ]
+  },
+  komdat_teori: {
+    name: "Komunikasi Data Teori",
+    description: "Tugas 20%, Kuis 20%, UTS 30%, UAS 30%.",
+    components: [
+      ["Tugas", 20], ["Kuis", 20], ["UTS", 30], ["UAS", 30]
+    ]
+  },
+  sig_teori: {
+    name: "SIG Teori",
+    description: "Kuis 15%, Tugas/Latihan 25%, UTS 25%, UAS 35%.",
+    components: [
+      ["Kuis", 15], ["Tugas/Latihan", 25], ["UTS", 25], ["UAS", 35]
+    ]
+  },
+  ecommerce_teori: {
+    name: "E-Commerce Teori",
+    description: "Kuis 15%, UTS 35%, Proyek 50%.",
+    components: [
+      ["Kuis", 15], ["UTS", 35], ["Proyek", 50]
+    ]
+  },
+  si_teori: {
+    name: "Sistem Informasi Teori",
+    description: "Tugas 15%, Kuis 10%, UTS 35%, UAS 40%.",
+    components: [
+      ["Tugas", 15], ["Kuis", 10], ["UTS", 35], ["UAS", 40]
+    ]
+  },
+  database_teori: {
+    name: "Database Teori",
+    description: "Praktikum 15%, Kuis 15%, Tugas/Latihan 20%, UTS 25%, UAS 25%.",
+    components: [
+      ["Praktikum", 15], ["Kuis", 15], ["Tugas/Latihan", 20],
+      ["UTS", 25], ["UAS", 25]
+    ]
+  },
+  ecommerce_prak: {
+    name: "Praktikum E-Commerce",
+    description: "Kehadiran 15%, Tugas 15%, Kuis 10%, UTS 25%, UAS 35%.",
+    components: [
+      ["Kehadiran", 15], ["Tugas", 15], ["Kuis", 10],
+      ["UTS", 25], ["UAS", 35]
+    ]
+  },
+  wirausaha_prak: {
+    name: "Praktikum Kewirausahaan",
+    description: "Absensi 15%, Tugas/Kuis 20%, UTS 30%, UAS 35%.",
+    components: [
+      ["Absensi", 15], ["Tugas/Kuis", 20], ["UTS", 30], ["UAS", 35]
+    ]
+  },
+  manual: {
+    name: "",
+    description: "Mode manual: tentukan sendiri nama komponen, bobot, dan nilai. Total bobot wajib 100%.",
+    components: [
+      ["Tugas", 30], ["UTS", 30], ["UAS", 40]
+    ]
+  }
+};
+
+/* =============================
+   TAB NAVIGATION
+============================= */
+document.querySelectorAll(".tab-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    button.classList.add("active");
+    document.getElementById(button.dataset.tab).classList.add("active");
+  });
+});
+
+/* =============================
+   FORM 1: IPS / IPK
+============================= */
+const courseList = document.getElementById("courseList");
+
+function makeCourseOptions(selectedName = "") {
+  return '<option value="">-- Pilih mata kuliah --</option>' +
+    courses.map(c =>
+      `<option value="${escapeHtml(c.name)}" ${c.name === selectedName ? "selected" : ""}>${escapeHtml(c.name)} (${c.sks} SKS)</option>`
+    ).join("");
+}
+
+function addCourseRow(defaultCourse = "", defaultGrade = "") {
+  const row = document.createElement("div");
+  row.className = "course-row";
+
+  row.innerHTML = `
+    <div class="field">
+      <div class="row-number">Mata kuliah</div>
+      <select class="course-name">${makeCourseOptions(defaultCourse)}</select>
+    </div>
+    <div class="field">
+      <div class="row-number">SKS otomatis</div>
+      <input class="course-sks" type="number" readonly placeholder="SKS">
+    </div>
+    <div class="field">
+      <div class="row-number">Nilai huruf</div>
+      <select class="course-grade">
+        <option value="">-- Nilai --</option>
+        ${gradeOptions.map(g => `<option value="${g}" ${g === defaultGrade ? "selected" : ""}>${g} (${gradePoints[g]})</option>`).join("")}
+      </select>
+    </div>
+    <div class="remove-cell">
+      <button class="btn-danger remove-course" type="button" title="Hapus mata kuliah">Hapus</button>
+    </div>
+  `;
+
+  const nameSelect = row.querySelector(".course-name");
+  const sksInput = row.querySelector(".course-sks");
+
+  function updateSks() {
+    const selected = courses.find(c => c.name === nameSelect.value);
+    sksInput.value = selected ? selected.sks : "";
+  }
+
+  nameSelect.addEventListener("change", () => {
+    updateSks();
+    hideSemesterResult();
+  });
+  row.querySelector(".course-grade").addEventListener("change", hideSemesterResult);
+  row.querySelector(".remove-course").addEventListener("click", () => {
+    row.remove();
+    hideSemesterResult();
+  });
+
+  courseList.appendChild(row);
+  updateSks();
+}
+
+function hideSemesterResult() {
+  document.getElementById("semesterResult").classList.remove("show");
+  document.getElementById("semesterError").style.display = "none";
+}
+
+document.getElementById("addCourse").addEventListener("click", () => addCourseRow());
+addCourseRow();
+
+function letterFromScore(score) {
+  if (score >= 87) return "A";
+  if (score >= 78) return "AB";
+  if (score >= 69) return "B";
+  if (score >= 60) return "BC";
+  if (score >= 51) return "C";
+  if (score >= 41) return "D";
+  return "E";
+}
+
+function showError(id, message) {
+  const el = document.getElementById(id);
+  el.textContent = message;
+  el.style.display = "block";
+}
+
+document.getElementById("calculateSemester").addEventListener("click", () => {
+  hideSemesterResult();
+
+  const previousGpa = Number(document.getElementById("previousGpa").value);
+  const previousSks = Number(document.getElementById("previousSks").value);
+  const rows = [...courseList.querySelectorAll(".course-row")];
+
+  if (!Number.isFinite(previousGpa) || previousGpa < 0 || previousGpa > 4) {
+    return showError("semesterError", "IPK sebelumnya harus di antara 0 sampai 4.");
+  }
+  if (!Number.isInteger(previousSks) || previousSks < 0) {
+    return showError("semesterError", "Total SKS sebelumnya harus berupa bilangan bulat minimal 0.");
+  }
+  if (!rows.length) return showError("semesterError", "Tambahkan setidaknya satu mata kuliah.");
+
+  let termSks = 0;
+  let termQuality = 0;
+  const details = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const name = rows[i].querySelector(".course-name").value;
+    const sks = Number(rows[i].querySelector(".course-sks").value);
+    const grade = rows[i].querySelector(".course-grade").value;
+
+    if (!name) return showError("semesterError", `Pilih mata kuliah pada baris ${i + 1}.`);
+    if (!grade) return showError("semesterError", `Pilih nilai huruf untuk ${name}.`);
+
+    const quality = sks * gradePoints[grade];
+    termSks += sks;
+    termQuality += quality;
+    details.push({ name, sks, grade, point: gradePoints[grade], quality });
+  }
+
+  if (termSks === 0) return showError("semesterError", "Total SKS semester ini tidak boleh 0.");
+
+  const previousQuality = previousGpa * previousSks;
+  const totalQuality = previousQuality + termQuality;
+  const totalSks = previousSks + termSks;
+  const ips = termQuality / termSks;
+  const ipk = totalSks > 0 ? totalQuality / totalSks : 0;
+
+  document.getElementById("outIps").textContent = ips.toFixed(3);
+  document.getElementById("outIpk").textContent = ipk.toFixed(3);
+  document.getElementById("outTermQuality").textContent = termQuality.toFixed(2);
+  document.getElementById("outPreviousQuality").textContent = previousQuality.toFixed(2);
+  document.getElementById("outTotalQuality").textContent = totalQuality.toFixed(2);
+  document.getElementById("outTotalSks").textContent = totalSks;
+
+  document.getElementById("semesterDetails").innerHTML = `
+    <table>
+      <thead><tr><th>Mata kuliah</th><th>SKS</th><th>Nilai</th><th>Bobot</th><th>Mutu</th></tr></thead>
+      <tbody>
+        ${details.map(d => `
+          <tr>
+            <td>${escapeHtml(d.name)}</td>
+            <td>${d.sks}</td>
+            <td>${d.grade}</td>
+            <td>${d.point.toFixed(1)}</td>
+            <td>${d.quality.toFixed(2)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+    <p class="small">IPS = total mutu semester ÷ SKS semester. IPK kumulatif = total mutu keseluruhan ÷ total SKS keseluruhan. Mutu sebelumnya diperkirakan dari IPK yang dimasukkan × SKS sebelumnya, sehingga bisa ada selisih kecil jika IPK awal sudah dibulatkan.</p>
+  `;
+
+  document.getElementById("semesterResult").classList.add("show");
+});
+
+document.getElementById("copySemester").addEventListener("click", () => {
+  const text = [
+    "REKAP KALKULATOR IP SEMESTER",
+    "IPK sebelumnya: " + document.getElementById("previousGpa").value,
+    "SKS sebelumnya: " + document.getElementById("previousSks").value,
+    "IPS: " + document.getElementById("outIps").textContent,
+    "Mutu semester ini: " + document.getElementById("outTermQuality").textContent,
+    "Mutu sebelumnya: " + document.getElementById("outPreviousQuality").textContent,
+    "Total mutu keseluruhan: " + document.getElementById("outTotalQuality").textContent,
+    "Total SKS keseluruhan: " + document.getElementById("outTotalSks").textContent,
+    "IPK setelah simulasi: " + document.getElementById("outIpk").textContent
+  ].join("\n");
+  copyText(text);
+});
+
+/* =============================
+   FORM 2: NILAI 1 MK
+============================= */
+const componentList = document.getElementById("componentList");
+const presetSelect = document.getElementById("presetSelect");
+let currentPreset = "prak_pbw";
+
+function addComponentRow(name = "", weight = 0, score = "") {
+  const row = document.createElement("div");
+  row.className = "component-row";
+  row.innerHTML = `
+    <div class="field">
+      <div class="row-number">Nama komponen</div>
+      <input class="component-name" type="text" placeholder="Contoh: Tugas" value="${escapeHtml(name)}">
+    </div>
+    <div class="field">
+      <div class="row-number">Bobot (%)</div>
+      <input class="component-weight" type="number" min="0" max="100" step="any" value="${weight}">
+    </div>
+    <div class="field">
+      <div class="row-number">Nilai (0–100)</div>
+      <input class="component-score" type="number" min="0" max="100" step="any" placeholder="Masukkan nilai" value="${score}">
+    </div>
+    <div class="remove-cell">
+      <button class="btn-danger remove-component" type="button">Hapus</button>
+    </div>
+  `;
+
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", () => {
+      document.getElementById("mkResult").classList.remove("show");
+      document.getElementById("mkError").style.display = "none";
+      updateWeightPreview();
     });
+  });
 
-    function renumberCourses() {
-      [...coursesEl.querySelectorAll(".course")].forEach((card, i) => {
-        card.querySelector(".item-title").textContent = `Mata Kuliah ${i + 1}`;
-        card.querySelector(".item-number").textContent = `MATA KULIAH ${i + 1}`;
-        card.querySelector(".remove-course").style.visibility = coursesEl.children.length > 1 ? "visible" : "hidden";
-      });
-    }
-    function addCourse() {
-      const card = document.getElementById("course-template").content.firstElementChild.cloneNode(true);
-      card.querySelector(".remove-course").addEventListener("click", () => {
-        card.remove(); renumberCourses(); hideResult("ip");
-      });
-      const nameSelect = card.querySelector(".c-name");
-      const sksInput = card.querySelector(".c-sks");
-      nameSelect.addEventListener("change", () => {
-        const selected = nameSelect.options[nameSelect.selectedIndex];
-        sksInput.value = selected.dataset.sks || "";
-        hideResult("ip");
-      });
-      card.querySelector(".c-grade").addEventListener("change", () => hideResult("ip"));
-      coursesEl.appendChild(card);
-      renumberCourses();
-    }
-    document.getElementById("add-course").addEventListener("click", addCourse);
-    addCourse();
+  row.querySelector(".remove-component").addEventListener("click", () => {
+    row.remove();
+    document.getElementById("mkResult").classList.remove("show");
+    updateWeightPreview();
+  });
 
-    function showError(type, message) {
-      const el = document.getElementById(`${type}-error`);
-      el.textContent = message;
-      el.className = "message error";
-      document.getElementById(`${type}-result`).classList.remove("show");
+  componentList.appendChild(row);
+  updateWeightPreview();
+}
+
+function loadPreset(key) {
+  currentPreset = key;
+  const preset = presets[key];
+  componentList.innerHTML = "";
+
+  document.getElementById("presetDescription").textContent = preset.description;
+  document.getElementById("mkName").value = preset.name;
+
+  preset.components.forEach(component => {
+    addComponentRow(component[0], component[1], "");
+  });
+
+  document.getElementById("mkResult").classList.remove("show");
+  document.getElementById("mkError").style.display = "none";
+  updateWeightPreview();
+}
+
+presetSelect.addEventListener("change", () => loadPreset(presetSelect.value));
+
+document.getElementById("addComponent").addEventListener("click", () => {
+  addComponentRow("", 0, "");
+});
+
+function updateWeightPreview() {
+  const rows = [...componentList.querySelectorAll(".component-row")];
+  const total = rows.reduce((sum, row) => {
+    const value = Number(row.querySelector(".component-weight").value);
+    return sum + (Number.isFinite(value) ? value : 0);
+  }, 0);
+
+  const description = document.getElementById("presetDescription");
+  const baseDescription = presets[currentPreset].description;
+  description.textContent = baseDescription + " Total bobot saat ini: " + total.toFixed(2) + "%.";
+}
+
+document.getElementById("calculateMk").addEventListener("click", () => {
+  document.getElementById("mkError").style.display = "none";
+  document.getElementById("mkResult").classList.remove("show");
+
+  const mkName = document.getElementById("mkName").value.trim() || "Mata Kuliah";
+  const targetValue = document.getElementById("mkTarget").value;
+  const target = targetValue === "" ? null : Number(targetValue);
+  const rows = [...componentList.querySelectorAll(".component-row")];
+
+  if (!rows.length) return showError("mkError", "Tambahkan setidaknya satu komponen nilai.");
+  if (target !== null && (!Number.isFinite(target) || target < 0 || target > 100)) {
+    return showError("mkError", "Target nilai harus berada di antara 0 sampai 100.");
+  }
+
+  let totalWeight = 0;
+  let weightedTotal = 0;
+  const details = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const name = rows[i].querySelector(".component-name").value.trim();
+    const weight = Number(rows[i].querySelector(".component-weight").value);
+    const scoreText = rows[i].querySelector(".component-score").value;
+    const score = scoreText === "" ? NaN : Number(scoreText);
+
+    if (!name) return showError("mkError", `Isi nama komponen pada baris ${i + 1}.`);
+    if (!Number.isFinite(weight) || weight < 0 || weight > 100) {
+      return showError("mkError", `Bobot komponen "${name}" harus 0 sampai 100%.`);
     }
-    function hideResult(type) {
-      document.getElementById(`${type}-error`).className = "message";
-      document.getElementById(`${type}-result`).classList.remove("show");
+    if (scoreText === "" || !Number.isFinite(score) || score < 0 || score > 100) {
+      return showError("mkError", `Masukkan nilai 0 sampai 100 untuk komponen "${name}".`);
     }
 
-    document.getElementById("calculate-ip").addEventListener("click", () => {
-      const cards = [...coursesEl.querySelectorAll(".course")];
-      let totalSks = 0, totalPoints = 0;
-      const rows = [];
-      for (let i = 0; i < cards.length; i++) {
-        const name = cards[i].querySelector(".c-name").value.trim();
-        const sksRaw = cards[i].querySelector(".c-sks").value;
-        const sks = Number(sksRaw);
-        const grade = cards[i].querySelector(".c-grade").value;
-        if (!name || sksRaw === "" || !Number.isFinite(sks) || sks <= 0) {
-          showError("ip", `Lengkapi nama mata kuliah dan SKS yang valid pada Mata Kuliah ${i + 1}.`);
-          return;
-        }
-        totalSks += sks;
-        totalPoints += sks * gradePoints[grade];
-        rows.push({ name, sks, grade, point: gradePoints[grade] });
-      }
-      if (!totalSks) return showError("ip", "Masukkan minimal satu mata kuliah dengan SKS yang valid.");
-      const ip = totalPoints / totalSks;
-      const previousGpaRaw = document.getElementById("previous-gpa").value;
-      const previousSksRaw = document.getElementById("previous-sks").value;
-      const previousGpa = Number(previousGpaRaw);
-      const previousSks = Number(previousSksRaw);
-      if (previousGpaRaw === "" || !Number.isFinite(previousGpa) || previousGpa < 0 || previousGpa > 4 ||
-          previousSksRaw === "" || !Number.isFinite(previousSks) || previousSks < 0) {
-        return showError("ip", "Isi IPK sebelumnya antara 0–4 dan total SKS sebelumnya dengan benar.");
-      }
-      const cumulativeSks = previousSks + totalSks;
-      const previousQualityPoints = previousGpa * previousSks;
-      const cumulativeQualityPoints = previousQualityPoints + totalPoints;
-      const cumulativeGpa = cumulativeSks > 0 ? cumulativeQualityPoints / cumulativeSks : 0;
-      const result = document.getElementById("ip-result");
-      result.innerHTML = `<div class="result-label">IP Semester (IPS)</div>
-        <div class="big-number">${fmt(ip)}</div>
-        <div class="stats"><div class="stat">SKS semester ini: <strong>${totalSks}</strong></div>
-        <div class="stat">Jumlah MK: <strong>${rows.length}</strong></div>
-        <div class="stat">Total mutu semester ini: <strong>${fmt(totalPoints)}</strong></div></div>
-        <hr style="border:0;border-top:1px solid #bbf7d0;margin:18px 0">
-        <div class="result-label">IPK setelah simulasi</div>
-        <div class="big-number">${fmt(cumulativeGpa)}</div>
-        <div class="stats"><div class="stat">SKS sebelumnya: <strong>${previousSks}</strong></div>
-        <div class="stat">Total SKS setelah simulasi: <strong>${cumulativeSks}</strong></div>
-        <div class="stat">IPK awal: <strong>${fmt(previousGpa)}</strong></div>
-        <div class="stat">Mutu keseluruhan sebelum semester ini: <strong>${fmt(previousQualityPoints)}</strong></div>
-        <div class="stat">Total mutu keseluruhan: <strong>${fmt(cumulativeQualityPoints)}</strong></div></div>
-        <p class="hint" style="margin-top:12px">Total mutu keseluruhan = (IPK sebelumnya × SKS sebelumnya) + total mutu semester ini. IPK simulasi = total mutu keseluruhan ÷ total SKS setelah simulasi. Hasil dapat sedikit berbeda jika IPK awal 3,55 sudah dibulatkan.</p>
-        <div class="btn-row"><button class="btn btn-outline" id="copy-ip">Salin rekap nilai</button></div>`;
-      result.classList.add("show");
-      document.getElementById("ip-error").className = "message";
-      document.getElementById("copy-ip").addEventListener("click", async () => {
-        const text = `REKAP NILAI SEMESTER\\n${rows.map(r => `${r.name}: ${r.sks} SKS, nilai ${r.grade}, bobot ${r.point}`).join("\\n")}\\nIPK sebelumnya: ${fmt(previousGpa)} dari ${previousSks} SKS\\nSKS semester ini: ${totalSks}\\nTotal SKS setelah simulasi: ${cumulativeSks}\\nTotal mutu semester ini: ${fmt(totalPoints)}\\nMutu keseluruhan sebelum semester ini: ${fmt(previousQualityPoints)}\\nTotal mutu keseluruhan: ${fmt(cumulativeQualityPoints)}\\nIPS: ${fmt(ip)}\\nIPK setelah simulasi: ${fmt(cumulativeGpa)}`;
-        await copyText(text, document.getElementById("copy-ip"));
-      });
-    });
+    const contribution = score * weight / 100;
+    totalWeight += weight;
+    weightedTotal += contribution;
+    details.push({ name, weight, score, contribution });
+  }
 
-    // Component grade calculator
-    function renumberComponents() {
-      [...componentsEl.querySelectorAll(".component")].forEach((card, i) => {
-        card.querySelector(".component-title").textContent = `Komponen ${i + 1}`;
-        card.querySelector(".item-number").textContent = `KOMPONEN PENILAIAN ${i + 1}`;
-        card.querySelector(".remove-component").style.visibility = componentsEl.children.length > 1 ? "visible" : "hidden";
-      });
-    }
-    function updateWeights() {
-      const cards = [...componentsEl.querySelectorAll(".component")];
-      let total = 0;
-      cards.forEach(card => {
-        const w = Number(card.querySelector(".p-weight").value) || 0;
-        const scoreRaw = card.querySelector(".p-score").value;
-        const score = Number(scoreRaw);
-        total += w;
-        card.querySelector(".p-contribution").value = scoreRaw !== "" && Number.isFinite(score) ? fmt(w * score / 100) : "—";
-      });
-      document.getElementById("weight-total").textContent = `${fmt(total, total % 1 ? 2 : 0)}%`;
-      document.getElementById("weight-progress").style.width = `${Math.max(0, Math.min(100, total))}%`;
-      const hint = document.getElementById("weight-hint");
-      hint.textContent = Math.abs(total - 100) < 0.001 ? "Total bobot sudah tepat 100%." :
-        total < 100 ? `Bobot masih kurang ${fmt(100 - total)}% dari 100%.` : `Bobot kelebihan ${fmt(total - 100)}%.`;
-      hint.style.color = Math.abs(total - 100) < 0.001 ? "var(--success)" : "var(--muted)";
-    }
-    function addComponent(name = "", weight = "", score = "") {
-      const card = document.getElementById("component-template").content.firstElementChild.cloneNode(true);
-      card.querySelector(".p-name").value = name;
-      card.querySelector(".p-weight").value = weight;
-      card.querySelector(".p-score").value = score;
-      card.querySelector(".remove-component").addEventListener("click", () => {
-        card.remove(); renumberComponents(); updateWeights(); hideResult("grade");
-      });
-      card.querySelectorAll("input").forEach(el => el.addEventListener("input", () => {
-        updateWeights(); hideResult("grade");
-      }));
-      componentsEl.appendChild(card);
-      renumberComponents();
-      updateWeights();
-    }
-    document.getElementById("add-component").addEventListener("click", () => addComponent());
-    document.getElementById("course-name").addEventListener("input", () => hideResult("grade"));
-    addComponent("Tugas", 20, "");
-    addComponent("UTS", 30, "");
-    addComponent("UAS", 50, "");
+  if (Math.abs(totalWeight - 100) > 0.001) {
+    const difference = 100 - totalWeight;
+    const message = difference > 0
+      ? `Total bobot baru ${totalWeight.toFixed(2)}%. Masih kurang ${difference.toFixed(2)}% agar menjadi 100%.`
+      : `Total bobot baru ${totalWeight.toFixed(2)}%. Kelebihan ${Math.abs(difference).toFixed(2)}%. Ubah bobot agar tepat 100%.`;
+    return showError("mkError", message);
+  }
 
-    document.getElementById("calculate-grade").addEventListener("click", () => {
-      const name = document.getElementById("course-name").value.trim();
-      const cards = [...componentsEl.querySelectorAll(".component")];
-      let totalWeight = 0, finalScore = 0;
-      const rows = [];
-      if (!name) return showError("grade", "Isi nama mata kuliah terlebih dahulu.");
-      for (let i = 0; i < cards.length; i++) {
-        const cname = cards[i].querySelector(".p-name").value.trim();
-        const weightRaw = cards[i].querySelector(".p-weight").value;
-        const scoreRaw = cards[i].querySelector(".p-score").value;
-        const weight = Number(weightRaw), score = Number(scoreRaw);
-        if (!cname || weightRaw === "" || scoreRaw === "" || !Number.isFinite(weight) || weight < 0 || !Number.isFinite(score) || score < 0 || score > 100) {
-          return showError("grade", `Periksa nama, bobot, dan nilai pada Komponen ${i + 1}. Nilai harus antara 0 dan 100.`);
-        }
-        totalWeight += weight;
-        const contribution = weight * score / 100;
-        finalScore += contribution;
-        rows.push({ name: cname, weight, score, contribution });
-      }
-      if (Math.abs(totalWeight - 100) > 0.001) {
-        return showError("grade", `Total bobot harus tepat 100%. Saat ini totalnya ${fmt(totalWeight, totalWeight % 1 ? 2 : 0)}%.`);
-      }
-      const grade = gradeScale.find(g => finalScore >= g.min).grade;
-      const point = gradePoints[grade];
-      const result = document.getElementById("grade-result");
-      result.innerHTML = `<div class="result-label">Nilai akhir — ${escapeHTML(name)}</div>
-        <div class="big-number">${fmt(finalScore)} / 100</div>
-        <div class="stats"><div class="stat">Nilai huruf: <strong>${grade}</strong></div><div class="stat">Bobot nilai: <strong>${fmt(point, 1)}</strong></div></div>
-        <h3 style="margin-top:18px;margin-bottom:8px">Rincian kontribusi</h3>
-        ${rows.map(r => `<div class="weight-line"><span>${escapeHTML(r.name)} (${fmt(r.weight, r.weight % 1 ? 2 : 0)}% × ${fmt(r.score)})</span><strong>${fmt(r.contribution)}</strong></div>`).join("")}
-        <div class="btn-row"><button class="btn btn-outline" id="copy-grade">Salin hasil</button></div>`;
-      result.classList.add("show");
-      document.getElementById("grade-error").className = "message";
-      document.getElementById("copy-grade").addEventListener("click", async () => {
-        const text = `KALKULATOR NILAI MK\nMata kuliah: ${name}\n${rows.map(r => `${r.name}: bobot ${r.weight}%, nilai ${r.score}, kontribusi ${fmt(r.contribution)}`).join("\n")}\nTotal bobot: ${fmt(totalWeight)}%\nNilai akhir: ${fmt(finalScore)}\nNilai huruf: ${grade}\nBobot nilai: ${fmt(point, 1)}`;
-        await copyText(text, document.getElementById("copy-grade"));
-      });
-    });
+  const finalScore = weightedTotal;
+  const letter = letterFromScore(finalScore);
+  const gradePoint = gradePoints[letter];
 
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-      })[char]);
-    }
-    async function copyText(text, button) {
-      try {
-        await navigator.clipboard.writeText(text);
-        const old = button.textContent;
-        button.textContent = "Berhasil disalin!";
-        setTimeout(() => button.textContent = old, 1500);
-      } catch {
-        window.prompt("Salin teks berikut:", text);
-      }
-    }
-  </script>
+  document.getElementById("outFinal").textContent = finalScore.toFixed(2);
+  document.getElementById("outLetter").innerHTML =
+    `<span class="grade-pill">${letter} — ${gradePoint.toFixed(1)}</span>`;
+  document.getElementById("outWeight").textContent = totalWeight.toFixed(2) + "%";
+  document.getElementById("outWeightGap").textContent = "0%";
+
+  let targetMessage = "";
+  if (target !== null) {
+    const difference = finalScore - target;
+    targetMessage = difference >= 0
+      ? `<p><strong>Target ${target}:</strong> tercapai, selisih +${difference.toFixed(2)} poin.</p>`
+      : `<p><strong>Target ${target}:</strong> belum tercapai, kurang ${Math.abs(difference).toFixed(2)} poin.</p>`;
+  }
+
+  document.getElementById("mkDetails").innerHTML = `
+    <h3>Rincian perhitungan — ${escapeHtml(mkName)}</h3>
+    <table>
+      <thead><tr><th>Komponen</th><th>Bobot</th><th>Nilai</th><th>Kontribusi</th></tr></thead>
+      <tbody>
+        ${details.map(d => `
+          <tr>
+            <td>${escapeHtml(d.name)}</td>
+            <td>${d.weight.toFixed(2)}%</td>
+            <td>${d.score.toFixed(2)}</td>
+            <td>${d.contribution.toFixed(2)}</td>
+          </tr>
+        `).join("")}
+        <tr>
+          <th>Total</th><th>${totalWeight.toFixed(2)}%</th><th>—</th><th>${finalScore.toFixed(2)}</th>
+        </tr>
+      </tbody>
+    </table>
+    <p>Nilai akhir dihitung dari jumlah nilai setiap komponen dikalikan bobotnya.</p>
+    <p><strong>Skala nilai:</strong> A = 87–100; AB = 78–&lt;87; B = 69–&lt;78; BC = 60–&lt;69; C = 51–&lt;60; D = 41–&lt;51; E = di bawah 41.</p>
+    ${targetMessage}
+  `;
+
+  document.getElementById("mkResult").classList.add("show");
+});
+
+document.getElementById("copyMk").addEventListener("click", () => {
+  const rows = [...componentList.querySelectorAll(".component-row")];
+  const lines = [
+    "REKAP NILAI AKHIR MATA KULIAH",
+    "Mata kuliah: " + (document.getElementById("mkName").value || "Mata Kuliah"),
+    ...rows.map(row => {
+      return row.querySelector(".component-name").value + ": " +
+        row.querySelector(".component-score").value + " × " +
+        row.querySelector(".component-weight").value + "%";
+    }),
+    "Total bobot: " + document.getElementById("outWeight").textContent,
+    "Nilai akhir: " + document.getElementById("outFinal").textContent,
+    "Prediksi nilai huruf: " + document.getElementById("outLetter").innerText
+  ];
+  copyText(lines.join("\n"));
+});
+
+/* =============================
+   UTILITAS
+============================= */
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("Rekap berhasil disalin.");
+  } catch (error) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    const success = document.execCommand("copy");
+    textarea.remove();
+    alert(success ? "Rekap berhasil disalin." : "Gagal menyalin. Silakan salin secara manual.");
+  }
+}
+
+/* Muat template pertama saat halaman dibuka */
+loadPreset("prak_pbw");
+</script>
 </body>
 </html>
