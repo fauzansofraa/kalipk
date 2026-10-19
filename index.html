@@ -3,154 +3,1083 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi Nilai & IPK Terpadu</title>
+    <title>Simulasi IP & IPK - Smart Grade Calculator</title>
     <!-- Tailwind CSS CDN -->
-    <script src="https://jsdelivr.net"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Custom dynamic colors utilizing CSS Variables toggled by JS */
+        /* Dynamic Theme Custom Colors */
         :root {
-            --btn-color: #3b82f6;
-            --btn-hover: #1d4ed8;
+            --btn-bg: #4f46e5;
+            --btn-hover: #4338ca;
+            --btn-text: #ffffff;
         }
         .custom-btn {
-            background-color: var(--btn-color) !important;
+            background-color: var(--btn-bg) !important;
+            color: var(--btn-text) !important;
             transition: all 0.2s ease-in-out;
         }
         .custom-btn:hover {
             background-color: var(--btn-hover) !important;
+            transform: translateY(-1px);
         }
-        .tab-active {
-            border-bottom: 3px solid var(--btn-color);
-            color: var(--btn-color);
-            font-weight: 700;
+        .custom-border-accent {
+            border-color: var(--btn-bg);
+        }
+        .custom-text-accent {
+            color: var(--btn-bg);
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans pb-12">
 
-    <!-- Header & Pengaturan Tema -->
-    <header class="border-b border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-800 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
-            <h1 class="text-xl font-bold tracking-tight">🎓 SmartGrade <span class="text-sm font-normal text-gray-500 dark:text-gray-400">| Simulasi IP-IPK</span></h1>
-            
-            <div class="flex flex-wrap items-center gap-4 text-sm">
-                <!-- Pilihan Warna Tombol -->
-                <div class="flex items-center gap-2">
-                    <label class="font-medium">Warna Tombol:</label>
-                    <input type="color" id="btnColorPicker" value="#3b82f6" class="w-7 h-7 rounded cursor-pointer border border-gray-300">
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 rounded-xl custom-btn flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-calculator text-xl"></i>
                 </div>
-                <!-- Pilihan Warna Hover -->
-                <div class="flex items-center gap-2">
-                    <label class="font-medium">Warna Hover:</label>
-                    <input type="color" id="btnHoverPicker" value="#1d4ed8" class="w-7 h-7 rounded cursor-pointer border border-gray-300">
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">Simulasi IP-IPK Pro</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Smart Academic Performance Calculator</p>
                 </div>
-                <!-- Toggle Tema -->
-                <button id="themeToggle" class="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-semibold cursor-pointer">
-                    🌓 Mode Gelap
+            </div>
+
+            <!-- Controls (Theme & Customizer) -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Theme Customizer Toggle -->
+                <button onclick="toggleCustomizer()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all text-sm flex items-center gap-1.5" title="Kustomisasi Warna">
+                    <i class="fa-solid fa-palette text-indigo-500"></i>
+                    <span class="hidden sm:inline font-medium">Warna</span>
                 </button>
+
+                <!-- Dark/Light Mode Toggle -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all" title="Ubah Mode Layar">
+                    <i class="fa-solid fa-moon dark:hidden text-slate-700"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Customizer Dropdown Drawer -->
+        <div id="customizerDrawer" class="hidden border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-800/90 p-4 transition-all">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-sm">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-paint-brush text-slate-500"></i>
+                    <span class="font-semibold">Kustomisasi Warna UI:</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-medium text-slate-600 dark:text-slate-400">Tombol Utama:</label>
+                        <input type="color" id="btnColorInput" value="#4f46e5" onchange="updateCustomColors()" class="w-8 h-8 rounded cursor-pointer border-0 bg-transparent">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-medium text-slate-600 dark:text-slate-400">Saat Hover:</label>
+                        <input type="color" id="hoverColorInput" value="#4338ca" onchange="updateCustomColors()" class="w-8 h-8 rounded cursor-pointer border-0 bg-transparent">
+                    </div>
+                    <button onclick="resetColors()" class="text-xs text-rose-500 hover:underline font-medium ml-2">Reset Default</button>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        <!-- Tab Navigasi -->
-        <div class="flex border-b border-gray-200 dark:border-gray-700 mb-8">
-            <button onclick="switchTab('mk-tab')" id="mk-tab-btn" class="flex-1 py-3 text-center font-medium cursor-pointer tab-active">
-                📝 Hitung Nilai 1 Mata Kuliah
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+        <!-- Navigation Tabs -->
+        <div class="flex space-x-2 border-b border-slate-200 dark:border-slate-800 mb-8 overflow-x-auto pb-1">
+            <button id="tabBtn1" onclick="switchTab('tab1')" class="px-5 py-3 font-semibold text-sm rounded-t-xl border-b-2 custom-border-accent custom-text-accent flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-book-bookmark"></i>
+                Simulasi Nilai 1 Mata Kuliah
             </button>
-            <button onclick="switchTab('ipk-tab')" id="ipk-tab-btn" class="flex-1 py-3 text-center font-medium cursor-pointer text-gray-500 dark:text-gray-400">
-                📊 Simulasi IP & IPK Akumulatif
+            <button id="tabBtn2" onclick="switchTab('tab2')" class="px-5 py-3 font-semibold text-sm rounded-t-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2 transition-all border-b-2 border-transparent">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Simulasi IP Semester 3 & IPK
             </button>
         </div>
 
-        <!-- ==================== TAB FORM 1: NILAI 1 MK ==================== -->
-        <div id="mk-tab" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Input Panel -->
-                <div class="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-4">
-                    <h3 class="text-lg font-bold border-b border-gray-100 dark:border-gray-700 pb-2">Input Parameter</h3>
-                    
-                    <div>
-                        <label class="block font-medium mb-1">Mode Pilih MK</label>
-                        <select id="mkModeSelect" onchange="toggleMkMode()" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
-                            <option value="otomatis">Otomatis (Kontrak Kuliah Tersedia)</option>
-                            <option value="manual">Manual (Isi Komponen Sendiri)</option>
-                        </select>
-                    </div>
+        <!-- ================= TAB 1: NILAI 1 MATA KULIAH ================= -->
+        <section id="tab1" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left Column: Input Form -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60">
+                        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
+                            <div>
+                                <h2 class="text-lg font-bold">Input Komponen Nilai</h2>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Pilih mata kuliah preset atau atur komponen bobot manual.</p>
+                            </div>
+                            <!-- Segmented Toggle Automatic vs Manual -->
+                            <div class="bg-slate-100 dark:bg-slate-900 p-1 rounded-xl flex text-xs font-semibold">
+                                <button id="modeAutoBtn" onclick="setMKMode('auto')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-slate-800 dark:text-white transition-all">Otomatis (Preset)</button>
+                                <button id="modeManualBtn" onclick="setMKMode('manual')" class="px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all">Manual</button>
+                            </div>
+                        </div>
 
-                    <!-- Dropdown MK Otomatis -->
-                    <div id="wrapperMkOtomatis">
-                        <label class="block font-medium mb-1">Pilih Mata Kuliah</label>
-                        <select id="mkOtomatisSelect" onchange="loadOtomatisMkComponents()" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"></select>
-                    </div>
+                        <!-- Auto Select Preset -->
+                        <div id="autoMKContainer" class="mb-6">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Pilih Mata Kuliah (Kontrak Kuliah)</label>
+                            <select id="presetMKSelect" onchange="loadPresetMK()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                                <!-- Options populated by JS -->
+                            </select>
+                        </div>
 
-                    <!-- Input Nama MK Manual -->
-                    <div id="wrapperMkManual" class="hidden">
-                        <label class="block font-medium mb-1">Nama Mata Kuliah</label>
-                        <input type="text" id="mkManualNama" placeholder="Misal: Pemrograman Lanjut" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
-                    </div>
+                        <!-- Manual Course Name Input (Hidden in Auto Mode) -->
+                        <div id="manualMKNameContainer" class="mb-6 hidden">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Nama Mata Kuliah</label>
+                            <input type="text" id="manualMKName" placeholder="Contoh: Pemrograman Lanjut" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
 
-                    <div>
-                        <label class="block font-medium mb-1">Target Nilai / Huruf Mutu <span class="text-xs text-gray-400">(Opsional)</span></label>
-                        <select id="targetGradeMk" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
-                            <option value="">-- Tanpa Target --</option>
-                            <option value="A">A (>= 85)</option>
-                            <option value="AB">AB (>= 78)</option>
-                            <option value="B">B (>= 70)</option>
-                            <option value="BC">BC (>= 63)</option>
-                            <option value="C">C (>= 55)</option>
-                        </select>
+                        <!-- Target Grade Selection (Optional) -->
+                        <div class="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/50">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2 flex items-center justify-between">
+                                <span>Target Nilai Akhir (Opsional)</span>
+                                <span class="text-[10px] text-slate-400 font-normal">Pilih untuk analisis strategi</span>
+                            </label>
+                            <select id="targetGradeSelect" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <option value="NONE">-- Tanpa Target --</option>
+                                <option value="A">A (Nilai ≥ 87)</option>
+                                <option value="AB">AB (Nilai 78 - 86.99)</option>
+                                <option value="B">B (Nilai 69 - 77.99)</option>
+                                <option value="BC">BC (Nilai 60 - 68.99)</option>
+                                <option value="C">C (Nilai 51 - 59.99)</option>
+                                <option value="D">D (Nilai 41 - 50.99)</option>
+                            </select>
+                        </div>
+
+                        <!-- Dynamic Components Form -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Komponen Nilai & Persentase</span>
+                                <span id="totalWeightBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">Total Bobot: 0%</span>
+                            </div>
+                            
+                            <div id="componentsList" class="space-y-3">
+                                <!-- Dynamic Component Inputs generated by JS -->
+                            </div>
+
+                            <button id="addComponentBtn" onclick="addManualComponent()" class="hidden w-full py-2 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-500 dark:hover:border-indigo-400 dark:hover:text-indigo-400 transition-all flex items-center justify-center gap-1.5 mt-2">
+                                <i class="fa-solid fa-plus"></i> Tambah Komponen Manual
+                            </button>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button onclick="calculateSingleMK()" class="w-full py-3.5 rounded-xl font-bold custom-btn shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            Hitung Nilai Akhir MK
+                        </button>
                     </div>
                 </div>
 
-                <!-- Komponen Dinamis & Hasil -->
-                <div class="md:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2 mb-4">
-                            <h3 class="text-lg font-bold">Komponen Penilaian (<span id="totalPersenLabel">0%</span>)</h3>
-                            <button id="btnTambahKomponen" onclick="tambahKomponenManualRow()" class="hidden text-xs py-1 px-3 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer">+ Tambah Komponen</button>
+                <!-- Right Column: Results & Optimization Options -->
+                <div class="lg:col-span-5 space-y-6">
+                    <!-- Score Card Result -->
+                    <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60 relative overflow-hidden">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Hasil Perhitungan</h3>
+                        
+                        <div id="resultMKEmpty" class="text-center py-12 text-slate-400">
+                            <i class="fa-solid fa-square-poll-vertical text-4xl mb-3 opacity-50"></i>
+                            <p class="text-sm">Isi komponen nilai di sebelah kiri dan klik tombol "Hitung Nilai Akhir MK".</p>
                         </div>
 
-                        <!-- Tempat Baris Komponen Di-generate -->
-                        <div id="containerKomponenMk" class="space-y-3 max-h-[350px] overflow-y-auto pr-2"></div>
-                    </div>
-
-                    <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
-                        <button onclick="hitungNilaiAkhirMK()" class="w-full py-3 text-white font-bold rounded-lg shadow custom-btn cursor-pointer">Hitung Nilai Akhir</button>
-                        
-                        <!-- Output Area -->
-                        <div id="hasilMkBox" class="hidden mt-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600">
-                            <div class="grid grid-cols-2 gap-4 text-center">
-                                <div class="bg-white dark:bg-gray-800 p-3 rounded-md shadow-sm">
-                                    <div class="text-xs text-gray-500">Nilai Angka</div>
-                                    <div id="outMkAngka" class="text-2xl font-black text-blue-600 dark:text-blue-400">0.00</div>
+                        <div id="resultMKDisplay" class="hidden space-y-6">
+                            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl">
+                                <div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium" id="resMKTitle">Mata Kuliah</div>
+                                    <div class="text-4xl font-extrabold mt-1 tracking-tight" id="resMKScore">0.00</div>
+                                    <div class="text-xs text-slate-400 mt-1">Skala 0 - 100</div>
                                 </div>
-                                <div class="bg-white dark:bg-gray-800 p-3 rounded-md shadow-sm">
-                                    <div class="text-xs text-gray-500">Huruf Mutu</div>
-                                    <div id="outMkHuruf" class="text-2xl font-black text-purple-600 dark:text-purple-400">-</div>
+                                <div class="text-right">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Nilai Huruf</div>
+                                    <div class="text-4xl font-black custom-text-accent mt-1" id="resMKGrade">-</div>
+                                    <div class="text-xs font-semibold text-slate-500 mt-1" id="resMKBobot">Bobot: 0.0</div>
                                 </div>
                             </div>
-                            <!-- Opsi Peningkatan Target -->
-                            <div id="opsiTargetMkBox" class="mt-4 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md text-sm hidden"></div>
+
+                            <!-- Target Status Badge -->
+                            <div id="targetStatusContainer" class="hidden p-4 rounded-xl text-sm font-medium border flex items-start gap-3">
+                                <i id="targetStatusIcon" class="fa-solid text-base mt-0.5"></i>
+                                <div>
+                                    <div id="targetStatusTitle" class="font-bold">Status Target</div>
+                                    <div id="targetStatusDesc" class="text-xs mt-0.5 opacity-90"></div>
+                                </div>
+                            </div>
+
+                            <!-- Recommendation / Options Box -->
+                            <div id="optimizationBox" class="hidden space-y-3 pt-2 border-t border-slate-100 dark:border-slate-700">
+                                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">
+                                    <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                                    <span>Opsi Perbaikan Nilai Komponen Agar Target Tercapai:</span>
+                                </div>
+                                <div id="optimizationList" class="space-y-2 text-xs">
+                                    <!-- Dynamic options list -->
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 2: SIMULASI IP SEMESTER 3 & IPK ================= -->
+        <section id="tab2" class="hidden space-y-6">
+            
+            <!-- Top Section: Initial Data (Sem 1 & 2) & Targets -->
+            <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60">
+                <h2 class="text-lg font-bold mb-1">1. Data Akademik Awal & Target</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Masukkan data histori IPK 2 semester awal dan tentukan target IP Semester 3 atau Target IPK Kumulatif.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">IPK 2 Semester Awal</label>
+                        <input type="number" id="ipkAwal" step="0.01" min="0" max="4" placeholder="Contoh: 3.45" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Total SKS 2 Sem Awal</label>
+                        <input type="number" id="sksAwal" step="1" min="0" placeholder="Contoh: 40" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Target IP Sem 3 <span class="text-[10px] font-normal text-slate-400">(Opsional)</span></label>
+                        <input type="number" id="targetIp3" step="0.01" min="0" max="4" placeholder="Contoh: 3.75" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Target IPK Kumulatif <span class="text-[10px] font-normal text-slate-400">(Opsional)</span></label>
+                        <input type="number" id="targetIpk3" step="0.01" min="0" max="4" placeholder="Contoh: 3.60" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ==================== TAB FORM 2: SIMULASI IP-IPK ==================== -->
-        <div id="ipk-tab" class="space-y-6 hidden">
-            <!-- Data Historis 2 Semester Awal -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-bold border-b border-gray-100 dark:border-gray-700 pb-2 mb-4">📍 Basis Data Transkrip Historis (Semester 1 & 2)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Main Course List Table for Semester 3 -->
+            <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                     <div>
-                        <label class="block text-sm font-medium mb-1">Total SKS Terkondisi (Sem 1+2)</label>
-                        <input type="number" id="sksLalu" value="38" min="0" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                        <h2 class="text-lg font-bold">2. Plan Mata Kuliah Semester 3</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Pilih nilai estimasi/prediksi huruf untuk tiap mata kuliah semester ini.</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">IPK Kumulatif Awal (Sem 1+2)</label>
-                        <input type="number" id="ipkLalu" value="3.45" step="0.01" min="0" max="4" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                    <div class="flex items-center gap-2">
+                        <button onclick="addIPKCourseRow()" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-plus text-indigo-500"></i> Tambah MK Manual
+                        </button>
+                        <button onclick="resetIPKSem3Form()" class="px-3 py-2 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all">
+                            Reset Form
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Total Bobot SKS Awal</label>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase text-[11px] font-bold tracking-wider">
+                                <th class="pb-3 px-2">Mata Kuliah</th>
+                                <th class="pb-3 px-2 w-28">SKS</th>
+                                <th class="pb-3 px-2 w-48">Prediksi Nilai Huruf</th>
+                                <th class="pb-3 px-2 w-32 text-right">Bobot (N × SKS)</th>
+                                <th class="pb-3 px-2 w-12"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ipkCoursesTable" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Dynamic rows populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Action Button -->
+                <div class="mt-8">
+                    <button onclick="calculateIPKSimulasi()" class="w-full py-4 rounded-xl font-bold custom-btn shadow-lg flex items-center justify-center gap-2 text-base">
+                        <i class="fa-solid fa-chart-line"></i>
+                        Hitung Simulasi IP & IPK Kumulatif
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section for IP & IPK -->
+            <div id="ipkResultsSection" class="hidden bg-white dark:bg-slate-800/80 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60 space-y-6">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Hasil Simulasi Akademik</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Card 1: IP Semester 3 -->
+                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block mb-1">IP Semester 3</span>
+                        <div id="resIPSem3" class="text-3xl font-extrabold custom-text-accent">0.00</div>
+                        <div class="text-[11px] text-slate-400 mt-2" id="resSksSem3">Total SKS Sem 3: 0</div>
+                    </div>
+
+                    <!-- Card 2: Total Bobot Semester 3 -->
+                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block mb-1">Total Bobot (SKS × Nilai) Sem 3</span>
+                        <div id="resBobotSem3" class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">0.00</div>
+                        <div class="text-[11px] text-slate-400 mt-2">Poin Mutu Semester 3</div>
+                    </div>
+
+                    <!-- Card 3: IPK Kumulatif Sem 1-3 -->
+                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block mb-1">IPK Kumulatif (Sem 1 - 3)</span>
+                        <div id="resIPKKumulatif" class="text-3xl font-black text-emerald-600 dark:text-emerald-400">0.00</div>
+                        <div class="text-[11px] text-slate-400 mt-2" id="resTotalSksKumulatif">Total SKS Kumulatif: 0</div>
+                    </div>
+
+                    <!-- Card 4: Total Bobot Kumulatif -->
+                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block mb-1">Total Bobot Kumulatif (Sem 1-3)</span>
+                        <div id="resBobotKumulatif" class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">0.00</div>
+                        <div class="text-[11px] text-slate-400 mt-2" id="resBobotAwalDetail">Awal: 0.00 | Sem 3: 0.00</div>
+                    </div>
+                </div>
+
+                <!-- Target Status & Recommendations Box -->
+                <div id="ipkTargetStatusBox" class="hidden p-5 rounded-2xl border transition-all space-y-4">
+                    <div class="flex items-start gap-3">
+                        <i id="ipkTargetIcon" class="fa-solid text-xl mt-0.5"></i>
+                        <div>
+                            <h4 id="ipkTargetTitle" class="font-bold text-sm"></h4>
+                            <p id="ipkTargetMessage" class="text-xs mt-1 leading-relaxed opacity-90"></p>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation Options for IP/IPK -->
+                    <div id="ipkOptimizationContainer" class="hidden pt-3 border-t border-slate-200/60 dark:border-slate-700/60">
+                        <div class="text-xs font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400 mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-route"></i>
+                            <span>Opsi Rekomendasi Kenaikan Grade Mata Kuliah Semester 3:</span>
+                        </div>
+                        <ul id="ipkOptimizationList" class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                            <!-- Dynamic recommendations -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        /* ================= DATA PRESETS ================= */
+        // 12 Presets for Tab 1 (Nilai 1 MK)
+        const PRESET_MK_TAB1 = [
+            {
+                name: "Praktikum PBW",
+                components: [
+                    { name: "Kehadiran", weight: 15 },
+                    { name: "Kuis", weight: 10 },
+                    { name: "Tugas", weight: 20 },
+                    { name: "UTS", weight: 25 },
+                    { name: "UAS", weight: 30 }
+                ]
+            },
+            {
+                name: "Praktikum Database",
+                components: [
+                    { name: "Kuis", weight: 15 },
+                    { name: "Tugas", weight: 25 },
+                    { name: "UTS", weight: 25 },
+                    { name: "UAS", weight: 35 }
+                ]
+            },
+            {
+                name: "Praktikum GIS",
+                components: [
+                    { name: "Kuis", weight: 10 },
+                    { name: "Tugas", weight: 25 },
+                    { name: "UTS", weight: 30 },
+                    { name: "UAS", weight: 35 }
+                ]
+            },
+            {
+                name: "Praktikum Sistem Informasi",
+                components: [
+                    { name: "Kehadiran", weight: 20 },
+                    { name: "Tugas", weight: 15 },
+                    { name: "UTS", weight: 30 },
+                    { name: "UAS", weight: 35 }
+                ]
+            },
+            {
+                name: "Praktikum Struktur Data",
+                components: [
+                    { name: "Kehadiran", weight: 10 },
+                    { name: "Tugas", weight: 15 },
+                    { name: "Kuis", weight: 10 },
+                    { name: "UTS", weight: 30 },
+                    { name: "UAS", weight: 35 }
+                ]
+            },
+            {
+                name: "Komunikasi Data Teori",
+                components: [
+                    { name: "Tugas", weight: 20 },
+                    { name: "Kuis", weight: 20 },
+                    { name: "UTS", weight: 30 },
+                    { name: "UAS", weight: 30 }
+                ]
+            },
+            {
+                name: "SIG Teori",
+                components: [
+                    { name: "Kuis", weight: 15 },
+                    { name: "Tugas/Latihan", weight: 25 },
+                    { name: "UTS", weight: 25 },
+                    { name: "UAS", weight: 35 }
+                ]
+            },
+            {
+                name: "E-Commerce Teori",
+                components: [
+                    { name: "Kuis", weight: 15 },
+                    { name: "UTS", weight: 35 },
+                    { name: "Proyek", weight: 50 }
+                ]
+            },
+            {
+                name: "Sistem Informasi Teori",
+                components: [
+                    { name: "Tugas", weight: 15 },
+                    { name: "Kuis", weight: 10 },
+                    { name: "UTS", weight: 35 },
+                    { name: "UAS", weight: 40 }
+                ]
+            },
+            {
+                name: "Database Teori",
+                components: [
+                    { name: "Praktikum", weight: 15 },
+                    { name: "Kuis", weight: 15 },
+                    { name: "Tugas/Latihan", weight: 20 },
+                    { name: "UTS", weight: 25 },
+                    { name: "UAS", weight: 25 }
+                ]
+            },
+            {
+                name: "Praktikum E-Commerce",
+                components: [
+                    { name: "Kehadiran", weight: 15 },
+                    { name: "Tugas", weight: 15 },
+                    { name: "Kuis", weight: 10 },
+                    { name: "UTS", weight: 25 },
+                    { name: "UAS", weight: 35 }
+                ]
+            },
+            {
+                name: "Praktikum Kewirausahaan",
+                components: [
+                    { name: "Absensi", weight: 15 },
+                    { name: "Tugas/Kuis", weight: 20 },
+                    { name: "UTS", weight: 30 },
+                    { name: "UAS", weight: 35 }
+                ]
+            }
+        ];
+
+        // Default Course List for Semester 3 (Tab 2)
+        const DEFAULT_SEM3_COURSES = [
+            { name: "Database", sks: 1 },
+            { name: "Praktikum Database", sks: 2 },
+            { name: "Komunikasi Data", sks: 1 },
+            { name: "Praktikum Komunikasi Data", sks: 2 },
+            { name: "Struktur Data", sks: 1 },
+            { name: "Praktikum Struktur Data", sks: 2 },
+            { name: "Pemrograman Berbasis Web", sks: 1 },
+            { name: "Praktikum Pemrograman Berbasis Web", sks: 2 },
+            { name: "Sistem Informasi Geografis", sks: 1 },
+            { name: "Praktikum Sistem Informasi Geografis", sks: 2 },
+            { name: "Sistem Informasi", sks: 1 },
+            { name: "Praktikum Sistem Informasi", sks: 2 },
+            { name: "E-Commerce", sks: 1 },
+            { name: "Praktikum E-Commerce", sks: 2 },
+            { name: "Kewirausahaan", sks: 2 },
+            { name: "Praktikum Kewirausahaan", sks: 1 }
+        ];
+
+        // Revised Grade Standards & Weights
+        // >= 87: A (4.0), 78 - <87: AB (3.5), 69 - <78: B (3.0), 60 - <69: BC (2.5), 51 - <60: C (2.0), 41 - <51: D (1.0), < 41: E (0.0)
+        const GRADE_SCALE = [
+            { grade: 'A', minScore: 87, weight: 4.0 },
+            { grade: 'AB', minScore: 78, weight: 3.5 },
+            { grade: 'B', minScore: 69, weight: 3.0 },
+            { grade: 'BC', minScore: 60, weight: 2.5 },
+            { grade: 'C', minScore: 51, weight: 2.0 },
+            { grade: 'D', minScore: 41, weight: 1.0 },
+            { grade: 'E', minScore: 0, weight: 0.0 }
+        ];
+
+        /* ================= STATE MANAGEMENT ================= */
+        let currentMKMode = 'auto'; // 'auto' | 'manual'
+        let currentComponents = [];
+        let ipkCourseList = [];
+
+        /* ================= INITIALIZATION ================= */
+        document.addEventListener("DOMContentLoaded", () => {
+            initPresetMKSelect();
+            loadPresetMK();
+            initIPKSem3Table();
+        });
+
+        /* ================= TAB 1 LOGIC ================= */
+        function initPresetMKSelect() {
+            const select = document.getElementById("presetMKSelect");
+            select.innerHTML = PRESET_MK_TAB1.map((item, index) => 
+                `<option value="${index}">${item.name}</option>`
+            ).join('');
+        }
+
+        function setMKMode(mode) {
+            currentMKMode = mode;
+            const autoBtn = document.getElementById('modeAutoBtn');
+            const manualBtn = document.getElementById('modeManualBtn');
+            const autoContainer = document.getElementById('autoMKContainer');
+            const manualNameContainer = document.getElementById('manualMKNameContainer');
+            const addBtn = document.getElementById('addComponentBtn');
+
+            if (mode === 'auto') {
+                autoBtn.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-slate-800 dark:text-white transition-all font-semibold";
+                manualBtn.className = "px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all font-semibold";
+                autoContainer.classList.remove('hidden');
+                manualNameContainer.classList.add('hidden');
+                addBtn.classList.add('hidden');
+                loadPresetMK();
+            } else {
+                manualBtn.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-slate-800 dark:text-white transition-all font-semibold";
+                autoBtn.className = "px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all font-semibold";
+                autoContainer.classList.add('hidden');
+                manualNameContainer.classList.remove('hidden');
+                addBtn.classList.remove('hidden');
+                
+                currentComponents = [
+                    { name: "Kuis / Tugas", weight: 30, value: '' },
+                    { name: "UTS", weight: 35, value: '' },
+                    { name: "UAS", weight: 35, value: '' }
+                ];
+                renderComponentsInputs();
+            }
+        }
+
+        function loadPresetMK() {
+            if (currentMKMode !== 'auto') return;
+            const index = document.getElementById("presetMKSelect").value;
+            const preset = PRESET_MK_TAB1[index];
+            currentComponents = preset.components.map(c => ({ ...c, value: '' }));
+            renderComponentsInputs();
+        }
+
+        function renderComponentsInputs() {
+            const container = document.getElementById("componentsList");
+            container.innerHTML = "";
+
+            let totalWeight = 0;
+
+            currentComponents.forEach((comp, idx) => {
+                totalWeight += parseFloat(comp.weight) || 0;
+                
+                const isManual = currentMKMode === 'manual';
+                const div = document.createElement("div");
+                div.className = "flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700/60";
+                
+                div.innerHTML = `
+                    <div class="flex-1">
+                        ${isManual ? 
+                            `<input type="text" value="${comp.name}" onchange="updateCompData(${idx}, 'name', this.value)" placeholder="Nama Komponen" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-indigo-500">` : 
+                            `<span class="text-xs font-semibold block text-slate-700 dark:text-slate-300 truncate">${comp.name}</span>`
+                        }
+                    </div>
+                    <div class="w-24 flex items-center gap-1">
+                        ${isManual ? 
+                            `<input type="number" min="0" max="100" value="${comp.weight}" onchange="updateCompData(${idx}, 'weight', this.value)" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold focus:ring-1 focus:ring-indigo-500">` : 
+                            `<span class="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-md w-full text-center">${comp.weight}%</span>`
+                        }
+                        <span class="text-[10px] text-slate-400 ${isManual ? 'hidden' : ''}">%</span>
+                    </div>
+                    <div class="w-28">
+                        <input type="number" min="0" max="100" step="0.1" value="${comp.value !== undefined ? comp.value : ''}" onchange="updateCompData(${idx}, 'value', this.value)" placeholder="Nilai (0-100)" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    ${isManual ? `
+                        <button onclick="removeManualComponent(${idx})" class="text-rose-500 hover:text-rose-700 p-1 text-xs">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    ` : ''}
+                `;
+                container.appendChild(div);
+            });
+
+            // Update badge total weight
+            const badge = document.getElementById("totalWeightBadge");
+            badge.innerText = `Total Bobot: ${totalWeight}%`;
+            if (totalWeight === 100) {
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300";
+            } else {
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300";
+            }
+        }
+
+        function updateCompData(index, field, val) {
+            if (field === 'weight' || field === 'value') {
+                currentComponents[index][field] = val === '' ? '' : parseFloat(val);
+            } else {
+                currentComponents[index][field] = val;
+            }
+            if (field === 'weight') {
+                renderComponentsInputs();
+            }
+        }
+
+        function addManualComponent() {
+            currentComponents.push({ name: "Komponen Baru", weight: 0, value: '' });
+            renderComponentsInputs();
+        }
+
+        function removeManualComponent(idx) {
+            currentComponents.splice(idx, 1);
+            renderComponentsInputs();
+        }
+
+        function calculateSingleMK() {
+            // Validate Total Weight
+            const totalWeight = currentComponents.reduce((acc, c) => acc + (parseFloat(c.weight) || 0), 0);
+            if (Math.abs(totalWeight - 100) > 0.01) {
+                alert(`Total bobot komponen harus sama dengan 100%. Bobot saat ini: ${totalWeight}%`);
+                return;
+            }
+
+            // Calculate final score
+            let finalScore = 0;
+            currentComponents.forEach(c => {
+                const val = parseFloat(c.value) || 0;
+                const w = parseFloat(c.weight) || 0;
+                finalScore += (val * w) / 100;
+            });
+
+            // Determine Grade based on revised scale
+            let gradeObj = GRADE_SCALE.find(g => finalScore >= g.minScore) || GRADE_SCALE[GRADE_SCALE.length - 1];
+
+            // Get Course Name
+            let courseName = "";
+            if (currentMKMode === 'auto') {
+                const idx = document.getElementById("presetMKSelect").value;
+                courseName = PRESET_MK_TAB1[idx].name;
+            } else {
+                courseName = document.getElementById("manualMKName").value || "Mata Kuliah (Manual)";
+            }
+
+            // Show Result UI
+            document.getElementById("resultMKEmpty").classList.add("hidden");
+            document.getElementById("resultMKDisplay").classList.remove("hidden");
+
+            document.getElementById("resMKTitle").innerText = courseName;
+            document.getElementById("resMKScore").innerText = finalScore.toFixed(2);
+            document.getElementById("resMKGrade").innerText = gradeObj.grade;
+            document.getElementById("resMKBobot").innerText = `Bobot Point: ${gradeObj.weight.toFixed(1)}`;
+
+            // Process Target Analysis
+            const targetGrade = document.getElementById("targetGradeSelect").value;
+            const targetStatusBox = document.getElementById("targetStatusContainer");
+            const optimizationBox = document.getElementById("optimizationBox");
+            const optimizationList = document.getElementById("optimizationList");
+
+            if (targetGrade === "NONE") {
+                targetStatusBox.classList.add("hidden");
+                optimizationBox.classList.add("hidden");
+                return;
+            }
+
+            const targetObj = GRADE_SCALE.find(g => g.grade === targetGrade);
+            targetStatusBox.classList.remove("hidden");
+
+            if (finalScore >= targetObj.minScore) {
+                // Target Met
+                targetStatusBox.className = "p-4 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-start gap-3";
+                document.getElementById("targetStatusIcon").className = "fa-solid fa-circle-check text-emerald-500 text-lg mt-0.5";
+                document.getElementById("targetStatusTitle").innerText = `Target '${targetGrade}' Tercapai! 🎉`;
+                document.getElementById("targetStatusDesc").innerText = `Selamat! Nilai akhir Anda (${finalScore.toFixed(2)}) telah memenuhi batas minimal target ${targetGrade} (${targetObj.minScore}).`;
+                optimizationBox.classList.add("hidden");
+            } else {
+                // Target Failed -> Provide Optimization Options
+                targetStatusBox.className = "p-4 rounded-xl text-sm font-medium bg-rose-50 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-start gap-3";
+                document.getElementById("targetStatusIcon").className = "fa-solid fa-triangle-exclamation text-rose-500 text-lg mt-0.5";
+                document.getElementById("targetStatusTitle").innerText = `Target '${targetGrade}' Belum Tercapai!`;
+                document.getElementById("targetStatusDesc").innerText = `Nilai saat ini (${finalScore.toFixed(2)}) kurang ${(targetObj.minScore - finalScore).toFixed(2)} poin dari target minimal ${targetGrade} (${targetObj.minScore}).`;
+
+                // Calculate required component scores
+                const options = generateOptimizationOptions(currentComponents, finalScore, targetObj.minScore);
+                optimizationList.innerHTML = "";
+
+                if (options.length > 0) {
+                    options.forEach(opt => {
+                        const div = document.createElement("div");
+                        div.className = "p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-slate-700 dark:text-slate-300 flex items-start gap-2";
+                        div.innerHTML = `
+                            <i class="fa-solid fa-arrow-up-right-dots text-amber-500 mt-0.5"></i>
+                            <div>${opt}</div>
+                        `;
+                        optimizationList.appendChild(div);
+                    });
+                    optimizationBox.classList.remove("hidden");
+                } else {
+                    optimizationList.innerHTML = `
+                        <div class="p-3 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500">
+                            Bahkan jika nilai seluruh komponen ditingkatkan menjadi 100, target nilai huruf <strong>${targetGrade}</strong> tidak memungkinkan untuk dicapai dari kondisi nilai saat ini.
+                        </div>
+                    `;
+                    optimizationBox.classList.remove("hidden");
+                }
+            }
+        }
+
+        function generateOptimizationOptions(components, currentScore, targetMinScore) {
+            const options = [];
+            const neededScoreGap = targetMinScore - currentScore;
+
+            // Option Type 1: Individual Component Boosts
+            components.forEach(comp => {
+                const currentVal = parseFloat(comp.value) || 0;
+                const weight = parseFloat(comp.weight) || 0;
+                if (weight <= 0) return;
+
+                const requiredValue = currentVal + (neededScoreGap * 100 / weight);
+
+                if (requiredValue <= 100) {
+                    options.push(`Naikkan nilai <strong>${comp.name}</strong> dari <strong>${currentVal}</strong> menjadi minimal <strong>${Math.ceil(requiredValue)}</strong>.`);
+                }
+            });
+
+            // Option Type 2: Dual Component Boosts if single components are not enough or few
+            if (options.length < 2 && components.length >= 2) {
+                const sorted = [...components].sort((a,b) => b.weight - a.weight);
+                const c1 = sorted[0];
+                const c2 = sorted[1];
+                
+                const w1 = parseFloat(c1.weight) || 0;
+                const w2 = parseFloat(c2.weight) || 0;
+                const totalW = w1 + w2;
+
+                if (totalW > 0) {
+                    const v1 = parseFloat(c1.value) || 0;
+                    const v2 = parseFloat(c2.value) || 0;
+
+                    const requiredIncrease = (neededScoreGap * 100) / totalW;
+                    const targetV1 = Math.ceil(v1 + requiredIncrease);
+                    const targetV2 = Math.ceil(v2 + requiredIncrease);
+
+                    if (targetV1 <= 100 && targetV2 <= 100) {
+                        options.push(`Naikkan bersamaan nilai <strong>${c1.name}</strong> jadi <strong>${targetV1}</strong> DAN <strong>${c2.name}</strong> jadi <strong>${targetV2}</strong>.`);
+                    }
+                }
+            }
+
+            return options;
+        }
+
+
+        /* ================= TAB 2 LOGIC ================= */
+        function initIPKSem3Table() {
+            ipkCourseList = DEFAULT_SEM3_COURSES.map(c => ({
+                name: c.name,
+                sks: c.sks,
+                grade: 'AB', // default prediction
+                isManual: false
+            }));
+            renderIPKSem3Table();
+        }
+
+        function renderIPKSem3Table() {
+            const tbody = document.getElementById("ipkCoursesTable");
+            tbody.innerHTML = "";
+
+            ipkCourseList.forEach((course, idx) => {
+                const tr = document.createElement("tr");
+                const gradeWeight = (GRADE_SCALE.find(g => g.grade === course.grade) || {}).weight || 0;
+                const totalPoints = course.sks * gradeWeight;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-2">
+                        ${course.isManual ? 
+                            `<input type="text" value="${course.name}" onchange="updateIPKCourse(${idx}, 'name', this.value)" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-medium">` : 
+                            `<span class="font-semibold text-slate-800 dark:text-slate-200">${course.name}</span>`
+                        }
+                    </td>
+                    <td class="py-3 px-2">
+                        ${course.isManual ? 
+                            `<input type="number" min="1" max="6" value="${course.sks}" onchange="updateIPKCourse(${idx}, 'sks', this.value)" class="w-20 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs font-bold text-center">` : 
+                            `<span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2.5 py-1 rounded-md text-xs font-bold">${course.sks} SKS</span>`
+                        }
+                    </td>
+                    <td class="py-3 px-2">
+                        <select onchange="updateIPKCourse(${idx}, 'grade', this.value)" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold custom-text-accent focus:outline-none">
+                            ${GRADE_SCALE.map(g => `<option value="${g.grade}" ${course.grade === g.grade ? 'selected' : ''}>${g.grade} (Bobot ${g.weight.toFixed(1)})</option>`).join('')}
+                        </select>
+                    </td>
+                    <td class="py-3 px-2 text-right font-mono font-bold text-slate-700 dark:text-slate-300">
+                        ${totalPoints.toFixed(1)}
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        ${course.isManual ? `
+                            <button onclick="removeIPKCourse(${idx})" class="text-rose-500 hover:text-rose-700 text-xs p-1">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateIPKCourse(idx, field, val) {
+            if (field === 'sks') {
+                ipkCourseList[idx].sks = parseInt(val) || 0;
+            } else {
+                ipkCourseList[idx][field] = val;
+            }
+            renderIPKSem3Table();
+        }
+
+        function addIPKCourseRow() {
+            ipkCourseList.push({
+                name: "Mata Kuliah Pilihan",
+                sks: 2,
+                grade: 'AB',
+                isManual: true
+            });
+            renderIPKSem3Table();
+        }
+
+        function removeIPKCourse(idx) {
+            ipkCourseList.splice(idx, 1);
+            renderIPKSem3Table();
+        }
+
+        function resetIPKSem3Form() {
+            initIPKSem3Table();
+            document.getElementById("ipkAwal").value = "";
+            document.getElementById("sksAwal").value = "";
+            document.getElementById("targetIp3").value = "";
+            document.getElementById("targetIpk3").value = "";
+            document.getElementById("ipkResultsSection").classList.add("hidden");
+        }
+
+        function calculateIPKSimulasi() {
+            const ipkAwal = parseFloat(document.getElementById("ipkAwal").value) || 0;
+            const sksAwal = parseInt(document.getElementById("sksAwal").value) || 0;
+            const targetIP3 = parseFloat(document.getElementById("targetIp3").value) || null;
+            const targetIPK3 = parseFloat(document.getElementById("targetIpk3").value) || null;
+
+            if (sksAwal <= 0 && ipkAwal > 0) {
+                alert("Harap masukkan Total SKS 2 Semester Awal dengan benar.");
+                return;
+            }
+
+            // Calculate Sem 3 metrics
+            let totalSksSem3 = 0;
+            let totalBobotSem3 = 0;
+
+            ipkCourseList.forEach(course => {
+                const weight = (GRADE_SCALE.find(g => g.grade === course.grade) || {}).weight || 0;
+                totalSksSem3 += course.sks;
+                totalBobotSem3 += (course.sks * weight);
+            });
+
+            const ipSem3 = totalSksSem3 > 0 ? (totalBobotSem3 / totalSksSem3) : 0;
+
+            // Calculate Cumulative Metrics (Sem 1 - 3)
+            const totalBobotAwal = ipkAwal * sksAwal;
+            const totalSksKumulatif = sksAwal + totalSksSem3;
+            const totalBobotKumulatif = totalBobotAwal + totalBobotSem3;
+            const ipkKumulatif = totalSksKumulatif > 0 ? (totalBobotKumulatif / totalSksKumulatif) : 0;
+
+            // Display Results Card
+            document.getElementById("ipkResultsSection").classList.remove("hidden");
+            document.getElementById("resIPSem3").innerText = ipSem3.toFixed(2);
+            document.getElementById("resSksSem3").innerText = `Total SKS Sem 3: ${totalSksSem3} SKS`;
+            document.getElementById("resBobotSem3").innerText = totalBobotSem3.toFixed(2);
+
+            document.getElementById("resIPKKumulatif").innerText = ipkKumulatif.toFixed(2);
+            document.getElementById("resTotalSksKumulatif").innerText = `Total SKS Kumulatif (Sem 1-3): ${totalSksKumulatif} SKS`;
+            document.getElementById("resBobotKumulatif").innerText = totalBobotKumulatif.toFixed(2);
+            document.getElementById("resBobotAwalDetail").innerText = `Awal: ${totalBobotAwal.toFixed(2)} | Sem 3: ${totalBobotSem3.toFixed(2)}`;
+
+            // Process Target Analysis (Target IP Sem 3 & Target IPK)
+            const targetBox = document.getElementById("ipkTargetStatusBox");
+            const optContainer = document.getElementById("ipkOptimizationContainer");
+            const optList = document.getElementById("ipkOptimizationList");
+
+            if (!targetIP3 && !targetIPK3) {
+                targetBox.classList.add("hidden");
+                return;
+            }
+
+            targetBox.classList.remove("hidden");
+
+            let ipTargetMet = targetIP3 ? (ipSem3 >= targetIP3) : true;
+            let ipkTargetMet = targetIPK3 ? (ipkKumulatif >= targetIPK3) : true;
+
+            if (ipTargetMet && ipkTargetMet) {
+                // All targets met
+                targetBox.className = "p-5 rounded-2xl bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 space-y-3";
+                document.getElementById("ipkTargetIcon").className = "fa-solid fa-trophy text-emerald-500 text-xl";
+                document.getElementById("ipkTargetTitle").innerText = `Semua Target Akademik Berhasil Tercapai! 🎯`;
+                
+                let msg = "Selamat! ";
+                if (targetIP3) msg += `IP Semester 3 (${ipSem3.toFixed(2)}) telah memenuhi target (${targetIP3.toFixed(2)}). `;
+                if (targetIPK3) msg += `IPK Kumulatif (${ipkKumulatif.toFixed(2)}) telah memenuhi target (${targetIPK3.toFixed(2)}).`;
+                document.getElementById("ipkTargetMessage").innerText = msg;
+
+                optContainer.classList.add("hidden");
+            } else {
+                // At least one target failed
+                targetBox.className = "p-5 rounded-2xl bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 space-y-3";
+                document.getElementById("ipkTargetIcon").className = "fa-solid fa-triangle-exclamation text-amber-500 text-xl";
+                document.getElementById("ipkTargetTitle").innerText = `Target Akademik Belum Tercapai!`;
+
+                let msg = "";
+                let neededBobotFromIP = 0;
+                let neededBobotFromIPK = 0;
+
+                if (targetIP3 && !ipTargetMet) {
+                    neededBobotFromIP = (targetIP3 * totalSksSem3) - totalBobotSem3;
+                    msg += `IP Sem 3 (${ipSem3.toFixed(2)}) kurang ${(targetIP3 - ipSem3).toFixed(2)} dari target (${targetIP3.toFixed(2)}). `;
+                }
+                if (targetIPK3 && !ipkTargetMet) {
+                    const requiredTotalBobot = targetIPK3 * totalSksKumulatif;
+                    neededBobotFromIPK = requiredTotalBobot - totalBobotKumulatif;
+                    msg += `IPK Kumulatif (${ipkKumulatif.toFixed(2)}) kurang ${(targetIPK3 - ipkKumulatif).toFixed(2)} dari target (${targetIPK3.toFixed(2)}).`;
+                }
+
+                document.getElementById("ipkTargetMessage").innerText = msg;
+
+                // Determine maximum needed points gap
+                const maxPointsGapNeeded = Math.max(neededBobotFromIP, neededBobotFromIPK);
+
+                // Generate specific course grade upgrades
+                const recs = generateCourseGradeUpgrades(maxPointsGapNeeded);
+                optList.innerHTML = "";
+
+                if (recs.length > 0) {
+                    recs.forEach(r => {
+                        const li = document.createElement("li");
+                        li.className = "p-2.5 rounded-xl bg-white/70 dark:bg-slate-900/50 border border-amber-200/80 dark:border-amber-900/40 flex items-center gap-2";
+                        li.innerHTML = `<i class="fa-solid fa-angle-right text-amber-500"></i> <div>${r}</div>`;
+                        optList.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement("li");
+                    li.className = "p-2.5 rounded-xl bg-rose-100/70 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300 font-medium";
+                    li.innerText = "Secara matematis, target ini tidak dapat dicapai hanya dengan menaikkan grade Semester 3 karena membutuhkan peningkatan poin melebihi nilai maksimal A pada semua MK.";
+                    optList.appendChild(li);
+                }
+
+                optContainer.classList.remove("hidden");
+            }
+        }
+
+        // Logic to calculate exact course grade upgrades (e.g., "Naikkan MK Pemrograman Berbasis Web dari AB ke A")
+        function generateCourseGradeUpgrades(pointsNeeded) {
+            const recommendations = [];
+            let currentGap = pointsNeeded;
+
+            // Clone course list and filter upgradable courses
+            const upgradable = ipkCourseList
+                .map((c, originalIndex) => ({ ...c, originalIndex }))
+                .filter(c => c.grade !== 'A');
+
+            // Sort by SKS descending to maximize impact per course grade boost
+            upgradable.sort((a, b) => b.sks - a.sks);
+
+            for (let c of upgradable) {
+                if (currentGap <= 0) break;
+
+                const curGradeObj = GRADE_SCALE.find(g => g.grade === c.grade) || { weight: 0 };
+                
+                // Try upgrading to next higher grade step by step or directly to A
+                // Steps: E -> D -> C -> BC -> B -> AB -> A
+                if (c.grade === 'AB') {
+                    // Upgrade AB -> A (+0.5 * SKS)
+                    const gain = c.sks * 0.5;
+                    recommendations.push(`Naikkan nilai MK <strong>${c.name}</strong> dari <span class="font-bold text-amber-600 dark:text-amber-400">AB</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">A</span> (Menambah +${gain.toFixed(1)} poin bobot)`);
+                    currentGap -= gain;
+                } else if (c.grade === 'B') {
+                    if (currentGap <= c.sks * 0.5) {
+                        // Upgrade B -> AB (+0.5 * SKS)
+                        const gain = c.sks * 0.5;
+                        recommendations.push(`Naikkan nilai MK <strong>${c.name}</strong> dari <span class="font-bold text-amber-600 dark:text-amber-400">B</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">AB</span> (Menambah +${gain.toFixed(1)} poin bobot)`);
+                        currentGap -= gain;
+                    } else {
+                        // Upgrade B -> A (+1.0 * SKS)
+                        const gain = c.sks * 1.0;
+                        recommendations.push(`Naikkan nilai MK <strong>${c.name}</strong> dari <span class="font-bold text-amber-600 dark:text-amber-400">B</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">A</span> (Menambah +${gain.toFixed(1)} poin bobot)`);
+                        currentGap -= gain;
+                    }
+                } else {
+                    // Upgrade BC, C, D, or E to A
+                    const gain = c.sks * (4.0 - curGradeObj.weight);
+                    recommendations.push(`Naikkan nilai MK <strong>${c.name}</strong> dari <span class="font-bold text-amber-600 dark:text-amber-400">${c.grade}</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">A</span> (Menambah +${gain.toFixed(1)} poin bobot)`);
+                    currentGap -= gain;
+                }
+            }
+
+            return recommendations;
+        }
+
+
+        /* ================= UI TABS & THEMING LOGIC ================= */
+        function switchTab(tabId) {
+            const tab1 = document.getElementById("tab1");
+            const tab2 = document.getElementById("tab2");
+            const btn1 = document.getElementById("tabBtn1");
+            const btn2 = document.getElementById("tabBtn2");
+
+            if (tabId === 'tab1') {
+                tab1.classList.remove("hidden");
+                tab2.classList.add("hidden");
+                btn1.className = "px-5 py-3 font-semibold text-sm rounded-t-xl border-b-2 custom-border-accent custom-text-accent flex items-center gap-2 transition-all";
+                btn2.className = "px-5 py-3 font-semibold text-sm rounded-t-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2 transition-all border-b-2 border-transparent";
+            } else {
+                tab2.classList.remove("hidden");
+                tab1.classList.add("hidden");
+                btn2.className = "px-5 py-3 font-semibold text-sm rounded-t-xl border-b-2 custom-border-accent custom-text-accent flex items-center gap-2 transition-all";
+                btn1.className = "px-5 py-3 font-semibold text-sm rounded-t-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2 transition-all border-b-2 border-transparent";
+            }
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function toggleCustomizer() {
+            const drawer = document.getElementById("customizerDrawer");
+            drawer.classList.toggle("hidden");
+        }
+
+        function updateCustomColors() {
+            const btnColor = document.getElementById("btnColorInput").value;
+            const hoverColor = document.getElementById("hoverColorInput").value;
+
+            document.documentElement.style.setProperty('--btn-bg', btnColor);
+            document.documentElement.style.setProperty('--btn-hover', hoverColor);
+        }
+
+        function resetColors() {
+            document.getElementById("btnColorInput").value = "#4f46e5";
+            document.getElementById("hoverColorInput").value = "#4338ca";
+            updateCustomColors();
+        }
+    </script>
+</body>
+</html>
