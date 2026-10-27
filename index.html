@@ -1,1145 +1,1415 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi IP & IPK Pro - Smart Academic Calculator</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Kalkulator IPK</title>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
+      (function () {
+        var t = null;
+        try {
+          var s = JSON.parse(localStorage.getItem("ipk_s") || "null");
+          if (s && s.theme) t = s.theme;
+        } catch (e) {}
+        if (!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      })();
     </script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" />
     <style>
-        /* Dynamic CSS Variables for Custom UI Colors */
-        :root {
-            --btn-bg: #4f46e5;
-            --btn-hover: #4338ca;
-            --btn-text: #ffffff;
+      :root {
+        --bg: #f4f5fb;
+        --card: #fff;
+        --fg: #14162b;
+        --mut: #6b6f8a;
+        --bd: #e3e5f1;
+        --inp: #f7f8fd;
+        --ok: #10b981;
+        --bad: #ef4444;
+        --btn: #6366f1;
+        --btn-h: #4f46e5;
+        --btn-t: #fff;
+        color-scheme: light;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      :root[data-theme="dark"] {
+        --bg: #0d0f1e;
+        --card: #171a2e;
+        --fg: #eef0ff;
+        --mut: #9a9fc0;
+        --bd: #262a47;
+        --inp: #1e2239;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          "Plus Jakarta Sans",
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          sans-serif;
+        min-height: 100vh;
+        background-image:
+          radial-gradient(800px 400px at 10% -10%, color-mix(in srgb, var(--btn) 22%, transparent), transparent),
+          radial-gradient(600px 400px at 100% 0, color-mix(in srgb, var(--btn) 14%, transparent), transparent);
+        background-attachment: fixed;
+      }
+      .wrap {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 18px 16px 60px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--btn), var(--btn-h));
+        display: grid;
+        place-items: center;
+        color: var(--btn-t);
+        font-weight: 800;
+        font-size: 20px;
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--btn) 40%, transparent);
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+      }
+      header p {
+        margin: 2px 0 0;
+        color: var(--mut);
+        font-size: 13px;
+      }
+      .sp {
+        flex: 1;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .btn {
+        background: var(--btn);
+        color: var(--btn-t);
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 14px;
+        transition: 0.18s;
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--btn) 35%, transparent);
+      }
+      .btn:hover {
+        background: var(--btn-h);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--btn-h) 45%, transparent);
+      }
+      .btn:active {
+        transform: translateY(0);
+      }
+      .ghost {
+        background: var(--card);
+        color: var(--fg);
+        border: 1px solid var(--bd);
+        box-shadow: none;
+      }
+      .ghost:hover {
+        background: var(--btn-h);
+        color: var(--btn-t);
+        border-color: transparent;
+      }
+      .icon {
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        font-size: 18px;
+        display: grid;
+        place-items: center;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        background: var(--card);
+        border: 1px solid var(--bd);
+        padding: 5px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+      }
+      .tab {
+        flex: 1;
+        background: none;
+        border: 0;
+        color: var(--mut);
+        padding: 11px 8px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        transition: 0.18s;
+      }
+      .tab:hover {
+        color: var(--fg);
+        background: color-mix(in srgb, var(--btn) 10%, transparent);
+      }
+      .tab.on {
+        background: var(--btn);
+        color: var(--btn-t);
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--btn) 35%, transparent);
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--bd);
+        border-radius: 20px;
+        padding: 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 6px 24px rgba(20, 22, 60, 0.05);
+      }
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 16px;
+        font-weight: 800;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--mut);
+        margin-bottom: 5px;
+      }
+      input,
+      select {
+        width: 100%;
+        background: var(--inp);
+        color: var(--fg);
+        border: 1.5px solid var(--bd);
+        border-radius: 11px;
+        padding: 10px 11px;
+        font: inherit;
+        font-size: 14px;
+        outline: 0;
+        transition: 0.15s;
+      }
+      input:focus,
+      select:focus {
+        border-color: var(--btn);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--btn) 22%, transparent);
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 72px 92px 38px;
+        gap: 8px;
+        margin-bottom: 8px;
+        align-items: center;
+      }
+      .row.m {
+        grid-template-columns: 1fr 64px 70px 84px 36px;
+      }
+      .row.a {
+        grid-template-columns: 1fr 64px 92px 84px;
+      }
+      .row.a2 {
+        grid-template-columns: 1fr 78px 96px;
+      }
+      .row > * {
+        min-width: 0;
+      }
+      .ct {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--btn);
+        text-align: center;
+        white-space: nowrap;
+      }
+      .hd {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--mut);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .x {
+        background: none;
+        border: 1.5px solid var(--bd);
+        color: var(--mut);
+        border-radius: 10px;
+        height: 38px;
+        font-size: 15px;
+        transition: 0.15s;
+      }
+      .x:hover {
+        background: var(--bad);
+        color: #fff;
+        border-color: var(--bad);
+      }
+      .wbadge {
+        background: color-mix(in srgb, var(--btn) 14%, transparent);
+        color: var(--btn);
+        font-weight: 800;
+        border-radius: 9px;
+        padding: 6px 8px;
+        text-align: center;
+        font-size: 13px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .stat {
+        background: linear-gradient(135deg, var(--btn), var(--btn-h));
+        color: var(--btn-t);
+        border-radius: 16px;
+        padding: 14px;
+        text-align: center;
+      }
+      .stat b {
+        display: block;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+      .stat span {
+        font-size: 12px;
+        opacity: 0.9;
+        font-weight: 600;
+      }
+      .stat.plain {
+        background: var(--inp);
+        color: var(--fg);
+        border: 1px solid var(--bd);
+      }
+      .hero.h2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero.h4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .hero.h4 .stat b {
+        font-size: 22px;
+      }
+      .hero.h4 .stat span {
+        font-size: 11px;
+      }
+      .msg {
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .msg.ok {
+        background: color-mix(in srgb, var(--ok) 15%, transparent);
+        color: var(--ok);
+      }
+      .msg.bad {
+        background: color-mix(in srgb, var(--bad) 14%, transparent);
+        color: var(--bad);
+      }
+      .msg.info {
+        background: color-mix(in srgb, var(--btn) 12%, transparent);
+        color: var(--btn);
+      }
+      .opt {
+        border: 1.5px dashed var(--bd);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+      }
+      .opt h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .opt h3 i {
+        font-style: normal;
+        background: var(--btn);
+        color: var(--btn-t);
+        border-radius: 8px;
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+      }
+      .opt ul {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .opt .res {
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--mut);
+        font-weight: 600;
+      }
+      .arrow {
+        color: var(--btn);
+        font-weight: 800;
+      }
+      .seg {
+        display: flex;
+        gap: 6px;
+      }
+      .seg button {
+        flex: 1;
+        padding: 10px;
+        border-radius: 11px;
+        border: 1.5px solid var(--bd);
+        background: var(--inp);
+        color: var(--fg);
+        font-weight: 700;
+        font-size: 13px;
+        transition: 0.15s;
+      }
+      .seg button:hover {
+        border-color: var(--btn-h);
+        background: color-mix(in srgb, var(--btn-h) 12%, transparent);
+      }
+      .seg button.on {
+        background: var(--btn);
+        color: var(--btn-t);
+        border-color: var(--btn);
+      }
+      .sw {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .sw button {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 3px solid var(--card);
+        outline: 2px solid var(--bd);
+        transition: 0.15s;
+      }
+      .sw button:hover {
+        transform: scale(1.15);
+      }
+      .sw button.on {
+        outline-color: var(--fg);
+      }
+      .sw input[type="color"] {
+        width: 38px;
+        height: 34px;
+        padding: 2px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      .ov {
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 6, 20, 0.55);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        z-index: 50;
+        padding: 0;
+      }
+      .ov.show {
+        display: flex;
+      }
+      .sheet {
+        background: var(--card);
+        width: 100%;
+        max-width: 480px;
+        border-radius: 24px 24px 0 0;
+        padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+        max-height: 90vh;
+        overflow: auto;
+      }
+      @media (min-width: 560px) {
+        .ov {
+          align-items: center;
         }
-        .custom-btn {
-            background-color: var(--btn-bg) !important;
-            color: var(--btn-text) !important;
-            transition: all 0.2s ease-in-out;
+        .sheet {
+          border-radius: 24px;
         }
-        .custom-btn:hover {
-            background-color: var(--btn-hover) !important;
-            transform: translateY(-1px);
+      }
+      .sheet h2 {
+        margin: 0 0 14px;
+        font-size: 18px;
+      }
+      .sec {
+        margin-bottom: 16px;
+      }
+      .note {
+        font-size: 12px;
+        color: var(--mut);
+        margin-top: 6px;
+      }
+      .hide {
+        display: none;
+      }
+      @media (max-width: 560px) {
+        .hero {
+          grid-template-columns: 1fr 1fr;
         }
-        .custom-border-accent {
-            border-color: var(--btn-bg) !important;
+        .hero .stat:first-child {
+          grid-column: 1/-1;
         }
-        .custom-text-accent {
-            color: var(--btn-bg) !important;
+        .row {
+          grid-template-columns: 1fr 58px 78px 36px;
         }
-        .custom-ring-accent:focus {
-            --tw-ring-color: var(--btn-bg) !important;
+        .row.a {
+          grid-template-columns: 1fr 50px 68px 70px;
         }
+        .row.a2 {
+          grid-template-columns: 1fr 66px 86px;
+        }
+        .row.m {
+          grid-template-columns: 1fr 46px 58px 68px 32px;
+        }
+        .ct {
+          font-size: 11px;
+        }
+        .stat b {
+          font-size: 26px;
+        }
+        .hero.h4 {
+          grid-template-columns: 1fr 1fr;
+        }
+        .hero.h2 .stat:first-child,
+        .hero.h4 .stat:first-child {
+          grid-column: auto;
+        }
+        .hero.h4 .stat b {
+          font-size: 20px;
+        }
+      }
     </style>
-</head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans pb-16">
-
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="p-2.5 rounded-xl custom-btn flex items-center justify-center shadow-md">
-                    <i class="fa-solid fa-calculator text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">Simulasi IP-IPK Pro</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">Smart Academic Performance & Target Calculator</p>
-                </div>
-            </div>
-
-            <!-- Controls (Theme & Customizer) -->
-            <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- Theme Customizer Toggle -->
-                <button onclick="toggleCustomizer()" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all text-xs font-semibold flex items-center gap-2 border border-slate-200/60 dark:border-slate-700" title="Kustomisasi Warna UI">
-                    <i class="fa-solid fa-palette text-indigo-500"></i>
-                    <span class="hidden sm:inline">Tema Warna</span>
-                </button>
-
-                <!-- Dark/Light Mode Toggle -->
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all border border-slate-200/60 dark:border-slate-700" title="Ubah Mode Layar">
-                    <i class="fa-solid fa-moon dark:hidden text-slate-700"></i>
-                    <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
-                </button>
-            </div>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="logo">Σ</div>
+        <div>
+          <h1>Kalkulator IPK</h1>
+          <p>Simulasi IP, IPK &amp; nilai per mata kuliah</p>
         </div>
+        <div class="sp"></div>
+        <button class="btn ghost icon" id="gear" aria-label="Pengaturan">⚙</button>
+      </header>
 
-        <!-- Customizer Dropdown Drawer -->
-        <div id="customizerDrawer" class="hidden border-b border-slate-200 dark:border-slate-800 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-md p-4 transition-all shadow-inner">
-            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-paint-brush text-indigo-500"></i>
-                    <span class="font-bold">Kustomisasi Warna Utama Aplikasi:</span>
-                </div>
-                
-                <!-- Color Presets -->
-                <div class="flex items-center gap-2">
-                    <span class="text-slate-500 dark:text-slate-400 font-medium">Preset:</span>
-                    <button onclick="applyPresetColor('#4f46e5', '#4338ca')" class="w-6 h-6 rounded-full bg-indigo-600 border-2 border-white shadow-sm" title="Indigo"></button>
-                    <button onclick="applyPresetColor('#059669', '#047857')" class="w-6 h-6 rounded-full bg-emerald-600 border-2 border-white shadow-sm" title="Emerald"></button>
-                    <button onclick="applyPresetColor('#0284c7', '#0369a1')" class="w-6 h-6 rounded-full bg-sky-600 border-2 border-white shadow-sm" title="Sky Blue"></button>
-                    <button onclick="applyPresetColor('#d97706', '#b45309')" class="w-6 h-6 rounded-full bg-amber-600 border-2 border-white shadow-sm" title="Amber"></button>
-                    <button onclick="applyPresetColor('#e11d48', '#be123c')" class="w-6 h-6 rounded-full bg-rose-600 border-2 border-white shadow-sm" title="Rose"></button>
-                    <button onclick="applyPresetColor('#9333ea', '#7e22ce')" class="w-6 h-6 rounded-full bg-purple-600 border-2 border-white shadow-sm" title="Purple"></button>
-                </div>
+      <div class="tabs">
+        <button class="tab on" data-t="t1">📊 Simulasi IP / IPK</button>
+        <button class="tab" data-t="t2">🎯 Nilai 1 MK</button>
+      </div>
 
-                <!-- Custom Pickers -->
-                <div class="flex flex-wrap items-center gap-4">
-                    <div class="flex items-center gap-2">
-                        <label class="font-medium text-slate-600 dark:text-slate-300">Warna Tombol:</label>
-                        <input type="color" id="btnColorInput" value="#4f46e5" onchange="updateCustomColors()" class="w-7 h-7 rounded cursor-pointer border-0 bg-transparent">
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <label class="font-medium text-slate-600 dark:text-slate-300">Saat Hover:</label>
-                        <input type="color" id="hoverColorInput" value="#4338ca" onchange="updateCustomColors()" class="w-7 h-7 rounded cursor-pointer border-0 bg-transparent">
-                    </div>
-                    <button onclick="resetColors()" class="text-rose-500 hover:underline font-bold ml-2">Reset Standard</button>
-                </div>
-            </div>
+      <section id="t1">
+        <div class="card">
+          <h2>Target &amp; data sebelumnya <span style="font-weight: 500; color: var(--mut); font-size: 12px">(opsional)</span></h2>
+          <div class="grid2">
+            <div><label>Target IP semester ini</label><input type="number" step="0.01" min="0" max="4" id="tIp" placeholder="mis. 3,75" /></div>
+            <div><label>Target IPK</label><input type="number" step="0.01" min="0" max="4" id="tIpk" placeholder="mis. 3,70" /></div>
+            <div><label>IPK semester lalu</label><input type="number" step="0.01" min="0" max="4" id="pIpk" placeholder="mis. 3,60" /></div>
+            <div><label>Total SKS semester lalu</label><input type="number" min="0" id="pSks" placeholder="mis. 20" /></div>
+          </div>
+          <div class="note">Tanpa data semester lalu, IPK dihitung dari semester ini saja.</div>
         </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-
-        <!-- Navigation Tabs -->
-        <div class="flex space-x-2 border-b border-slate-200 dark:border-slate-800 mb-8 overflow-x-auto pb-1">
-            <button id="tabBtn1" onclick="switchTab('tab1')" class="px-5 py-3 font-bold text-xs sm:text-sm rounded-t-xl border-b-2 custom-border-accent custom-text-accent flex items-center gap-2 transition-all shrink-0">
-                <i class="fa-solid fa-book-bookmark"></i>
-                Simulasi Nilai 1 Mata Kuliah
-            </button>
-            <button id="tabBtn2" onclick="switchTab('tab2')" class="px-5 py-3 font-bold text-xs sm:text-sm rounded-t-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2 transition-all border-b-2 border-transparent shrink-0">
-                <i class="fa-solid fa-graduation-cap"></i>
-                Simulasi IP Semester 3 & IPK Kumulatif
-            </button>
+        <div class="card">
+          <h2>Mata kuliah</h2>
+          <div class="seg" id="simMode"><button data-m="auto" class="on">⚡ Otomatis (per semester)</button><button data-m="manual">✍️ Manual</button></div>
+          <div id="semPick" style="margin: 12px 0">
+            <label>Semester</label
+            ><select id="semSel">
+              <option value="2">Semester 2</option>
+            </select>
+            <div class="note">MK dan SKS terisi otomatis dan tidak bisa diubah. Kamu tinggal memilih nilainya.</div>
+          </div>
+          <div style="height: 12px"></div>
+          <div class="row" id="hdr1"></div>
+          <div id="rows"></div>
+          <button class="btn ghost" id="addRow">＋ Tambah MK</button>
         </div>
-
-        <!-- ================= TAB 1: NILAI 1 MATA KULIAH ================= -->
-        <section id="tab1" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
-                <!-- Left Column: Input Form -->
-                <div class="lg:col-span-7 space-y-6">
-                    <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60">
-                        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-700/80">
-                            <div>
-                                <h2 class="text-lg font-bold">Input Komponen Nilai</h2>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Pilih mata kuliah preset atau atur komponen bobot manual.</p>
-                            </div>
-                            <!-- Segmented Toggle Automatic vs Manual -->
-                            <div class="bg-slate-100 dark:bg-slate-900 p-1 rounded-xl flex text-xs font-semibold border border-slate-200 dark:border-slate-800">
-                                <button id="modeAutoBtn" onclick="setMKMode('auto')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-slate-800 dark:text-white transition-all">Preset (Otomatis)</button>
-                                <button id="modeManualBtn" onclick="setMKMode('manual')" class="px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all">Manual</button>
-                            </div>
-                        </div>
-
-                        <!-- Auto Select Preset -->
-                        <div id="autoMKContainer" class="mb-6">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Pilih Mata Kuliah (Preset Bobot Kontrak Kuliah)</label>
-                            <select id="presetMKSelect" onchange="loadPresetMK()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold focus:ring-2 focus:outline-none transition-all custom-ring-accent">
-                                <!-- Options populated by JS -->
-                            </select>
-                        </div>
-
-                        <!-- Manual Course Name Input (Hidden in Auto Mode) -->
-                        <div id="manualMKNameContainer" class="mb-6 hidden">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Nama Mata Kuliah</label>
-                            <input type="text" id="manualMKName" placeholder="Contoh: Pemrograman Lanjut" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:ring-2 focus:outline-none transition-all custom-ring-accent">
-                        </div>
-
-                        <!-- Target Grade Selection (Optional) -->
-                        <div class="mb-6 p-4 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 dark:text-indigo-300 mb-2 flex items-center justify-between">
-                                <span>Target Nilai Akhir Huruf (Opsional)</span>
-                                <span class="text-[10px] text-indigo-500 dark:text-indigo-400 font-normal">Pilih untuk analisis strategi</span>
-                            </label>
-                            <select id="targetGradeSelect" class="w-full bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold custom-text-accent focus:ring-2 focus:outline-none">
-                                <option value="NONE">-- Tanpa Target (Hitung Nilai Apa Adanya) --</option>
-                                <option value="A">Target A (Nilai Akhir ≥ 87)</option>
-                                <option value="AB">Target AB (Nilai Akhir ≥ 78)</option>
-                                <option value="B">Target B (Nilai Akhir ≥ 69)</option>
-                                <option value="BC">Target BC (Nilai Akhir ≥ 60)</option>
-                                <option value="C">Target C (Nilai Akhir ≥ 51)</option>
-                            </select>
-                        </div>
-
-                        <!-- Dynamic Components Form -->
-                        <div class="space-y-3 mb-6">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Komponen Nilai & Persentase</span>
-                                <span id="totalWeightBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">Total Bobot: 0%</span>
-                            </div>
-                            
-                            <div id="componentsList" class="space-y-3">
-                                <!-- Dynamic Component Inputs generated by JS -->
-                            </div>
-
-                            <button id="addComponentBtn" onclick="addManualComponent()" class="hidden w-full py-2.5 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-500 dark:hover:border-indigo-400 dark:hover:text-indigo-400 transition-all flex items-center justify-center gap-1.5 mt-2">
-                                <i class="fa-solid fa-plus"></i> Tambah Komponen Manual
-                            </button>
-                        </div>
-
-                        <!-- Action Button -->
-                        <button onclick="calculateSingleMK()" class="w-full py-3.5 rounded-xl font-bold custom-btn shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base">
-                            <i class="fa-solid fa-calculator"></i>
-                            Hitung Nilai Akhir & Cek Target
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Right Column: Results & Optimization Options -->
-                <div class="lg:col-span-5 space-y-6">
-                    <!-- Score Card Result -->
-                    <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60 relative overflow-hidden">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Hasil Perhitungan Single MK</h3>
-                        
-                        <div id="resultMKEmpty" class="text-center py-12 text-slate-400">
-                            <i class="fa-solid fa-square-poll-vertical text-5xl mb-3 opacity-40"></i>
-                            <p class="text-xs sm:text-sm font-medium">Isi komponen nilai di sebelah kiri dan klik tombol "Hitung Nilai Akhir".</p>
-                        </div>
-
-                        <div id="resultMKDisplay" class="hidden space-y-6">
-                            <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/80 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
-                                <div>
-                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider" id="resMKTitle">Mata Kuliah</div>
-                                    <div class="text-4xl font-black mt-1 tracking-tight" id="resMKScore">0.00</div>
-                                    <div class="text-[11px] text-slate-400 mt-0.5">Skala Nilai 0 - 100</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Nilai Huruf</div>
-                                    <div class="text-4xl font-black custom-text-accent mt-1" id="resMKGrade">-</div>
-                                    <div class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5" id="resMKBobot">Bobot: 0.0</div>
-                                </div>
-                            </div>
-
-                            <!-- Target Status Badge -->
-                            <div id="targetStatusContainer" class="hidden p-4 rounded-xl text-xs sm:text-sm font-medium border flex items-start gap-3">
-                                <i id="targetStatusIcon" class="fa-solid text-lg mt-0.5"></i>
-                                <div>
-                                    <div id="targetStatusTitle" class="font-bold">Status Target</div>
-                                    <div id="targetStatusDesc" class="text-xs mt-0.5 leading-relaxed opacity-90"></div>
-                                </div>
-                            </div>
-
-                            <!-- Recommendation / Options Box -->
-                            <div id="optimizationBox" class="hidden space-y-3 pt-3 border-t border-slate-100 dark:border-slate-700">
-                                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                                    <i class="fa-solid fa-lightbulb text-amber-500"></i>
-                                    <span>Opsi Konkret Perbaikan Komponen Agar Target Tercapai:</span>
-                                </div>
-                                <div id="optimizationList" class="space-y-2 text-xs">
-                                    <!-- Dynamic options list -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- ================= TAB 2: SIMULASI IP SEMESTER 3 & IPK ================= -->
-        <section id="tab2" class="hidden space-y-6">
-            
-            <!-- Top Section: Initial Data (Sem 1 & 2) & Targets -->
-            <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60">
-                <h2 class="text-lg font-bold mb-1">1. Data Akademik Histori & Target Kumulatif</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Masukkan IPK histori 2 semester awal dan tentukan target pencapaian Anda.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">IPK 2 Semester Awal</label>
-                        <input type="number" id="ipkAwal" step="0.01" min="0" max="4" placeholder="Contoh: 3.55" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold focus:ring-2 focus:outline-none custom-ring-accent">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Total SKS 2 Sem Awal</label>
-                        <input type="number" id="sksAwal" step="1" min="0" placeholder="Default: 40 SKS" value="40" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold focus:ring-2 focus:outline-none custom-ring-accent">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Target IP Sem 3 <span class="text-[10px] font-normal text-slate-400">(Opsional)</span></label>
-                        <input type="number" id="targetIp3" step="0.01" min="0" max="4" placeholder="Contoh: 3.75" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold focus:ring-2 focus:outline-none custom-ring-accent">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Target IPK Kumulatif <span class="text-[10px] font-normal text-slate-400">(Opsional)</span></label>
-                        <input type="number" id="targetIpk3" step="0.01" min="0" max="4" placeholder="Contoh: 3.65" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold focus:ring-2 focus:outline-none custom-ring-accent">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Course List Table for Semester 3 -->
-            <div class="bg-white dark:bg-slate-800/90 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700/80">
-                    <div>
-                        <h2 class="text-lg font-bold">2. Planning Mata Kuliah Semester 3</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Pilih estimasi/prediksi nilai huruf untuk setiap mata kuliah semester ini.</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="addIPKCourseRow()" class="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1.5 transition-all">
-                            <i class="fa-solid fa-plus text-indigo-500"></i> Tambah MK Manual
-                        </button>
-                        <button onclick="resetIPKSem3Form()" class="px-3 py-2 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all">
-                            Reset Form
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs sm:text-sm">
-                        <thead>
-                            <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase text-[11px] font-bold tracking-wider">
-                                <th class="pb-3 px-2">Mata Kuliah Semester 3</th>
-                                <th class="pb-3 px-2 w-28">SKS</th>
-                                <th class="pb-3 px-2 w-48">Prediksi Nilai Huruf</th>
-                                <th class="pb-3 px-2 w-32 text-right">Bobot (SKS × Nilai)</th>
-                                <th class="pb-3 px-2 w-12"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="ipkCoursesTable" class="divide-y divide-slate-100 dark:divide-slate-800">
-                            <!-- Dynamic rows populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Action Button -->
-                <div class="mt-8">
-                    <button onclick="calculateIPKSimulasi()" class="w-full py-4 rounded-xl font-bold custom-btn shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base">
-                        <i class="fa-solid fa-chart-line"></i>
-                        Hitung Simulasi IP & IPK Kumulatif
-                    </button>
-                </div>
-            </div>
-
-            <!-- Results Section for IP & IPK -->
-            <div id="ipkResultsSection" class="hidden bg-white dark:bg-slate-800/90 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-700/60 space-y-6">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Ringkasan Hasil Simulasi Akademik</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Card 1: IP Semester 3 -->
-                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">IP Semester 3</span>
-                        <div id="resIPSem3" class="text-3xl font-black custom-text-accent">0.00</div>
-                        <div class="text-[11px] text-slate-400 mt-2 font-medium" id="resSksSem3">Total SKS Sem 3: 0 SKS</div>
-                    </div>
-
-                    <!-- Card 2: Total Bobot Semester 3 -->
-                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Mutu Poin Sem 3</span>
-                        <div id="resBobotSem3" class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">0.00</div>
-                        <div class="text-[11px] text-slate-400 mt-2 font-medium">Hasil Total (SKS × Nilai)</div>
-                    </div>
-
-                    <!-- Card 3: IPK Kumulatif Sem 1-3 -->
-                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">IPK Kumulatif (Sem 1-3)</span>
-                        <div id="resIPKKumulatif" class="text-3xl font-black text-emerald-600 dark:text-emerald-400">0.00</div>
-                        <div class="text-[11px] text-slate-400 mt-2 font-medium" id="resTotalSksKumulatif">Total SKS Kumulatif: 0 SKS</div>
-                    </div>
-
-                    <!-- Card 4: Total Bobot Kumulatif -->
-                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Total Mutu Kumulatif</span>
-                        <div id="resBobotKumulatif" class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">0.00</div>
-                        <div class="text-[11px] text-slate-400 mt-2 font-medium" id="resBobotAwalDetail">Awal: 0.00 | Sem 3: 0.00</div>
-                    </div>
-                </div>
-
-                <!-- Target Status & Recommendations Box -->
-                <div id="ipkTargetStatusBox" class="hidden p-5 rounded-2xl border transition-all space-y-4">
-                    <div class="flex items-start gap-3">
-                        <i id="ipkTargetIcon" class="fa-solid text-xl mt-0.5"></i>
-                        <div>
-                            <h4 id="ipkTargetTitle" class="font-bold text-sm"></h4>
-                            <p id="ipkTargetMessage" class="text-xs mt-1 leading-relaxed opacity-90"></p>
-                        </div>
-                    </div>
-
-                    <!-- Recommendation Options for IP/IPK -->
-                    <div id="ipkOptimizationContainer" class="hidden pt-3 border-t border-slate-200/60 dark:border-slate-700/60">
-                        <div class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1.5">
-                            <i class="fa-solid fa-route"></i>
-                            <span>Opsi Rekomendasi Peningkatan Grade Mata Kuliah Semester 3:</span>
-                        </div>
-                        <ul id="ipkOptimizationList" class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
-                            <!-- Dynamic recommendations -->
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- Custom Modal for Notifications (Alert Replacement) -->
-    <div id="customModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 text-center space-y-4">
-            <div id="modalIconContainer" class="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
-                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-            </div>
-            <h3 id="modalTitle" class="text-base font-bold">Pemberitahuan</h3>
-            <p id="modalMessage" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"></p>
-            <button onclick="closeModal()" class="w-full py-2.5 rounded-xl font-bold custom-btn text-xs">
-                Tutup
-            </button>
+        <div class="card">
+          <h2>Hasil</h2>
+          <div id="out1"></div>
         </div>
+      </section>
+
+      <section id="t2" class="hide">
+        <div class="card">
+          <h2>Pilih cara input</h2>
+          <div class="seg" id="modeSeg"><button data-m="auto" class="on">⚡ Otomatis (kontrak kuliah)</button><button data-m="manual">✍️ Manual</button></div>
+          <div id="autoPick" style="margin-top: 12px">
+            <label>Mata kuliah</label
+            ><select id="mkSel"></select>
+          </div>
+          <div style="margin-top: 12px">
+            <label>Target nilai (opsional)</label
+            ><select id="tg">
+              <option value="">Tanpa target</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <h2 id="compTitle">Komponen nilai</h2>
+          <div id="comps"></div>
+          <button class="btn ghost hide" id="addComp">＋ Tambah komponen</button>
+          <div class="note" id="wNote"></div>
+        </div>
+        <div class="card">
+          <h2>Hasil</h2>
+          <div id="out2"></div>
+        </div>
+      </section>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <div class="ov" id="ov">
+      <div class="sheet">
+        <h2>⚙ Pengaturan</h2>
+        <div class="sec">
+          <label>Mode tampilan</label>
+          <div class="seg" id="themeSeg"><button data-th="light">☀️ Terang</button><button data-th="dark">🌙 Gelap</button></div>
+          <div class="note">Pilihanmu tersimpan, tidak berubah saat halaman di-refresh.</div>
+        </div>
+        <div class="sec">
+          <label>Warna tombol</label>
+          <div class="sw" id="swBtn"></div>
+        </div>
+        <div class="sec">
+          <label>Warna tombol saat di-hover</label>
+          <div class="sw" id="swHov"></div>
+        </div>
+        <div class="sec"><label>Pratinjau</label><button class="btn">Tombol contoh (coba arahkan kursor)</button></div>
+        <button class="btn" id="closeS" style="width: 100%">Selesai</button>
+      </div>
+    </div>
+
     <script>
-        /* ================= DATA PRESETS ================= */
-        // 12 Presets for Tab 1 (Nilai 1 MK)
-        const PRESET_MK_TAB1 = [
-            {
-                name: "Praktikum PBW",
-                components: [
-                    { name: "Kehadiran", weight: 15 },
-                    { name: "Kuis", weight: 10 },
-                    { name: "Tugas", weight: 20 },
-                    { name: "UTS", weight: 25 },
-                    { name: "UAS", weight: 30 }
-                ]
-            },
-            {
-                name: "Praktikum Database",
-                components: [
-                    { name: "Kuis", weight: 15 },
-                    { name: "Tugas", weight: 25 },
-                    { name: "UTS", weight: 25 },
-                    { name: "UAS", weight: 35 }
-                ]
-            },
-            {
-                name: "Praktikum GIS",
-                components: [
-                    { name: "Kuis", weight: 10 },
-                    { name: "Tugas", weight: 25 },
-                    { name: "UTS", weight: 30 },
-                    { name: "UAS", weight: 35 }
-                ]
-            },
-            {
-                name: "Praktikum Sistem Informasi",
-                components: [
-                    { name: "Kehadiran", weight: 20 },
-                    { name: "Tugas", weight: 15 },
-                    { name: "UTS", weight: 30 },
-                    { name: "UAS", weight: 35 }
-                ]
-            },
-            {
-                name: "Praktikum Struktur Data",
-                components: [
-                    { name: "Kehadiran", weight: 10 },
-                    { name: "Tugas", weight: 15 },
-                    { name: "Kuis", weight: 10 },
-                    { name: "UTS", weight: 30 },
-                    { name: "UAS", weight: 35 }
-                ]
-            },
-            {
-                name: "Komunikasi Data Teori",
-                components: [
-                    { name: "Tugas", weight: 20 },
-                    { name: "Kuis", weight: 20 },
-                    { name: "UTS", weight: 30 },
-                    { name: "UAS", weight: 30 }
-                ]
-            },
-            {
-                name: "SIG Teori",
-                components: [
-                    { name: "Kuis", weight: 15 },
-                    { name: "Tugas/Latihan", weight: 25 },
-                    { name: "UTS", weight: 25 },
-                    { name: "UAS", weight: 35 }
-                ]
-            },
-            {
-                name: "E-Commerce Teori",
-                components: [
-                    { name: "Kuis", weight: 15 },
-                    { name: "UTS", weight: 35 },
-                    { name: "Proyek", weight: 50 }
-                ]
-            },
-            {
-                name: "Sistem Informasi Teori",
-                components: [
-                    { name: "Tugas", weight: 15 },
-                    { name: "Kuis", weight: 10 },
-                    { name: "UTS", weight: 35 },
-                    { name: "UAS", weight: 40 }
-                ]
-            },
-            {
-                name: "Database Teori",
-                components: [
-                    { name: "Praktikum", weight: 15 },
-                    { name: "Kuis", weight: 15 },
-                    { name: "Tugas/Latihan", weight: 20 },
-                    { name: "UTS", weight: 25 },
-                    { name: "UAS", weight: 25 }
-                ]
-            },
-            {
-                name: "Praktikum E-Commerce",
-                components: [
-                    { name: "Kehadiran", weight: 15 },
-                    { name: "Tugas", weight: 15 },
-                    { name: "Kuis", weight: 10 },
-                    { name: "UTS", weight: 25 },
-                    { name: "UAS", weight: 35 }
-                ]
-            },
-            {
-                name: "Praktikum Kewirausahaan",
-                components: [
-                    { name: "Absensi", weight: 15 },
-                    { name: "Tugas/Kuis", weight: 20 },
-                    { name: "UTS", weight: 30 },
-                    { name: "UAS", weight: 35 }
-                ]
-            }
-        ];
-
-        // 16 Default Courses for Semester 3 (Tab 2)
-        const DEFAULT_SEM3_COURSES = [
-            { name: "Database", sks: 1 },
-            { name: "Praktikum Database", sks: 2 },
-            { name: "Komunikasi Data", sks: 1 },
-            { name: "Praktikum Komunikasi Data", sks: 2 },
-            { name: "Struktur Data", sks: 1 },
-            { name: "Praktikum Struktur Data", sks: 2 },
-            { name: "Pemrograman Berbasis Web", sks: 1 },
-            { name: "Praktikum Pemrograman Berbasis Web", sks: 2 },
-            { name: "Sistem Informasi Geografis", sks: 1 },
-            { name: "Praktikum Sistem Informasi Geografis", sks: 2 },
-            { name: "Sistem Informasi", sks: 1 },
-            { name: "Praktikum Sistem Informasi", sks: 2 },
-            { name: "E-Commerce", sks: 1 },
-            { name: "Praktikum E-Commerce", sks: 2 },
-            { name: "Kewirausahaan", sks: 2 },
-            { name: "Praktikum Kewirausahaan", sks: 1 }
-        ];
-
-        // Revised Grade Scale & Point Weights
-        const GRADE_SCALE = [
-            { grade: 'A', minScore: 87, weight: 4.0 },
-            { grade: 'AB', minScore: 78, weight: 3.5 },
-            { grade: 'B', minScore: 69, weight: 3.0 },
-            { grade: 'BC', minScore: 60, weight: 2.5 },
-            { grade: 'C', minScore: 51, weight: 2.0 },
-            { grade: 'D', minScore: 41, weight: 1.0 },
-            { grade: 'E', minScore: 0, weight: 0.0 }
-        ];
-
-        /* ================= STATE MANAGEMENT ================= */
-        let currentMKMode = 'auto'; // 'auto' | 'manual'
-        let currentComponents = [];
-        let ipkCourseList = [];
-
-        /* ================= INITIALIZATION ================= */
-        document.addEventListener("DOMContentLoaded", () => {
-            initPresetMKSelect();
-            loadPresetMK();
-            initIPKSem3Table();
+      var GR = [
+        ["A", 87, 4],
+        ["AB", 78, 3.5],
+        ["B", 69, 3],
+        ["BC", 60, 2.5],
+        ["C", 51, 2],
+        ["D", 41, 1],
+        ["E", 0, 0],
+      ];
+      var K = [
+        [
+          "Praktikum PBW",
+          [
+            ["Kehadiran", 15],
+            ["Kuis", 10],
+            ["Tugas", 20],
+            ["UTS", 25],
+            ["UAS", 30],
+          ],
+        ],
+        [
+          "Praktikum Database",
+          [
+            ["Kuis", 15],
+            ["Tugas", 25],
+            ["UTS", 25],
+            ["UAS", 35],
+          ],
+        ],
+        [
+          "Praktikum GIS",
+          [
+            ["Kuis", 10],
+            ["Tugas", 25],
+            ["UTS", 30],
+            ["UAS", 35],
+          ],
+        ],
+        [
+          "Praktikum Sistem Informasi",
+          [
+            ["Kehadiran", 20],
+            ["Tugas", 15],
+            ["UTS", 30],
+            ["UAS", 35],
+          ],
+        ],
+        [
+          "Praktikum Struktur Data",
+          [
+            ["Kehadiran", 10],
+            ["Tugas", 15],
+            ["Kuis", 10],
+            ["UTS", 30],
+            ["UAS", 35],
+          ],
+        ],
+        [
+          "Komunikasi Data Teori",
+          [
+            ["Tugas", 20],
+            ["Kuis", 20],
+            ["UTS", 30],
+            ["UAS", 30],
+          ],
+        ],
+        [
+          "SIG Teori",
+          [
+            ["Kuis", 15],
+            ["Tugas/Latihan", 25],
+            ["UTS", 25],
+            ["UAS", 35],
+          ],
+        ],
+        [
+          "E-Commerce Teori",
+          [
+            ["Kuis", 15],
+            ["UTS", 35],
+            ["Proyek", 50],
+          ],
+        ],
+        [
+          "Sistem Informasi Teori",
+          [
+            ["Tugas", 15],
+            ["Kuis", 10],
+            ["UTS", 35],
+            ["UAS", 40],
+          ],
+        ],
+        [
+          "Database Teori",
+          [
+            ["Praktikum", 15],
+            ["Kuis", 15],
+            ["Tugas/Latihan", 20],
+            ["UTS", 25],
+            ["UAS", 25],
+          ],
+        ],
+        [
+          "Praktikum E-Commerce",
+          [
+            ["Kehadiran", 15],
+            ["Tugas", 15],
+            ["Kuis", 10],
+            ["UTS", 25],
+            ["UAS", 35],
+          ],
+        ],
+        [
+          "Praktikum Kewirausahaan",
+          [
+            ["Absensi", 15],
+            ["Tugas/Kuis", 20],
+            ["UTS", 30],
+            ["UAS", 35],
+          ],
+        ],
+      ];
+      var DEF = [
+        ["Database", 1, 0],
+        ["Praktikum Database", 2, 0],
+        ["Komunikasi Data", 1, 1],
+        ["Praktikum Komunikasi Data", 2, 1],
+        ["Struktur Data", 1, 0],
+        ["Praktikum Struktur Data", 2, 0],
+        ["Pemrograman Berbasis Web", 1, 0],
+        ["Praktikum Pemrograman Berbasis Web", 2, 0],
+        ["Sistem Informasi Geografis", 1, 1],
+        ["Praktikum Sistem Informasi Geografis", 2, 1],
+        ["Sistem Informasi", 1, 0],
+        ["Praktikum Sistem Informasi", 2, 1],
+        ["E-Commerce", 1, 0],
+        ["Praktikum E-Commerce", 2, 0],
+        ["Kewirausahaan", 2, 0],
+        ["Praktikum Kewirausahaan", 1, 0],
+      ];
+      var PAL = [
+        ["#6366f1", "#4f46e5"],
+        ["#8b5cf6", "#7c3aed"],
+        ["#ec4899", "#db2777"],
+        ["#f43f5e", "#e11d48"],
+        ["#f59e0b", "#d97706"],
+        ["#10b981", "#059669"],
+        ["#0ea5e9", "#0284c7"],
+        ["#14b8a6", "#0d9488"],
+      ];
+      var $ = function (s) {
+        return document.querySelector(s);
+      };
+      function load(k, d) {
+        try {
+          var v = JSON.parse(localStorage.getItem(k));
+          return v == null ? d : v;
+        } catch (e) {
+          return d;
+        }
+      }
+      function save(k, v) {
+        try {
+          localStorage.setItem(k, JSON.stringify(v));
+        } catch (e) {}
+      }
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
         });
+      }
+      function f(x, d) {
+        return (+x).toFixed(d == null ? 2 : d).replace(".", ",");
+      }
+      function num(v) {
+        return v === "" || v == null || isNaN(+v) ? null : +v;
+      }
 
-        /* ================= MODAL ALERT FUNCTION ================= */
-        function showAlert(message, title = "Pemberitahuan") {
-            document.getElementById("modalTitle").innerText = title;
-            document.getElementById("modalMessage").innerText = message;
-            document.getElementById("customModal").classList.remove("hidden");
+      /* ---------- Pengaturan ---------- */
+      var S = Object.assign({ theme: document.documentElement.getAttribute("data-theme"), btn: "#6366f1", hov: "#4f46e5" }, load("ipk_s", {}));
+      function contrast(h) {
+        var n = parseInt(h.slice(1), 16),
+          r = n >> 16,
+          g = (n >> 8) & 255,
+          b = n & 255;
+        return 0.299 * r + 0.587 * g + 0.114 * b > 165 ? "#111827" : "#ffffff";
+      }
+      function applyS() {
+        var r = document.documentElement;
+        r.setAttribute("data-theme", S.theme);
+        r.style.setProperty("--btn", S.btn);
+        r.style.setProperty("--btn-h", S.hov);
+        r.style.setProperty("--btn-t", contrast(S.btn));
+        document.querySelectorAll("#themeSeg button").forEach(function (b) {
+          b.classList.toggle("on", b.dataset.th === S.theme);
+        });
+        document.querySelectorAll("#swBtn button").forEach(function (b) {
+          b.classList.toggle("on", b.dataset.c === S.btn);
+        });
+        document.querySelectorAll("#swHov button").forEach(function (b) {
+          b.classList.toggle("on", b.dataset.c === S.hov);
+        });
+        save("ipk_s", S);
+      }
+      function buildSw() {
+        var a = "",
+          h = "";
+        PAL.forEach(function (p) {
+          a += '<button data-c="' + p[0] + '" data-h="' + p[1] + '" style="background:' + p[0] + '"></button>';
+          h += '<button data-c="' + p[1] + '" style="background:' + p[1] + '"></button>';
+        });
+        $("#swBtn").innerHTML = a + '<input type="color" id="cBtn" value="' + S.btn + '" title="Warna kustom">';
+        $("#swHov").innerHTML = h + '<input type="color" id="cHov" value="' + S.hov + '" title="Warna kustom">';
+      }
+      buildSw();
+      $("#swBtn").addEventListener("click", function (e) {
+        var b = e.target.closest("button");
+        if (!b) return;
+        S.btn = b.dataset.c;
+        S.hov = b.dataset.h;
+        $("#cBtn").value = S.btn;
+        $("#cHov").value = S.hov;
+        applyS();
+      });
+      $("#swHov").addEventListener("click", function (e) {
+        var b = e.target.closest("button");
+        if (!b) return;
+        S.hov = b.dataset.c;
+        $("#cHov").value = S.hov;
+        applyS();
+      });
+      $("#swBtn").addEventListener("input", function (e) {
+        if (e.target.id === "cBtn") {
+          S.btn = e.target.value;
+          applyS();
         }
-
-        function closeModal() {
-            document.getElementById("customModal").classList.add("hidden");
+      });
+      $("#swHov").addEventListener("input", function (e) {
+        if (e.target.id === "cHov") {
+          S.hov = e.target.value;
+          applyS();
         }
+      });
+      $("#themeSeg").addEventListener("click", function (e) {
+        var b = e.target.closest("button");
+        if (!b) return;
+        S.theme = b.dataset.th;
+        applyS();
+      });
+      $("#gear").onclick = function () {
+        $("#ov").classList.add("show");
+      };
+      $("#closeS").onclick = function () {
+        $("#ov").classList.remove("show");
+      };
+      $("#ov").addEventListener("click", function (e) {
+        if (e.target.id === "ov") $("#ov").classList.remove("show");
+      });
+      applyS();
 
-        /* ================= TAB 1 LOGIC ================= */
-        function initPresetMKSelect() {
-            const select = document.getElementById("presetMKSelect");
-            select.innerHTML = PRESET_MK_TAB1.map((item, index) => 
-                `<option value="${index}">${item.name}</option>`
-            ).join('');
-        }
+      /* ---------- Tab ---------- */
+      document.querySelectorAll(".tab").forEach(function (t) {
+        t.onclick = function () {
+          document.querySelectorAll(".tab").forEach(function (x) {
+            x.classList.toggle("on", x === t);
+          });
+          $("#t1").classList.toggle("hide", t.dataset.t !== "t1");
+          $("#t2").classList.toggle("hide", t.dataset.t !== "t2");
+        };
+      });
 
-        function setMKMode(mode) {
-            currentMKMode = mode;
-            const autoBtn = document.getElementById('modeAutoBtn');
-            const manualBtn = document.getElementById('modeManualBtn');
-            const autoContainer = document.getElementById('autoMKContainer');
-            const manualNameContainer = document.getElementById('manualMKNameContainer');
-            const addBtn = document.getElementById('addComponentBtn');
-
-            if (mode === 'auto') {
-                autoBtn.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-slate-800 dark:text-white transition-all font-semibold";
-                manualBtn.className = "px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all font-semibold";
-                autoContainer.classList.remove('hidden');
-                manualNameContainer.classList.add('hidden');
-                addBtn.classList.add('hidden');
-                loadPresetMK();
-            } else {
-                manualBtn.className = "px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-slate-800 dark:text-white transition-all font-semibold";
-                autoBtn.className = "px-3 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all font-semibold";
-                autoContainer.classList.add('hidden');
-                manualNameContainer.classList.remove('hidden');
-                addBtn.classList.remove('hidden');
-                
-                currentComponents = [
-                    { name: "Kuis / Tugas", weight: 30, value: '' },
-                    { name: "UTS", weight: 35, value: '' },
-                    { name: "UAS", weight: 35, value: '' }
-                ];
-                renderComponentsInputs();
+      /* ---------- Form 1: Simulasi IP/IPK ---------- */
+      var sim = Object.assign({ tIp: "", tIpk: "", pIpk: "", pSks: "", mode: "auto", sem: "2" }, load("ipk_sim", {}));
+      var oldR = sim.rows || null;
+      sim.store = sim.store || {};
+      (function () {
+        var prev = sim.store.auto || oldR || [];
+        sim.store.auto = DEF.map(function (d) {
+          var g = d[2];
+          prev.forEach(function (r) {
+            if (r.n === d[0]) g = r.g;
+          });
+          return { n: d[0], s: d[1], g: g };
+        });
+        if (!sim.store.manual || !sim.store.manual.length) sim.store.manual = [{ n: "MK 1", s: 2, g: 0 }];
+      })();
+      sim.rows = sim.store[sim.mode] || sim.store.auto;
+      function gOpts(sel) {
+        return GR.map(function (g, i) {
+          return '<option value="' + i + '"' + (i === sel ? " selected" : "") + ">" + g[0] + " (" + f(g[2], 1) + ")</option>";
+        }).join("");
+      }
+      function renderRows() {
+        var a = sim.mode === "auto";
+        $("#semPick").classList.toggle("hide", !a);
+        $("#addRow").classList.toggle("hide", a);
+        document.querySelectorAll("#simMode button").forEach(function (b) {
+          b.classList.toggle("on", b.dataset.m === sim.mode);
+        });
+        $("#hdr1").className = "row" + (a ? " a2" : "");
+        $("#hdr1").innerHTML = '<span class="hd">Nama MK</span><span class="hd">SKS</span><span class="hd">Nilai</span>' + (a ? "" : "<span></span>");
+        $("#rows").innerHTML = sim.rows
+          .map(function (r, i) {
+            return a
+              ? '<div class="row a2" data-i="' +
+                  i +
+                  '"><b style="font-size:14px">' +
+                  esc(r.n) +
+                  '</b><span class="wbadge">' +
+                  r.s +
+                  ' SKS</span><select class="rg">' +
+                  gOpts(r.g) +
+                  "</select></div>"
+              : '<div class="row" data-i="' +
+                  i +
+                  '"><input class="rn" value="' +
+                  esc(r.n) +
+                  '" placeholder="Nama MK"><input class="rs" type="number" min="0" step="1" value="' +
+                  r.s +
+                  '" placeholder="SKS"><select class="rg">' +
+                  gOpts(r.g) +
+                  '</select><button class="x" title="Hapus">✕</button></div>';
+          })
+          .join("");
+      }
+      function stats(gs) {
+        var q = 0,
+          s = 0;
+        sim.rows.forEach(function (r, i) {
+          q += r.s * GR[gs[i]][2];
+          s += r.s;
+        });
+        var ps = num(sim.pSks) || 0,
+          pi = num(sim.pIpk) || 0,
+          ip = s ? q / s : 0,
+          ipk = ps + s ? (pi * ps + q) / (ps + s) : 0;
+        return { ip: ip, ipk: ipk, s: s, q: q, ps: ps, pq: pi * ps };
+      }
+      function met(gs) {
+        var st = stats(gs),
+          a = num(sim.tIp),
+          b = num(sim.tIpk);
+        return (a == null || st.ip >= a - 1e-9) && (b == null || st.ipk >= b - 1e-9);
+      }
+      function changes(gs) {
+        var c = [];
+        sim.rows.forEach(function (r, i) {
+          if (gs[i] !== r.g) c.push({ n: r.n, s: r.s, from: r.g, to: gs[i] });
+        });
+        return c;
+      }
+      function planA() {
+        var gs = sim.rows.map(function (r) {
+            return r.g;
+          }),
+          idx = [];
+        sim.rows.forEach(function (r, i) {
+          if (r.g > 0 && r.s > 0) idx.push(i);
+        });
+        idx.sort(function (a, b) {
+          return sim.rows[b].s * (4 - GR[sim.rows[b].g][2]) - sim.rows[a].s * (4 - GR[sim.rows[a].g][2]);
+        });
+        for (var j = 0; j < idx.length; j++) {
+          var i = idx[j],
+            old = gs[i];
+          gs[i] = 0;
+          if (met(gs)) {
+            for (var k = old - 1; k >= 0; k--) {
+              gs[i] = k;
+              if (met(gs)) break;
             }
+            return gs;
+          }
         }
-
-        function loadPresetMK() {
-            if (currentMKMode !== 'auto') return;
-            const index = document.getElementById("presetMKSelect").value;
-            const preset = PRESET_MK_TAB1[index];
-            currentComponents = preset.components.map(c => ({ ...c, value: '' }));
-            renderComponentsInputs();
+        return null;
+      }
+      function planStep(pick) {
+        var gs = sim.rows.map(function (r) {
+            return r.g;
+          }),
+          n = 0;
+        while (!met(gs) && n++ < 200) {
+          var best = -1;
+          sim.rows.forEach(function (r, i) {
+            if (gs[i] > 0 && r.s > 0 && (best < 0 || pick(i, best, gs))) best = i;
+          });
+          if (best < 0) return null;
+          gs[best]--;
         }
-
-        function renderComponentsInputs() {
-            const container = document.getElementById("componentsList");
-            container.innerHTML = "";
-
-            let totalWeight = 0;
-
-            currentComponents.forEach((comp, idx) => {
-                totalWeight += parseFloat(comp.weight) || 0;
-                
-                const isManual = currentMKMode === 'manual';
-                const div = document.createElement("div");
-                div.className = "flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/60";
-                
-                div.innerHTML = `
-                    <div class="flex-1">
-                        ${isManual ? 
-                            `<input type="text" value="${comp.name}" onchange="updateCompData(${idx}, 'name', this.value)" placeholder="Nama Komponen" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:ring-2 focus:outline-none custom-ring-accent">` : 
-                            `<span class="text-xs font-bold block text-slate-700 dark:text-slate-300 truncate">${comp.name}</span>`
-                        }
-                    </div>
-                    <div class="w-20 sm:w-24 flex items-center gap-1">
-                        ${isManual ? 
-                            `<input type="number" min="0" max="100" value="${comp.weight}" onchange="updateCompData(${idx}, 'weight', this.value)" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center font-bold focus:ring-2 focus:outline-none custom-ring-accent">` : 
-                            `<span class="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-md w-full text-center">${comp.weight}%</span>`
-                        }
-                    </div>
-                    <div class="w-24 sm:w-28">
-                        <input type="number" min="0" max="100" step="0.1" value="${comp.value !== undefined ? comp.value : ''}" onchange="updateCompData(${idx}, 'value', this.value)" placeholder="Nilai (0-100)" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold focus:ring-2 focus:outline-none custom-ring-accent">
-                    </div>
-                    ${isManual ? `
-                        <button onclick="removeManualComponent(${idx})" class="text-rose-500 hover:text-rose-700 p-1 text-xs">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    ` : ''}
-                `;
-                container.appendChild(div);
+        return met(gs) ? gs : null;
+      }
+      function calc1() {
+        var inc =
+          !sim.rows.length ||
+          sim.rows.some(function (r) {
+            return !(r.s > 0) || !String(r.n).trim();
+          });
+        if (inc) {
+          $("#out1").innerHTML = '<div class="msg info">Lengkapi nama MK dan SKS dulu. Setelah semua terisi, IP, IPK, dan bobot SKS muncul di sini.</div>';
+          save("ipk_sim", sim);
+          return;
+        }
+        var base = sim.rows.map(function (r) {
+            return r.g;
+          }),
+          st = stats(base),
+          a = num(sim.tIp),
+          b = num(sim.tIpk),
+          h = "";
+        h +=
+          '<div class="hero h2"><div class="stat"><b>' +
+          f(st.ip) +
+          '</b><span>IP semester ini</span></div><div class="stat"><b>' +
+          f(st.ipk) +
+          "</b><span>IPK" +
+          (st.ps ? "" : " (semester ini saja)") +
+          '</span></div></div><div class="hero h4"><div class="stat plain"><b>' +
+          st.s +
+          '</b><span>Bobot semester ini (SKS)</span></div><div class="stat plain"><b>' +
+          (st.s + st.ps) +
+          '</b><span>Bobot keseluruhan (SKS)</span></div><div class="stat plain"><b>' +
+          f(st.q, 1) +
+          '</b><span>Poin mutu semester ini</span></div><div class="stat plain"><b>' +
+          f(st.q + st.pq, 1) +
+          "</b><span>Poin mutu keseluruhan</span></div></div>";
+        if (a == null && b == null) {
+          h += '<div class="msg info">Isi target IP / IPK di atas kalau mau lihat saran agar target tercapai.</div>';
+        } else if (met(base)) {
+          h += '<div class="msg ok">🎉 Target tercapai dengan nilai saat ini!</div>';
+        } else {
+          var all = base.map(function () {
+              return 0;
+            }),
+            mx = stats(all);
+          if (!met(all)) {
+            h += '<div class="msg bad">Target belum bisa dicapai semester ini. Jika semua MK mendapat A: IP ' + f(mx.ip) + " · IPK " + f(mx.ipk) + ".</div>";
+          } else {
+            h += '<div class="msg bad">Target belum tercapai. Ini opsi agar target tercapai:</div>';
+            var ps = [
+                ["Paling ringkas (sedikit MK yang dinaikkan)", planA()],
+                [
+                  "Naik satu tingkat, mulai dari MK ber-SKS besar",
+                  planStep(function (i, j, g) {
+                    return sim.rows[i].s > sim.rows[j].s || (sim.rows[i].s === sim.rows[j].s && g[i] > g[j]);
+                  }),
+                ],
+                [
+                  "Perbaiki MK yang paling lemah dulu",
+                  planStep(function (i, j, g) {
+                    return g[i] > g[j] || (g[i] === g[j] && sim.rows[i].s > sim.rows[j].s);
+                  }),
+                ],
+              ],
+              seen = {},
+              n = 0;
+            ps.forEach(function (p) {
+              if (!p[1]) return;
+              var c = changes(p[1]),
+                key = JSON.stringify(c);
+              if (seen[key]) return;
+              seen[key] = 1;
+              n++;
+              var r = stats(p[1]);
+              h +=
+                '<div class="opt"><h3><i>' +
+                n +
+                "</i>" +
+                p[0] +
+                "</h3><ul>" +
+                c
+                  .map(function (x) {
+                    return "<li>Naikkan <b>" + esc(x.n) + "</b> (" + x.s + " SKS): " + GR[x.from][0] + ' <span class="arrow">→</span> <b>' + GR[x.to][0] + "</b></li>";
+                  })
+                  .join("") +
+                '</ul><div class="res">Hasil: IP ' +
+                f(r.ip) +
+                " · IPK " +
+                f(r.ipk) +
+                "</div></div>";
             });
+          }
+        }
+        $("#out1").innerHTML = h;
+        save("ipk_sim", sim);
+      }
+      $("#rows").addEventListener("input", function (e) {
+        var row = e.target.closest(".row");
+        if (!row) return;
+        var r = sim.rows[+row.dataset.i];
+        if (e.target.classList.contains("rn")) r.n = e.target.value;
+        if (e.target.classList.contains("rs")) r.s = Math.max(0, num(e.target.value) || 0);
+        if (e.target.classList.contains("rg")) r.g = +e.target.value;
+        calc1();
+      });
+      $("#rows").addEventListener("click", function (e) {
+        if (!e.target.classList.contains("x")) return;
+        sim.rows.splice(+e.target.closest(".row").dataset.i, 1);
+        renderRows();
+        calc1();
+      });
+      $("#addRow").onclick = function () {
+        sim.rows.push({ n: "MK baru", s: 2, g: 0 });
+        renderRows();
+        calc1();
+        var l = document.querySelectorAll("#rows .rn");
+        l[l.length - 1].focus();
+        l[l.length - 1].select();
+      };
+      [
+        ["tIp", "tIp"],
+        ["tIpk", "tIpk"],
+        ["pIpk", "pIpk"],
+        ["pSks", "pSks"],
+      ].forEach(function (p) {
+        var el = $("#" + p[0]);
+        el.value = sim[p[1]];
+        el.addEventListener("input", function () {
+          sim[p[1]] = el.value;
+          calc1();
+        });
+      });
 
-            // Update badge total weight
-            const badge = document.getElementById("totalWeightBadge");
-            badge.innerText = `Total Bobot: ${totalWeight}%`;
-            if (Math.abs(totalWeight - 100) < 0.01) {
-                badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300";
+      $("#simMode").addEventListener("click", function (e) {
+        var b = e.target.closest("button");
+        if (!b || b.dataset.m === sim.mode) return;
+        sim.store[sim.mode] = sim.rows;
+        sim.mode = b.dataset.m;
+        sim.rows = sim.store[sim.mode];
+        renderRows();
+        calc1();
+      });
+      /* ---------- Form 2: Nilai 1 MK ---------- */
+      var k2 = load("ipk_k2", null) || {
+        mode: "auto",
+        key: 0,
+        tg: "",
+        auto: {},
+        man: [
+          { n: "Tugas", w: 30, s: "" },
+          { n: "UTS", w: 30, s: "" },
+          { n: "UAS", w: 40, s: "" },
+        ],
+      };
+      function comps() {
+        return k2.mode === "auto"
+          ? K[k2.key][1].map(function (c, i) {
+              var s = (k2.auto[k2.key] || [])[i];
+              return { n: c[0], w: c[1], s: s == null ? "" : s };
+            })
+          : k2.man;
+      }
+      function gradeOf(x) {
+        for (var i = 0; i < GR.length; i++) if (x >= GR[i][1] - 1e-9) return GR[i];
+      }
+      function renderComps() {
+        var a = k2.mode === "auto";
+        $("#autoPick").classList.toggle("hide", !a);
+        $("#addComp").classList.toggle("hide", a);
+        document.querySelectorAll("#modeSeg button").forEach(function (b) {
+          b.classList.toggle("on", b.dataset.m === k2.mode);
+        });
+        var c = comps(),
+          h =
+            '<div class="row ' +
+            (a ? "a" : "m") +
+            '"><span class="hd">Komponen</span><span class="hd">Bobot %</span><span class="hd">Nilai (0-100)</span><span class="hd" style="text-align:center">Sumbangan</span>' +
+            (a ? "" : "<span></span>") +
+            "</div>";
+        h += c
+          .map(function (x, i) {
+            return a
+              ? '<div class="row a" data-i="' +
+                  i +
+                  '"><b style="font-size:14px">' +
+                  esc(x.n) +
+                  '</b><span class="wbadge">' +
+                  x.w +
+                  '%</span><input class="cs" type="number" min="0" max="100" step="0.01" value="' +
+                  x.s +
+                  '" placeholder="–"><span class="ct"></span></div>'
+              : '<div class="row m" data-i="' +
+                  i +
+                  '"><input class="cn" value="' +
+                  esc(x.n) +
+                  '" placeholder="Komponen"><input class="cw" type="number" min="0" max="100" value="' +
+                  x.w +
+                  '"><input class="cs" type="number" min="0" max="100" step="0.01" value="' +
+                  x.s +
+                  '" placeholder="–"><span class="ct"></span><button class="x">✕</button></div>';
+          })
+          .join("");
+        $("#comps").innerHTML = h;
+        $("#compTitle").textContent = a ? K[k2.key][0] : "Komponen nilai manual";
+      }
+      function updCt(c) {
+        document.querySelectorAll("#comps .row[data-i]").forEach(function (row) {
+          var x = c[+row.dataset.i],
+            el = row.querySelector(".ct");
+          if (!x || !el) return;
+          el.textContent = (x.s == null ? "0" : f((x.w * x.s) / 100)) + " / " + +x.w;
+        });
+      }
+      function calc2() {
+        var c = comps().map(function (x) {
+            return { n: x.n, w: +x.w || 0, s: num(x.s) };
+          }),
+          tw = 0,
+          earned = 0,
+          rem = 0,
+          fw = 0;
+        c.forEach(function (x) {
+          tw += x.w;
+          if (x.s == null) rem += x.w;
+          else {
+            earned += x.w * x.s;
+            fw += x.w;
+          }
+        });
+        var h = "";
+        updCt(c);
+        $("#wNote").textContent = tw === 100 ? "Total bobot 100% ✓" : "Total bobot saat ini " + f(tw, 0) + "% (idealnya 100%)";
+        if (!tw || !fw) {
+          $("#out2").innerHTML = '<div class="msg info">Masukkan minimal satu nilai komponen untuk melihat hasil.</div>';
+          save("ipk_k2", k2);
+          return;
+        }
+        earned = earned / tw;
+        rem = rem / tw;
+        var tgi = k2.tg === "" ? null : +k2.tg,
+          M = tgi == null ? null : GR[tgi][1],
+          cur = gradeOf(earned),
+          done = rem < 1e-9;
+        h +=
+          '<div class="hero"><div class="stat"><b>' +
+          f(earned) +
+          "</b><span>" +
+          (done ? "Nilai akhir" : "Poin terkumpul") +
+          '</span></div><div class="stat plain"><b>' +
+          (done ? cur[0] : f(100 * (1 - rem), 0) + "%") +
+          "</b><span>" +
+          (done ? "Nilai huruf (" + f(cur[2], 1) + ")" : "Bobot terisi") +
+          '</span></div><div class="stat plain"><b>' +
+          (M == null ? "–" : GR[tgi][0]) +
+          "</b><span>Target</span></div></div>";
+        if (M != null) {
+          if (earned >= M - 1e-9) {
+            h += '<div class="msg ok">🎉 Target ' + GR[tgi][0] + " sudah tercapai" + (done ? "!" : " dari poin yang terkumpul!") + "</div>";
+          } else if (!done) {
+            var need = (M - earned) / rem;
+            if (need > 100 + 1e-9) {
+              h += '<div class="msg bad">Target ' + GR[tgi][0] + " tidak mungkin tercapai. Nilai maksimal jika sisa komponen 100: " + f(earned + 100 * rem) + ".</div>";
             } else {
-                badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300";
+              h += '<div class="msg info">Untuk meraih ' + GR[tgi][0] + " (min. " + M + "), rata-rata komponen yang belum terisi harus ≥ <b>" + f(need) + "</b>.</div>";
+              h +=
+                '<div class="opt"><h3><i>💡</i>Target per komponen</h3><ul>' +
+                c
+                  .filter(function (x) {
+                    return x.s == null;
+                  })
+                  .map(function (x) {
+                    return "<li>" + esc(x.n) + " (" + x.w + "%): minimal <b>" + f(need) + "</b> jika semua sisa rata</li>";
+                  })
+                  .join("") +
+                "</ul></div>";
             }
-        }
-
-        function updateCompData(index, field, val) {
-            if (field === 'weight' || field === 'value') {
-                currentComponents[index][field] = val === '' ? '' : parseFloat(val);
+          } else {
+            var d = M - earned,
+              mx =
+                earned +
+                c.reduce(function (a, x) {
+                  return a + ((100 - x.s) * x.w) / tw;
+                }, 0);
+            if (mx < M - 1e-9) {
+              h += '<div class="msg bad">Target ' + GR[tgi][0] + " tidak terjangkau: bahkan jika semua komponen 100, nilai maksimal " + f(mx) + ".</div>";
             } else {
-                currentComponents[index][field] = val;
-            }
-            if (field === 'weight') {
-                renderComponentsInputs();
-            }
-        }
-
-        function addManualComponent() {
-            currentComponents.push({ name: "Komponen Baru", weight: 0, value: '' });
-            renderComponentsInputs();
-        }
-
-        function removeManualComponent(idx) {
-            currentComponents.splice(idx, 1);
-            renderComponentsInputs();
-        }
-
-        function calculateSingleMK() {
-            // Validate Total Weight
-            const totalWeight = currentComponents.reduce((acc, c) => acc + (parseFloat(c.weight) || 0), 0);
-            if (Math.abs(totalWeight - 100) > 0.01) {
-                showAlert(`Total bobot persentase komponen harus tepat 100%. Bobot saat ini: ${totalWeight}%`, "Bobot Komponen Tidak Valid");
-                return;
-            }
-
-            // Calculate final score
-            let finalScore = 0;
-            currentComponents.forEach(c => {
-                const val = parseFloat(c.value) || 0;
-                const w = parseFloat(c.weight) || 0;
-                finalScore += (val * w) / 100;
-            });
-
-            // Determine Grade based on revised scale
-            let gradeObj = GRADE_SCALE.find(g => finalScore >= g.minScore) || GRADE_SCALE[GRADE_SCALE.length - 1];
-
-            // Get Course Name
-            let courseName = "";
-            if (currentMKMode === 'auto') {
-                const idx = document.getElementById("presetMKSelect").value;
-                courseName = PRESET_MK_TAB1[idx].name;
-            } else {
-                courseName = document.getElementById("manualMKName").value || "Mata Kuliah Manual";
-            }
-
-            // Show Result UI
-            document.getElementById("resultMKEmpty").classList.add("hidden");
-            document.getElementById("resultMKDisplay").classList.remove("hidden");
-
-            document.getElementById("resMKTitle").innerText = courseName;
-            document.getElementById("resMKScore").innerText = finalScore.toFixed(2);
-            document.getElementById("resMKGrade").innerText = gradeObj.grade;
-            document.getElementById("resMKBobot").innerText = `Bobot Point: ${gradeObj.weight.toFixed(1)}`;
-
-            // Process Target Analysis
-            const targetGrade = document.getElementById("targetGradeSelect").value;
-            const targetStatusBox = document.getElementById("targetStatusContainer");
-            const optimizationBox = document.getElementById("optimizationBox");
-            const optimizationList = document.getElementById("optimizationList");
-
-            if (targetGrade === "NONE") {
-                targetStatusBox.classList.add("hidden");
-                optimizationBox.classList.add("hidden");
-                return;
-            }
-
-            const targetObj = GRADE_SCALE.find(g => g.grade === targetGrade);
-            targetStatusBox.classList.remove("hidden");
-
-            if (finalScore >= targetObj.minScore) {
-                // Target Met
-                targetStatusBox.className = "p-4 rounded-xl text-xs sm:text-sm font-medium bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-start gap-3";
-                document.getElementById("targetStatusIcon").className = "fa-solid fa-circle-check text-emerald-500 text-lg mt-0.5";
-                document.getElementById("targetStatusTitle").innerText = `Target Nilai '${targetGrade}' Tercapai! 🎉`;
-                document.getElementById("targetStatusDesc").innerText = `Selamat! Nilai akhir Anda (${finalScore.toFixed(2)}) sudah memenuhi batas minimal grade ${targetGrade} (${targetObj.minScore}).`;
-                optimizationBox.classList.add("hidden");
-            } else {
-                // Target Failed -> Provide Concrete Optimization Options
-                targetStatusBox.className = "p-4 rounded-xl text-xs sm:text-sm font-medium bg-rose-50 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-start gap-3";
-                document.getElementById("targetStatusIcon").className = "fa-solid fa-triangle-exclamation text-rose-500 text-lg mt-0.5";
-                document.getElementById("targetStatusTitle").innerText = `Target Nilai '${targetGrade}' Belum Tercapai!`;
-                document.getElementById("targetStatusDesc").innerText = `Nilai saat ini (${finalScore.toFixed(2)}) masih kurang ${(targetObj.minScore - finalScore).toFixed(2)} poin dari batas minimal ${targetGrade} (${targetObj.minScore}).`;
-
-                // Calculate required component scores
-                const options = generateConcreteOptimizationOptions(currentComponents, finalScore, targetObj.minScore);
-                optimizationList.innerHTML = "";
-
-                if (options.length > 0) {
-                    options.forEach(opt => {
-                        const div = document.createElement("div");
-                        div.className = "p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-slate-700 dark:text-slate-300 flex items-start gap-2.5";
-                        div.innerHTML = `
-                            <i class="fa-solid fa-arrow-up-right-dots text-amber-500 text-sm mt-0.5"></i>
-                            <div class="leading-relaxed">${opt}</div>
-                        `;
-                        optimizationList.appendChild(div);
-                    });
-                    optimizationBox.classList.remove("hidden");
-                } else {
-                    // Maximum potential score calculation
-                    let maxPotentialScore = 0;
-                    currentComponents.forEach(c => {
-                        const weight = parseFloat(c.weight) || 0;
-                        maxPotentialScore += (100 * weight) / 100;
-                    });
-
-                    optimizationList.innerHTML = `
-                        <div class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                            <i class="fa-solid fa-circle-info text-indigo-500 mr-1.5"></i>
-                            Secara matematis, jika seluruh nilai komponen ditingkatkan menjadi <strong>100</strong>, nilai akhir maksimal yang bisa didapat adalah <strong>${maxPotentialScore.toFixed(2)}</strong>.
-                        </div>
-                    `;
-                    optimizationBox.classList.remove("hidden");
+              h += '<div class="msg bad">Kurang ' + f(d) + " poin dari target " + GR[tgi][0] + ". Opsi agar tercapai:</div>";
+              var n = 0;
+              var one = c.filter(function (x) {
+                return x.w > 0 && x.s + (d * tw) / x.w <= 100 + 1e-9;
+              });
+              if (one.length) {
+                n++;
+                h +=
+                  '<div class="opt"><h3><i>' +
+                  n +
+                  "</i>Naikkan satu komponen saja</h3><ul>" +
+                  one
+                    .map(function (x) {
+                      return (
+                        "<li>Naikkan <b>" +
+                        esc(x.n) +
+                        "</b> dari " +
+                        f(x.s, 0) +
+                        ' <span class="arrow">→</span> <b>' +
+                        f(Math.ceil((x.s + (d * tw) / x.w) * 100) / 100) +
+                        "</b></li>"
+                      );
+                    })
+                    .join("") +
+                  "</ul></div>";
+              }
+              if (
+                c.every(function (x) {
+                  return x.s + d <= 100 + 1e-9;
+                })
+              ) {
+                n++;
+                h +=
+                  '<div class="opt"><h3><i>' +
+                  n +
+                  "</i>Naikkan semua komponen sama rata</h3><ul><li>Tambah sekitar <b>+" +
+                  f(Math.ceil(d * 100) / 100) +
+                  " poin</b> di setiap komponen</li></ul></div>";
+              }
+              var big = c
+                .slice()
+                .sort(function (a, b) {
+                  return b.w - a.w;
+                })
+                .slice(0, 2);
+              var left = d;
+              var parts = [];
+              big.forEach(function (x) {
+                if (left <= 0) return;
+                var gain = Math.min(100 - x.s, (left * tw) / x.w);
+                if (gain > 0) {
+                  parts.push(
+                    "<li>Naikkan <b>" +
+                      esc(x.n) +
+                      "</b> dari " +
+                      f(x.s, 0) +
+                      ' <span class="arrow">→</span> <b>' +
+                      f(Math.min(100, x.s + Math.ceil(gain * 100) / 100)) +
+                      "</b></li>",
+                  );
+                  left -= (gain * x.w) / tw;
                 }
+              });
+              if (parts.length > 1 && left <= 1e-6) {
+                n++;
+                h += '<div class="opt"><h3><i>' + n + "</i>Fokus ke komponen berbobot besar</h3><ul>" + parts.join("") + "</ul></div>";
+              }
             }
+          }
         }
-
-        // Generate Specific Component Score Increase Recommendations (e.g., "Naikkan Kuis dari 70 -> 95")
-        function generateConcreteOptimizationOptions(components, currentScore, targetMinScore) {
-            const options = [];
-            const neededScoreGap = targetMinScore - currentScore;
-
-            // Filter components that are not already 100 and have weight > 0
-            const upgradable = components.filter(c => (parseFloat(c.value) || 0) < 100 && (parseFloat(c.weight) || 0) > 0);
-
-            // Option Type 1: Individual Single Component Boosts
-            upgradable.forEach(comp => {
-                const currentVal = parseFloat(comp.value) || 0;
-                const weight = parseFloat(comp.weight) || 0;
-
-                const requiredIncreaseInComp = (neededScoreGap * 100) / weight;
-                const targetCompVal = currentVal + requiredIncreaseInComp;
-
-                if (targetCompVal <= 100) {
-                    const roundedTarget = Math.ceil(targetCompVal);
-                    const gapInComp = roundedTarget - currentVal;
-                    options.push(`
-                        <strong>${comp.name}</strong> (Bobot ${weight}%): 
-                        Naikkan dari <span class="font-bold text-rose-600 dark:text-rose-400">${currentVal}</span> 
-                        menjadi <span class="font-bold text-emerald-600 dark:text-emerald-400">${roundedTarget}</span> 
-                        <span class="text-[11px] text-slate-500 dark:text-slate-400">(naik +${gapInComp} poin)</span>
-                    `);
-                }
-            });
-
-            // Option Type 2: Dual Component Boosts (if single boost is impossible or to provide multiple choices)
-            if (options.length < 3 && upgradable.length >= 2) {
-                // Sort by weight descending
-                const sorted = [...upgradable].sort((a, b) => b.weight - a.weight);
-                const c1 = sorted[0];
-                const c2 = sorted[1];
-
-                const w1 = parseFloat(c1.weight) || 0;
-                const w2 = parseFloat(c2.weight) || 0;
-                const v1 = parseFloat(c1.value) || 0;
-                const v2 = parseFloat(c2.value) || 0;
-
-                const combinedWeight = w1 + w2;
-                if (combinedWeight > 0) {
-                    const equalPointIncrease = (neededScoreGap * 100) / combinedWeight;
-                    const targetV1 = Math.ceil(v1 + equalPointIncrease);
-                    const targetV2 = Math.ceil(v2 + equalPointIncrease);
-
-                    if (targetV1 <= 100 && targetV2 <= 100) {
-                        options.push(`
-                            Kombinasi 2 Komponen: Naikkan <strong>${c1.name}</strong> dari <strong>${v1} → ${targetV1}</strong> 
-                            DAN <strong>${c2.name}</strong> dari <strong>${v2} → ${targetV2}</strong>.
-                        `);
-                    }
-                }
-            }
-
-            return options;
+        $("#out2").innerHTML = h;
+        save("ipk_k2", k2);
+      }
+      $("#mkSel").innerHTML = K.map(function (k, i) {
+        return '<option value="' + i + '">' + k[0] + "</option>";
+      }).join("");
+      $("#mkSel").value = k2.key;
+      $("#tg").innerHTML += GR.map(function (g, i) {
+        return '<option value="' + i + '">' + g[0] + " (≥ " + g[1] + ")</option>";
+      }).join("");
+      $("#tg").value = k2.tg;
+      $("#mkSel").onchange = function () {
+        k2.key = +this.value;
+        renderComps();
+        calc2();
+      };
+      $("#tg").onchange = function () {
+        k2.tg = this.value;
+        calc2();
+      };
+      $("#modeSeg").addEventListener("click", function (e) {
+        var b = e.target.closest("button");
+        if (!b) return;
+        k2.mode = b.dataset.m;
+        renderComps();
+        calc2();
+      });
+      $("#addComp").onclick = function () {
+        k2.man.push({ n: "Komponen", w: 0, s: "" });
+        renderComps();
+        calc2();
+      };
+      $("#comps").addEventListener("input", function (e) {
+        var row = e.target.closest(".row");
+        if (!row || row.dataset.i == null) return;
+        var i = +row.dataset.i,
+          v = e.target.value;
+        if (e.target.classList.contains("cs")) {
+          if (k2.mode === "auto") {
+            var arr = (k2.auto[k2.key] = k2.auto[k2.key] || []);
+            arr[i] = v;
+          } else k2.man[i].s = v;
         }
+        if (e.target.classList.contains("cn")) k2.man[i].n = v;
+        if (e.target.classList.contains("cw")) k2.man[i].w = v;
+        calc2();
+      });
+      $("#comps").addEventListener("click", function (e) {
+        if (!e.target.classList.contains("x")) return;
+        k2.man.splice(+e.target.closest(".row").dataset.i, 1);
+        renderComps();
+        calc2();
+      });
 
-
-        /* ================= TAB 2 LOGIC ================= */
-        function initIPKSem3Table() {
-            ipkCourseList = DEFAULT_SEM3_COURSES.map(c => ({
-                name: c.name,
-                sks: c.sks,
-                grade: 'AB', // Default realistic prediction
-                isManual: false
-            }));
-            renderIPKSem3Table();
-        }
-
-        function renderIPKSem3Table() {
-            const tbody = document.getElementById("ipkCoursesTable");
-            tbody.innerHTML = "";
-
-            ipkCourseList.forEach((course, idx) => {
-                const tr = document.createElement("tr");
-                const gradeWeight = (GRADE_SCALE.find(g => g.grade === course.grade) || {}).weight || 0;
-                const totalPoints = course.sks * gradeWeight;
-
-                tr.innerHTML = `
-                    <td class="py-3 px-2">
-                        ${course.isManual ? 
-                            `<input type="text" value="${course.name}" onchange="updateIPKCourse(${idx}, 'name', this.value)" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:ring-2 focus:outline-none custom-ring-accent">` : 
-                            `<span class="font-bold text-slate-800 dark:text-slate-200">${course.name}</span>`
-                        }
-                    </td>
-                    <td class="py-3 px-2">
-                        ${course.isManual ? 
-                            `<input type="number" min="1" max="6" value="${course.sks}" onchange="updateIPKCourse(${idx}, 'sks', this.value)" class="w-20 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs font-bold text-center focus:ring-2 focus:outline-none custom-ring-accent">` : 
-                            `<span class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-1 rounded-md text-xs font-bold">${course.sks} SKS</span>`
-                        }
-                    </td>
-                    <td class="py-3 px-2">
-                        <select onchange="updateIPKCourse(${idx}, 'grade', this.value)" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold custom-text-accent focus:outline-none">
-                            ${GRADE_SCALE.map(g => `<option value="${g.grade}" ${course.grade === g.grade ? 'selected' : ''}>Nilai ${g.grade} (Bobot ${g.weight.toFixed(1)})</option>`).join('')}
-                        </select>
-                    </td>
-                    <td class="py-3 px-2 text-right font-mono font-bold text-slate-800 dark:text-slate-200">
-                        ${totalPoints.toFixed(1)}
-                    </td>
-                    <td class="py-3 px-2 text-center">
-                        ${course.isManual ? `
-                            <button onclick="removeIPKCourse(${idx})" class="text-rose-500 hover:text-rose-700 text-xs p-1">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        ` : ''}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updateIPKCourse(idx, field, val) {
-            if (field === 'sks') {
-                ipkCourseList[idx].sks = parseInt(val) || 0;
-            } else {
-                ipkCourseList[idx][field] = val;
-            }
-            renderIPKSem3Table();
-        }
-
-        function addIPKCourseRow() {
-            ipkCourseList.push({
-                name: "Mata Kuliah Manual Baru",
-                sks: 2,
-                grade: 'AB',
-                isManual: true
-            });
-            renderIPKSem3Table();
-        }
-
-        function removeIPKCourse(idx) {
-            ipkCourseList.splice(idx, 1);
-            renderIPKSem3Table();
-        }
-
-        function resetIPKSem3Form() {
-            initIPKSem3Table();
-            document.getElementById("ipkAwal").value = "";
-            document.getElementById("sksAwal").value = "40";
-            document.getElementById("targetIp3").value = "";
-            document.getElementById("targetIpk3").value = "";
-            document.getElementById("ipkResultsSection").classList.add("hidden");
-        }
-
-        function calculateIPKSimulasi() {
-            const ipkAwalInput = document.getElementById("ipkAwal").value;
-            const sksAwalInput = document.getElementById("sksAwal").value;
-
-            const ipkAwal = parseFloat(ipkAwalInput) || 0;
-            const sksAwal = parseInt(sksAwalInput) || 0;
-            const targetIP3 = parseFloat(document.getElementById("targetIp3").value) || null;
-            const targetIPK3 = parseFloat(document.getElementById("targetIpk3").value) || null;
-
-            if (ipkAwalInput !== "" && sksAwal <= 0) {
-                showAlert("Harap isi Total SKS 2 Semester Awal dengan benar (misal: 40 SKS).", "Data SKS Tidak Sesuai");
-                return;
-            }
-
-            // Calculate Sem 3 metrics
-            let totalSksSem3 = 0;
-            let totalBobotSem3 = 0;
-
-            ipkCourseList.forEach(course => {
-                const weight = (GRADE_SCALE.find(g => g.grade === course.grade) || {}).weight || 0;
-                totalSksSem3 += course.sks;
-                totalBobotSem3 += (course.sks * weight);
-            });
-
-            const ipSem3 = totalSksSem3 > 0 ? (totalBobotSem3 / totalSksSem3) : 0;
-
-            // Calculate Cumulative Metrics (Sem 1 - 3)
-            const totalBobotAwal = ipkAwal * sksAwal;
-            const totalSksKumulatif = sksAwal + totalSksSem3;
-            const totalBobotKumulatif = totalBobotAwal + totalBobotSem3;
-            const ipkKumulatif = totalSksKumulatif > 0 ? (totalBobotKumulatif / totalSksKumulatif) : 0;
-
-            // Display Results
-            document.getElementById("ipkResultsSection").classList.remove("hidden");
-            document.getElementById("resIPSem3").innerText = ipSem3.toFixed(2);
-            document.getElementById("resSksSem3").innerText = `Total SKS Sem 3: ${totalSksSem3} SKS`;
-            document.getElementById("resBobotSem3").innerText = totalBobotSem3.toFixed(2);
-
-            document.getElementById("resIPKKumulatif").innerText = ipkKumulatif.toFixed(2);
-            document.getElementById("resTotalSksKumulatif").innerText = `Total SKS Kumulatif (Sem 1-3): ${totalSksKumulatif} SKS`;
-            document.getElementById("resBobotKumulatif").innerText = totalBobotKumulatif.toFixed(2);
-            document.getElementById("resBobotAwalDetail").innerText = `Awal: ${totalBobotAwal.toFixed(2)} | Sem 3: ${totalBobotSem3.toFixed(2)}`;
-
-            // Process Target Analysis (Target IP Sem 3 & Target IPK)
-            const targetBox = document.getElementById("ipkTargetStatusBox");
-            const optContainer = document.getElementById("ipkOptimizationContainer");
-            const optList = document.getElementById("ipkOptimizationList");
-
-            if (!targetIP3 && !targetIPK3) {
-                targetBox.classList.add("hidden");
-                return;
-            }
-
-            targetBox.classList.remove("hidden");
-
-            let ipTargetMet = targetIP3 ? (ipSem3 >= targetIP3) : true;
-            let ipkTargetMet = targetIPK3 ? (ipkKumulatif >= targetIPK3) : true;
-
-            if (ipTargetMet && ipkTargetMet) {
-                // All targets met
-                targetBox.className = "p-5 rounded-2xl bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 space-y-3";
-                document.getElementById("ipkTargetIcon").className = "fa-solid fa-trophy text-emerald-500 text-xl";
-                document.getElementById("ipkTargetTitle").innerText = `Seluruh Target Akademik Berhasil Tercapai! 🎯`;
-                
-                let msg = "Selamat! ";
-                if (targetIP3) msg += `IP Semester 3 (${ipSem3.toFixed(2)}) telah memenuhi target (${targetIP3.toFixed(2)}). `;
-                if (targetIPK3) msg += `IPK Kumulatif Akhir (${ipkKumulatif.toFixed(2)}) telah memenuhi target (${targetIPK3.toFixed(2)}).`;
-                document.getElementById("ipkTargetMessage").innerText = msg;
-
-                optContainer.classList.add("hidden");
-            } else {
-                // At least one target failed
-                targetBox.className = "p-5 rounded-2xl bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 space-y-3";
-                document.getElementById("ipkTargetIcon").className = "fa-solid fa-triangle-exclamation text-amber-500 text-xl";
-                document.getElementById("ipkTargetTitle").innerText = `Target Akademik Belum Tercapai!`;
-
-                let msg = "";
-                let neededBobotFromIP = 0;
-                let neededBobotFromIPK = 0;
-
-                if (targetIP3 && !ipTargetMet) {
-                    neededBobotFromIP = (targetIP3 * totalSksSem3) - totalBobotSem3;
-                    msg += `IP Sem 3 (${ipSem3.toFixed(2)}) kurang ${(targetIP3 - ipSem3).toFixed(2)} dari target (${targetIP3.toFixed(2)}). `;
-                }
-                if (targetIPK3 && !ipkTargetMet) {
-                    const requiredTotalBobot = targetIPK3 * totalSksKumulatif;
-                    neededBobotFromIPK = requiredTotalBobot - totalBobotKumulatif;
-                    msg += `IPK Kumulatif (${ipkKumulatif.toFixed(2)}) kurang ${(targetIPK3 - ipkKumulatif).toFixed(2)} dari target (${targetIPK3.toFixed(2)}).`;
-                }
-
-                document.getElementById("ipkTargetMessage").innerText = msg;
-
-                // Determine maximum needed points gap
-                const maxPointsGapNeeded = Math.max(neededBobotFromIP, neededBobotFromIPK);
-
-                // Generate specific course grade upgrades
-                const recs = generateCourseGradeUpgrades(maxPointsGapNeeded);
-                optList.innerHTML = "";
-
-                if (recs.length > 0) {
-                    recs.forEach(r => {
-                        const li = document.createElement("li");
-                        li.className = "p-3 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-amber-200/80 dark:border-amber-900/50 flex items-center gap-2 font-medium";
-                        li.innerHTML = `<i class="fa-solid fa-angle-right text-amber-500"></i> <div>${r}</div>`;
-                        optList.appendChild(li);
-                    });
-                } else {
-                    const li = document.createElement("li");
-                    li.className = "p-3 rounded-xl bg-rose-100/70 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 font-medium";
-                    li.innerText = "Secara matematis, target ini tidak dapat dicapai hanya dengan menaikkan grade Semester 3 karena membutuhkan poin melebihi nilai maksimal A pada seluruh mata kuliah.";
-                    optList.appendChild(li);
-                }
-
-                optContainer.classList.remove("hidden");
-            }
-        }
-
-        // Generate specific course upgrades for Tab 2
-        function generateCourseGradeUpgrades(pointsNeeded) {
-            const recommendations = [];
-            let currentGap = pointsNeeded;
-
-            const upgradable = ipkCourseList
-                .map((c, originalIndex) => ({ ...c, originalIndex }))
-                .filter(c => c.grade !== 'A');
-
-            // Sort by SKS descending to maximize impact per grade increase
-            upgradable.sort((a, b) => b.sks - a.sks);
-
-            for (let c of upgradable) {
-                if (currentGap <= 0) break;
-
-                const curGradeObj = GRADE_SCALE.find(g => g.grade === c.grade) || { weight: 0 };
-                
-                if (c.grade === 'AB') {
-                    const gain = c.sks * 0.5;
-                    recommendations.push(`Naikkan MK <strong>${c.name}</strong> (${c.sks} SKS) dari <span class="font-bold text-amber-600 dark:text-amber-400">AB</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">A</span> (+${gain.toFixed(1)} poin mutu)`);
-                    currentGap -= gain;
-                } else if (c.grade === 'B') {
-                    if (currentGap <= c.sks * 0.5) {
-                        const gain = c.sks * 0.5;
-                        recommendations.push(`Naikkan MK <strong>${c.name}</strong> (${c.sks} SKS) dari <span class="font-bold text-amber-600 dark:text-amber-400">B</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">AB</span> (+${gain.toFixed(1)} poin mutu)`);
-                        currentGap -= gain;
-                    } else {
-                        const gain = c.sks * 1.0;
-                        recommendations.push(`Naikkan MK <strong>${c.name}</strong> (${c.sks} SKS) dari <span class="font-bold text-amber-600 dark:text-amber-400">B</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">A</span> (+${gain.toFixed(1)} poin mutu)`);
-                        currentGap -= gain;
-                    }
-                } else {
-                    const gain = c.sks * (4.0 - curGradeObj.weight);
-                    recommendations.push(`Naikkan MK <strong>${c.name}</strong> (${c.sks} SKS) dari <span class="font-bold text-amber-600 dark:text-amber-400">${c.grade}</span> ke <span class="font-bold text-emerald-600 dark:text-emerald-400">A</span> (+${gain.toFixed(1)} poin mutu)`);
-                    currentGap -= gain;
-                }
-            }
-
-            return recommendations;
-        }
-
-
-        /* ================= UI TABS & THEMING LOGIC ================= */
-        function switchTab(tabId) {
-            const tab1 = document.getElementById("tab1");
-            const tab2 = document.getElementById("tab2");
-            const btn1 = document.getElementById("tabBtn1");
-            const btn2 = document.getElementById("tabBtn2");
-
-            if (tabId === 'tab1') {
-                tab1.classList.remove("hidden");
-                tab2.classList.add("hidden");
-                btn1.className = "px-5 py-3 font-bold text-xs sm:text-sm rounded-t-xl border-b-2 custom-border-accent custom-text-accent flex items-center gap-2 transition-all shrink-0";
-                btn2.className = "px-5 py-3 font-bold text-xs sm:text-sm rounded-t-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2 transition-all border-b-2 border-transparent shrink-0";
-            } else {
-                tab2.classList.remove("hidden");
-                tab1.classList.add("hidden");
-                btn2.className = "px-5 py-3 font-bold text-xs sm:text-sm rounded-t-xl border-b-2 custom-border-accent custom-text-accent flex items-center gap-2 transition-all shrink-0";
-                btn1.className = "px-5 py-3 font-bold text-xs sm:text-sm rounded-t-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-2 transition-all border-b-2 border-transparent shrink-0";
-            }
-        }
-
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
-        }
-
-        function toggleCustomizer() {
-            const drawer = document.getElementById("customizerDrawer");
-            drawer.classList.toggle("hidden");
-        }
-
-        function applyPresetColor(bg, hover) {
-            document.getElementById("btnColorInput").value = bg;
-            document.getElementById("hoverColorInput").value = hover;
-            updateCustomColors();
-        }
-
-        function updateCustomColors() {
-            const btnColor = document.getElementById("btnColorInput").value;
-            const hoverColor = document.getElementById("hoverColorInput").value;
-
-            document.documentElement.style.setProperty('--btn-bg', btnColor);
-            document.documentElement.style.setProperty('--btn-hover', hoverColor);
-        }
-
-        function resetColors() {
-            applyPresetColor('#4f46e5', '#4338ca');
-        }
+      renderRows();
+      calc1();
+      renderComps();
+      calc2();
     </script>
-</body>
+  </body>
 </html>
