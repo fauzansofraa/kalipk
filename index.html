@@ -530,9 +530,9 @@
           <h2>Target &amp; data sebelumnya <span style="font-weight: 500; color: var(--mut); font-size: 12px">(opsional)</span></h2>
           <div class="grid2">
             <div><label>Target IP semester ini</label><input type="number" step="0.01" min="0" max="4" id="tIp" placeholder="mis. 3,75" /></div>
-            <div><label>Target IPK</label><input type="number" step="0.01" min="0" max="4" id="tIpk" placeholder="mis. 3,70" /></div>
-            <div><label>IPK semester lalu</label><input type="number" step="0.01" min="0" max="4" id="pIpk" placeholder="mis. 3,60" /></div>
-            <div><label>Total SKS semester lalu</label><input type="number" min="0" id="pSks" placeholder="mis. 20" /></div>
+            <div><label>Target IPK Setelah Semester 3</label><input type="number" step="0.01" min="0" max="4" id="tIpk" placeholder="mis. 3,70" /></div>
+            <div><label>IPK Sekarang</label><input type="number" step="0.01" min="0" max="4" id="pIpk" placeholder="mis. 3,60" /></div>
+            <div><label>Total SKS Yang Sudah Di Lalui</label><input type="number" min="0" id="pSks" placeholder="mis. 20" /></div>
           </div>
           <div class="note">Tanpa data semester lalu, IPK dihitung dari semester ini saja.</div>
         </div>
@@ -883,21 +883,30 @@
       var oldR = sim.rows || null;
       sim.store = sim.store || {};
       (function () {
-        var prev = sim.store.auto || oldR || [];
+        if (sim.v !== 3) {
+          sim.store = {};
+          sim.v = 3;
+        }
+        var prev = sim.store.auto || [];
         sim.store.auto = DEF.map(function (d) {
-          var g = d[2];
+          var g = null;
           prev.forEach(function (r) {
             if (r.n === d[0]) g = r.g;
           });
           return { n: d[0], s: d[1], g: g };
         });
-        if (!sim.store.manual || !sim.store.manual.length) sim.store.manual = [{ n: "MK 1", s: 2, g: 0 }];
+        if (!sim.store.manual || !sim.store.manual.length) sim.store.manual = [{ n: "MK 1", s: 2, g: null }];
       })();
       sim.rows = sim.store[sim.mode] || sim.store.auto;
       function gOpts(sel) {
-        return GR.map(function (g, i) {
-          return '<option value="' + i + '"' + (i === sel ? " selected" : "") + ">" + g[0] + " (" + f(g[2], 1) + ")</option>";
-        }).join("");
+        return (
+          '<option value=""' +
+          (sel == null ? " selected" : "") +
+          ">Pilih</option>" +
+          GR.map(function (g, i) {
+            return '<option value="' + i + '"' + (i === sel ? " selected" : "") + ">" + g[0] + " (" + f(g[2], 1) + ")</option>";
+          }).join("")
+        );
       }
       function renderRows() {
         var a = sim.mode === "auto";
@@ -934,16 +943,20 @@
       }
       function stats(gs) {
         var q = 0,
-          s = 0;
+          s = 0,
+          all = 0;
         sim.rows.forEach(function (r, i) {
-          q += r.s * GR[gs[i]][2];
-          s += r.s;
+          all += r.s;
+          if (gs[i] != null) {
+            q += r.s * GR[gs[i]][2];
+            s += r.s;
+          }
         });
         var ps = num(sim.pSks) || 0,
           pi = num(sim.pIpk) || 0,
           ip = s ? q / s : 0,
           ipk = ps + s ? (pi * ps + q) / (ps + s) : 0;
-        return { ip: ip, ipk: ipk, s: s, q: q, ps: ps, pq: pi * ps };
+        return { ip: ip, ipk: ipk, s: s, all: all, q: q, ps: ps, pq: pi * ps };
       }
       function met(gs) {
         var st = stats(gs),
@@ -1016,15 +1029,25 @@
           a = num(sim.tIp),
           b = num(sim.tIpk),
           h = "";
+        if (st.s === 0) {
+          $("#out1").innerHTML = '<div class="msg info">Pilih nilai minimal satu MK, nanti hasil sementara langsung muncul di sini.</div>';
+          save("ipk_sim", sim);
+          return;
+        }
+        var part = st.s < st.all;
         h +=
           '<div class="hero h2"><div class="stat"><b>' +
           f(st.ip) +
-          '</b><span>IP semester ini</span></div><div class="stat"><b>' +
+          "</b><span>IP semester ini" +
+          (part ? " (sementara)" : "") +
+          '</span></div><div class="stat"><b>' +
           f(st.ipk) +
           "</b><span>IPK" +
+          (part ? " (sementara)" : "") +
           (st.ps ? "" : " (semester ini saja)") +
           '</span></div></div><div class="hero h4"><div class="stat plain"><b>' +
           st.s +
+          (part ? " / " + st.all : "") +
           '</b><span>Bobot semester ini (SKS)</span></div><div class="stat plain"><b>' +
           (st.s + st.ps) +
           '</b><span>Bobot keseluruhan (SKS)</span></div><div class="stat plain"><b>' +
@@ -1032,7 +1055,12 @@
           '</b><span>Poin mutu semester ini</span></div><div class="stat plain"><b>' +
           f(st.q + st.pq, 1) +
           "</b><span>Poin mutu keseluruhan</span></div></div>";
-        if (a == null && b == null) {
+        if (part) {
+          h +=
+            '<div class="msg info">Ini hasil sementara dari MK yang sudah diberi nilai.' +
+            (a != null || b != null ? " Isi nilai semua MK untuk melihat apakah target tercapai beserta sarannya." : "") +
+            "</div>";
+        } else if (a == null && b == null) {
           h += '<div class="msg info">Isi target IP / IPK di atas kalau mau lihat saran agar target tercapai.</div>';
         } else if (met(base)) {
           h += '<div class="msg ok">🎉 Target tercapai dengan nilai saat ini!</div>';
@@ -1098,7 +1126,7 @@
         var r = sim.rows[+row.dataset.i];
         if (e.target.classList.contains("rn")) r.n = e.target.value;
         if (e.target.classList.contains("rs")) r.s = Math.max(0, num(e.target.value) || 0);
-        if (e.target.classList.contains("rg")) r.g = +e.target.value;
+        if (e.target.classList.contains("rg")) r.g = e.target.value === "" ? null : +e.target.value;
         calc1();
       });
       $("#rows").addEventListener("click", function (e) {
@@ -1108,7 +1136,7 @@
         calc1();
       });
       $("#addRow").onclick = function () {
-        sim.rows.push({ n: "MK baru", s: 2, g: 0 });
+        sim.rows.push({ n: "MK baru", s: 2, g: null });
         renderRows();
         calc1();
         var l = document.querySelectorAll("#rows .rn");
@@ -1245,10 +1273,12 @@
           "</b><span>" +
           (done ? "Nilai akhir" : "Poin terkumpul") +
           '</span></div><div class="stat plain"><b>' +
-          (done ? cur[0] : f(100 * (1 - rem), 0) + "%") +
+          cur[0] +
           "</b><span>" +
-          (done ? "Nilai huruf (" + f(cur[2], 1) + ")" : "Bobot terisi") +
-          '</span></div><div class="stat plain"><b>' +
+          (done ? "Nilai huruf" : "Nilai huruf sementara, sisa dianggap 0") +
+          " (" +
+          f(cur[2], 1) +
+          ')</span></div><div class="stat plain"><b>' +
           (M == null ? "–" : GR[tgi][0]) +
           "</b><span>Target</span></div></div>";
         if (M != null) {
