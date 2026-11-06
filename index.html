@@ -1,23 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Kalkulator IPK</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M32 14 8 26l24 12 24-12z' fill='%23fff'/%3E%3Cpath d='M18 34v10c0 4 6 8 14 8s14-4 14-8V34l-14 7z' fill='%23fff' fill-opacity='.85'/%3E%3Cpath d='M54 27v14' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='54' cy='44' r='3' fill='%23fbbf24'/%3E%3C/svg%3E">
     <script>
-      (function () {
+    (function() {
         var t = null;
         try {
-          var s = JSON.parse(localStorage.getItem("ipk_s") || "null");
-          if (s && s.theme) t = s.theme;
+            var s = JSON.parse(localStorage.getItem('ipk_s') || 'null');
+            if (s && s.theme) t = s.theme
         } catch (e) {}
-        if (!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", t);
-      })();
+        if (!t) t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+    })();
     </script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap">
     <style>
-      :root {
+    :root {
         --bg: #f4f5fb;
         --card: #fff;
         --fg: #14162b;
@@ -32,52 +36,51 @@
         color-scheme: light;
         box-sizing: border-box;
         padding-top: env(safe-area-inset-top, 0px);
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-      }
-      :root[data-theme="dark"] {
+        padding-bottom: env(safe-area-inset-bottom, 0px)
+    }
+
+    :root[data-theme="dark"] {
         --bg: #0d0f1e;
         --card: #171a2e;
         --fg: #eef0ff;
         --mut: #9a9fc0;
         --bd: #262a47;
         --inp: #1e2239;
-        color-scheme: dark;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html {
-        scroll-padding-top: env(safe-area-inset-top, 0px);
-      }
-      body {
+        color-scheme: dark
+    }
+
+    * {
+        box-sizing: border-box
+    }
+
+    html {
+        scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    body {
         margin: 0;
         background: var(--bg);
         color: var(--fg);
-        font-family:
-          "Plus Jakarta Sans",
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          sans-serif;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         min-height: 100vh;
-        background-image:
-          radial-gradient(800px 400px at 10% -10%, color-mix(in srgb, var(--btn) 22%, transparent), transparent),
-          radial-gradient(600px 400px at 100% 0, color-mix(in srgb, var(--btn) 14%, transparent), transparent);
-        background-attachment: fixed;
-      }
-      .wrap {
+        background-image: radial-gradient(800px 400px at 10% -10%, color-mix(in srgb, var(--btn) 22%, transparent), transparent), radial-gradient(600px 400px at 100% 0, color-mix(in srgb, var(--btn) 14%, transparent), transparent);
+        background-attachment: fixed
+    }
+
+    .wrap {
         max-width: 860px;
         margin: 0 auto;
-        padding: 18px 16px 60px;
-      }
-      header {
+        padding: 18px 16px 60px
+    }
+
+    header {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin-bottom: 18px;
-      }
-      .logo {
+        margin-bottom: 18px
+    }
+
+    .logo {
         width: 44px;
         height: 44px;
         border-radius: 14px;
@@ -87,27 +90,32 @@
         color: var(--btn-t);
         font-weight: 800;
         font-size: 20px;
-        box-shadow: 0 8px 20px color-mix(in srgb, var(--btn) 40%, transparent);
-      }
-      h1 {
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--btn) 40%, transparent)
+    }
+
+    h1 {
         font-size: 22px;
         margin: 0;
         font-weight: 800;
-        letter-spacing: -0.3px;
-      }
-      header p {
+        letter-spacing: -.3px
+    }
+
+    header p {
         margin: 2px 0 0;
         color: var(--mut);
-        font-size: 13px;
-      }
-      .sp {
-        flex: 1;
-      }
-      button {
+        font-size: 13px
+    }
+
+    .sp {
+        flex: 1
+    }
+
+    button {
         font-family: inherit;
-        cursor: pointer;
-      }
-      .btn {
+        cursor: pointer
+    }
+
+    .btn {
         background: var(--btn);
         color: var(--btn-t);
         border: 0;
@@ -115,46 +123,53 @@
         padding: 10px 16px;
         font-weight: 700;
         font-size: 14px;
-        transition: 0.18s;
-        box-shadow: 0 4px 14px color-mix(in srgb, var(--btn) 35%, transparent);
-      }
-      .btn:hover {
+        transition: .18s;
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--btn) 35%, transparent)
+    }
+
+    .btn:hover {
         background: var(--btn-h);
         transform: translateY(-1px);
-        box-shadow: 0 8px 20px color-mix(in srgb, var(--btn-h) 45%, transparent);
-      }
-      .btn:active {
-        transform: translateY(0);
-      }
-      .ghost {
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--btn-h) 45%, transparent)
+    }
+
+    .btn:active {
+        transform: translateY(0)
+    }
+
+    .ghost {
         background: var(--card);
         color: var(--fg);
         border: 1px solid var(--bd);
-        box-shadow: none;
-      }
-      .ghost:hover {
+        box-shadow: none
+    }
+
+    .ghost:hover {
         background: var(--btn-h);
         color: var(--btn-t);
-        border-color: transparent;
-      }
-      .icon {
+        border-color: transparent
+    }
+
+    .icon {
         width: 42px;
         height: 42px;
         padding: 0;
         font-size: 18px;
         display: grid;
-        place-items: center;
-      }
-      .tabs {
+        place-items: center
+    }
+
+    .tabs {
         display: flex;
         gap: 6px;
         background: var(--card);
         border: 1px solid var(--bd);
         padding: 5px;
         border-radius: 16px;
-        margin-bottom: 16px;
-      }
-      .tab {
+        margin-bottom: 16px
+    }
+
+    .tab {
         flex: 1;
         background: none;
         border: 0;
@@ -163,44 +178,51 @@
         border-radius: 12px;
         font-weight: 700;
         font-size: 14px;
-        transition: 0.18s;
-      }
-      .tab:hover {
+        transition: .18s
+    }
+
+    .tab:hover {
         color: var(--fg);
-        background: color-mix(in srgb, var(--btn) 10%, transparent);
-      }
-      .tab.on {
+        background: color-mix(in srgb, var(--btn) 10%, transparent)
+    }
+
+    .tab.on {
         background: var(--btn);
         color: var(--btn-t);
-        box-shadow: 0 4px 14px color-mix(in srgb, var(--btn) 35%, transparent);
-      }
-      .card {
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--btn) 35%, transparent)
+    }
+
+    .card {
         background: var(--card);
         border: 1px solid var(--bd);
         border-radius: 20px;
         padding: 18px;
         margin-bottom: 14px;
-        box-shadow: 0 6px 24px rgba(20, 22, 60, 0.05);
-      }
-      .card h2 {
+        box-shadow: 0 6px 24px rgba(20, 22, 60, .05)
+    }
+
+    .card h2 {
         margin: 0 0 12px;
         font-size: 16px;
-        font-weight: 800;
-      }
-      .grid2 {
+        font-weight: 800
+    }
+
+    .grid2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-      label {
+        gap: 10px
+    }
+
+    label {
         display: block;
         font-size: 12px;
         font-weight: 700;
         color: var(--mut);
-        margin-bottom: 5px;
-      }
-      input,
-      select {
+        margin-bottom: 5px
+    }
+
+    input,
+    select {
         width: 100%;
         background: var(--inp);
         color: var(--fg);
@@ -210,143 +232,170 @@
         font: inherit;
         font-size: 14px;
         outline: 0;
-        transition: 0.15s;
-      }
-      input:focus,
-      select:focus {
+        transition: .15s
+    }
+
+    input:focus,
+    select:focus {
         border-color: var(--btn);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--btn) 22%, transparent);
-      }
-      .row {
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--btn) 22%, transparent)
+    }
+
+    .row {
         display: grid;
         grid-template-columns: 1fr 72px 92px 38px;
         gap: 8px;
         margin-bottom: 8px;
-        align-items: center;
-      }
-      .row.m {
-        grid-template-columns: 1fr 64px 70px 84px 36px;
-      }
-      .row.a {
-        grid-template-columns: 1fr 64px 92px 84px;
-      }
-      .row.a2 {
-        grid-template-columns: 1fr 78px 96px;
-      }
-      .row > * {
-        min-width: 0;
-      }
-      .ct {
+        align-items: center
+    }
+
+    .row.m {
+        grid-template-columns: 1fr 64px 70px 84px 36px
+    }
+
+    .row.a {
+        grid-template-columns: 1fr 64px 92px 84px
+    }
+
+    .row.a2 {
+        grid-template-columns: 1fr 78px 96px
+    }
+
+    .row>* {
+        min-width: 0
+    }
+
+    .ct {
         font-size: 12px;
         font-weight: 700;
         color: var(--btn);
         text-align: center;
-        white-space: nowrap;
-      }
-      .hd {
+        white-space: nowrap
+    }
+
+    .hd {
         font-size: 11px;
         font-weight: 700;
         color: var(--mut);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .x {
+        letter-spacing: .5px
+    }
+
+    .x {
         background: none;
         border: 1.5px solid var(--bd);
         color: var(--mut);
         border-radius: 10px;
         height: 38px;
         font-size: 15px;
-        transition: 0.15s;
-      }
-      .x:hover {
+        transition: .15s
+    }
+
+    .x:hover {
         background: var(--bad);
         color: #fff;
-        border-color: var(--bad);
-      }
-      .wbadge {
+        border-color: var(--bad)
+    }
+
+    .wbadge {
         background: color-mix(in srgb, var(--btn) 14%, transparent);
         color: var(--btn);
         font-weight: 800;
         border-radius: 9px;
         padding: 6px 8px;
         text-align: center;
-        font-size: 13px;
-      }
-      .hero {
+        font-size: 13px
+    }
+
+    .hero {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
-        margin-bottom: 12px;
-      }
-      .stat {
+        margin-bottom: 12px
+    }
+
+    .stat {
         background: linear-gradient(135deg, var(--btn), var(--btn-h));
         color: var(--btn-t);
         border-radius: 16px;
         padding: 14px;
-        text-align: center;
-      }
-      .stat b {
+        text-align: center
+    }
+
+    .stat b {
         display: block;
         font-size: 30px;
         font-weight: 800;
-        letter-spacing: -1px;
-      }
-      .stat span {
+        letter-spacing: -1px
+    }
+
+    .stat span {
         font-size: 12px;
-        opacity: 0.9;
-        font-weight: 600;
-      }
-      .stat.plain {
+        opacity: .9;
+        font-weight: 600
+    }
+
+    .stat.plain {
         background: var(--inp);
         color: var(--fg);
-        border: 1px solid var(--bd);
-      }
-      .hero.h2 {
-        grid-template-columns: 1fr 1fr;
-      }
-      .hero.h4 {
-        grid-template-columns: repeat(4, 1fr);
-      }
-      .hero.h4 .stat b {
-        font-size: 22px;
-      }
-      .hero.h4 .stat span {
-        font-size: 11px;
-      }
-      .msg {
+        border: 1px solid var(--bd)
+    }
+
+    .hero.h2 {
+        grid-template-columns: 1fr 1fr
+    }
+
+    .hero.h4 {
+        grid-template-columns: repeat(4, 1fr)
+    }
+
+    .hero.h4 .stat b {
+        font-size: 22px
+    }
+
+    .hero.h4 .stat span {
+        font-size: 11px
+    }
+
+    .msg {
         border-radius: 14px;
         padding: 12px 14px;
         font-size: 14px;
         font-weight: 600;
-        margin-bottom: 10px;
-      }
-      .msg.ok {
+        margin-bottom: 10px
+    }
+
+    .msg.ok {
         background: color-mix(in srgb, var(--ok) 15%, transparent);
-        color: var(--ok);
-      }
-      .msg.bad {
+        color: var(--ok)
+    }
+
+    .msg.bad {
         background: color-mix(in srgb, var(--bad) 14%, transparent);
-        color: var(--bad);
-      }
-      .msg.info {
+        color: var(--bad)
+    }
+
+    .msg.info {
         background: color-mix(in srgb, var(--btn) 12%, transparent);
-        color: var(--btn);
-      }
-      .opt {
+        color: var(--btn)
+    }
+
+    .opt {
         border: 1.5px dashed var(--bd);
         border-radius: 14px;
         padding: 12px 14px;
-        margin-bottom: 10px;
-      }
-      .opt h3 {
+        margin-bottom: 10px
+    }
+
+    .opt h3 {
         margin: 0 0 8px;
         font-size: 14px;
         display: flex;
         align-items: center;
-        gap: 8px;
-      }
-      .opt h3 i {
+        gap: 8px
+    }
+
+    .opt h3 i {
         font-style: normal;
         background: var(--btn);
         color: var(--btn-t);
@@ -355,29 +404,34 @@
         height: 24px;
         display: grid;
         place-items: center;
-        font-size: 12px;
-      }
-      .opt ul {
+        font-size: 12px
+    }
+
+    .opt ul {
         margin: 0;
         padding-left: 18px;
         font-size: 14px;
-        line-height: 1.7;
-      }
-      .opt .res {
+        line-height: 1.7
+    }
+
+    .opt .res {
         margin-top: 6px;
         font-size: 12px;
         color: var(--mut);
-        font-weight: 600;
-      }
-      .arrow {
+        font-weight: 600
+    }
+
+    .arrow {
         color: var(--btn);
-        font-weight: 800;
-      }
-      .seg {
+        font-weight: 800
+    }
+
+    .seg {
         display: flex;
-        gap: 6px;
-      }
-      .seg button {
+        gap: 6px
+    }
+
+    .seg button {
         flex: 1;
         padding: 10px;
         border-radius: 11px;
@@ -386,350 +440,345 @@
         color: var(--fg);
         font-weight: 700;
         font-size: 13px;
-        transition: 0.15s;
-      }
-      .seg button:hover {
+        transition: .15s
+    }
+
+    .seg button:hover {
         border-color: var(--btn-h);
-        background: color-mix(in srgb, var(--btn-h) 12%, transparent);
-      }
-      .seg button.on {
+        background: color-mix(in srgb, var(--btn-h) 12%, transparent)
+    }
+
+    .seg button.on {
         background: var(--btn);
         color: var(--btn-t);
-        border-color: var(--btn);
-      }
-      .sw {
+        border-color: var(--btn)
+    }
+
+    .sw {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        align-items: center;
-      }
-      .sw button {
+        align-items: center
+    }
+
+    .sw button {
         width: 32px;
         height: 32px;
         border-radius: 50%;
         border: 3px solid var(--card);
         outline: 2px solid var(--bd);
-        transition: 0.15s;
-      }
-      .sw button:hover {
-        transform: scale(1.15);
-      }
-      .sw button.on {
-        outline-color: var(--fg);
-      }
-      .sw input[type="color"] {
+        transition: .15s
+    }
+
+    .sw button:hover {
+        transform: scale(1.15)
+    }
+
+    .sw button.on {
+        outline-color: var(--fg)
+    }
+
+    .sw input[type=color] {
         width: 38px;
         height: 34px;
         padding: 2px;
         border-radius: 10px;
-        cursor: pointer;
-      }
-      .ov {
+        cursor: pointer
+    }
+
+    .ov {
         position: fixed;
         inset: 0;
-        background: rgba(5, 6, 20, 0.55);
+        background: rgba(5, 6, 20, .55);
         backdrop-filter: blur(4px);
         display: none;
         align-items: flex-end;
         justify-content: center;
         z-index: 50;
-        padding: 0;
-      }
-      .ov.show {
-        display: flex;
-      }
-      .sheet {
+        padding: 0
+    }
+
+    .ov.show {
+        display: flex
+    }
+
+    .sheet {
         background: var(--card);
         width: 100%;
         max-width: 480px;
         border-radius: 24px 24px 0 0;
         padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 0px));
         max-height: 90vh;
-        overflow: auto;
-      }
-      @media (min-width: 560px) {
+        overflow: auto
+    }
+
+    @media(min-width:560px) {
         .ov {
-          align-items: center;
+            align-items: center
         }
+
         .sheet {
-          border-radius: 24px;
+            border-radius: 24px
         }
-      }
-      .sheet h2 {
+    }
+
+    .sheet h2 {
         margin: 0 0 14px;
-        font-size: 18px;
-      }
-      .sec {
-        margin-bottom: 16px;
-      }
-      .note {
+        font-size: 18px
+    }
+
+    .sec {
+        margin-bottom: 16px
+    }
+
+    .note {
         font-size: 12px;
         color: var(--mut);
-        margin-top: 6px;
-      }
-      .hide {
-        display: none;
-      }
-      @media (max-width: 560px) {
+        margin-top: 6px
+    }
+
+    .hide {
+        display: none
+    }
+
+    @media(max-width:560px) {
         .hero {
-          grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr
         }
+
         .hero .stat:first-child {
-          grid-column: 1/-1;
+            grid-column: 1/-1
         }
+
         .row {
-          grid-template-columns: 1fr 58px 78px 36px;
+            grid-template-columns: 1fr 58px 78px 36px
         }
+
         .row.a {
-          grid-template-columns: 1fr 50px 68px 70px;
+            grid-template-columns: 1fr 50px 68px 70px
         }
+
         .row.a2 {
-          grid-template-columns: 1fr 66px 86px;
+            grid-template-columns: 1fr 66px 86px
         }
+
         .row.m {
-          grid-template-columns: 1fr 46px 58px 68px 32px;
+            grid-template-columns: 1fr 46px 58px 68px 32px
         }
+
         .ct {
-          font-size: 11px;
+            font-size: 11px
         }
+
         .stat b {
-          font-size: 26px;
+            font-size: 26px
         }
+
         .hero.h4 {
-          grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr
         }
+
         .hero.h2 .stat:first-child,
         .hero.h4 .stat:first-child {
-          grid-column: auto;
+            grid-column: auto
         }
+
         .hero.h4 .stat b {
-          font-size: 20px;
+            font-size: 20px
         }
-      }
+    }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="wrap">
-      <header>
-        <div class="logo">Σ</div>
-        <div>
-          <h1>Kalkulator IPK</h1>
-          <p>Simulasi IP, IPK &amp; nilai per mata kuliah</p>
-        </div>
-        <div class="sp"></div>
-        <button class="btn ghost icon" id="gear" aria-label="Pengaturan">⚙</button>
-      </header>
+        <header>
+            <div class="logo"><svg viewBox="0 0 64 64" width="28" height="28" fill="none" aria-hidden="true">
+                    <path d="M32 12 6 25l26 13 26-13z" fill="#fff" />
+                    <path d="M17 34v11c0 4 7 8 15 8s15-4 15-8V34l-15 7z" fill="#fff" fill-opacity=".85" />
+                    <path d="M56 26v15" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+                    <circle cx="56" cy="45" r="3.5" fill="#fbbf24" />
+                </svg></div>
+            <div>
+                <h1>Kalkulator IPK</h1>
+                <p>Simulasi IP, IPK &amp; nilai per mata kuliah</p>
+            </div>
+            <div class="sp"></div>
+            <button class="btn ghost icon" id="gear" aria-label="Pengaturan">⚙</button>
+        </header>
 
-      <div class="tabs">
-        <button class="tab on" data-t="t1"> Simulasi IP / IPK</button>
-        <button class="tab" data-t="t2">Nilai 1 MK</button>
-      </div>
+        <div class="tabs">
+            <button class="tab on" data-t="t1"> Simulasi IP / IPK</button>
+            <button class="tab" data-t="t2"> Nilai 1 MK</button>
+        </div>
 
-      <section id="t1">
-        <div class="card">
-          <h2>Target &amp; data sebelumnya <span style="font-weight: 500; color: var(--mut); font-size: 12px">(opsional)</span></h2>
-          <div class="grid2">
-            <div><label>Target IP semester ini</label><input type="number" step="0.01" min="0" max="4" id="tIp" placeholder="mis. 3,75" /></div>
-            <div><label>Target IPK Setelah Semester 3</label><input type="number" step="0.01" min="0" max="4" id="tIpk" placeholder="mis. 3,70" /></div>
-            <div><label>IPK Sekarang</label><input type="number" step="0.01" min="0" max="4" id="pIpk" placeholder="mis. 3,60" /></div>
-            <div><label>Total SKS Yang Sudah Di Lalui</label><input type="number" min="0" id="pSks" placeholder="mis. 20" /></div>
-          </div>
-          <div class="note">Tanpa data semester lalu, IPK dihitung dari semester ini saja.</div>
-        </div>
-        <div class="card">
-          <h2>Mata kuliah</h2>
-          <div class="seg" id="simMode"><button data-m="auto" class="on">⚡ Otomatis (per semester)</button><button data-m="manual">✍️ Manual</button></div>
-          <div id="semPick" style="margin: 12px 0">
-            <label>Semester</label
-            ><select id="semSel">
-              <option value="2">Semester 2</option>
-            </select>
-            <div class="note">MK dan SKS terisi otomatis dan tidak bisa diubah. Kamu tinggal memilih nilainya.</div>
-          </div>
-          <div style="height: 12px"></div>
-          <div class="row" id="hdr1"></div>
-          <div id="rows"></div>
-          <button class="btn ghost" id="addRow">＋ Tambah MK</button>
-        </div>
-        <div class="card">
-          <h2>Hasil</h2>
-          <div id="out1"></div>
-        </div>
-      </section>
+        <section id="t1">
+            <div class="card">
+                <h2>Target &amp; data sebelumnya <span
+                        style="font-weight:500;color:var(--mut);font-size:12px">(opsional)</span></h2>
+                <div class="grid2">
+                    <div><label>Target IP semester ini</label><input type="number" step="0.01" min="0" max="4" id="tIp"
+                            placeholder="mis. 3,75"></div>
+                    <div><label>Target IPK</label><input type="number" step="0.01" min="0" max="4" id="tIpk"
+                            placeholder="mis. 3,70"></div>
+                    <div><label>IPK semester lalu</label><input type="number" step="0.01" min="0" max="4" id="pIpk"
+                            placeholder="mis. 3,60"></div>
+                    <div><label>Total SKS semester lalu</label><input type="number" min="0" id="pSks"
+                            placeholder="mis. 20"></div>
+                </div>
+                <div class="note">Tanpa data semester lalu, IPK dihitung dari semester ini saja.</div>
+            </div>
+            <div class="card">
+                <h2>Mata kuliah</h2>
+                <div class="seg" id="simMode"><button data-m="auto" class="on"> Otomatis (per semester)</button><button
+                        data-m="manual> Manual</button></div>
+                <div id="semPick" style="margin:12px 0"><label>Semester</label><select id="semSel">
+                        <option value="2">Semester 2</option>
+                    </select>
+                    <div class="note">MK dan SKS terisi otomatis dan tidak bisa diubah. Kamu tinggal memilih nilainya.
+                    </div>
+                </div>
+                <div style="height:12px"></div>
+                <div class="row" id="hdr1"></div>
+                <div id="rows"></div>
+                <button class="btn ghost" id="addRow">＋ Tambah MK</button>
+            </div>
+            <div class="card">
+                <h2>Hasil</h2>
+                <div id="out1"></div>
+            </div>
+        </section>
 
-      <section id="t2" class="hide">
-        <div class="card">
-          <h2>Pilih cara input</h2>
-          <div class="seg" id="modeSeg"><button data-m="auto" class>Otomatis</button><button data-m="manual"> Manual</button></div>
-          <div id="autoPick" style="margin-top: 12px">
-            <label>Mata kuliah</label
-            ><select id="mkSel"></select>
-          </div>
-          <div style="margin-top: 12px">
-            <label>Target nilai (opsional)</label
-            ><select id="tg">
-              <option value="">Tanpa target</option>
-            </select>
-          </div>
-        </div>
-        <div class="card">
-          <h2 id="compTitle">Komponen nilai</h2>
-          <div id="comps"></div>
-          <button class="btn ghost hide" id="addComp">＋ Tambah komponen</button>
-          <div class="note" id="wNote"></div>
-        </div>
-        <div class="card">
-          <h2>Hasil</h2>
-          <div id="out2"></div>
-        </div>
-      </section>
+        <section id="t2" class="hide">
+            <div class="card">
+                <h2>Pilih cara input</h2>
+                <div class="seg" id="modeSeg"><button data-m="auto" class="on">⚡ Otomatis (kontrak
+                        kuliah)</button><button data-m="manual">✍️ Manual</button></div>
+                <div id="autoPick" style="margin-top:12px"><label>Mata kuliah</label><select id="mkSel"></select></div>
+                <div style="margin-top:12px"><label>Target nilai (opsional)</label><select id="tg">
+                        <option value="">Tanpa target</option>
+                    </select></div>
+            </div>
+            <div class="card">
+                <h2 id="compTitle">Komponen nilai</h2>
+                <div id="comps"></div><button class="btn ghost hide" id="addComp">＋ Tambah komponen</button>
+                <div class="note" id="wNote"></div>
+            </div>
+            <div class="card">
+                <h2>Hasil</h2>
+                <div id="out2"></div>
+            </div>
+        </section>
     </div>
 
     <div class="ov" id="ov">
-      <div class="sheet">
-        <h2>a wee seweewPengaturan</h2>
-        <div class="sec">
-          <label>Mode tampilan</label>
-          <div class="seg" id="themeSeg"><button data-th="light">☀️ Terang</button><button data-th="dark">🌙 Gelap</button></div>
-          <div class="note">Pilihanmu tersimpan, tidak berubah saat halaman di-refresh.</div>
+        <div class="sheet">
+            <h2>⚙ Pengaturan</h2>
+            <div class="sec"><label>Mode tampilan</label>
+                <div class="seg" id="themeSeg"><button data-th="light">☀️ Terang</button><button data-th="dark">🌙
+                        Gelap</button></div>
+                <div class="note">Pilihanmu tersimpan, tidak berubah saat halaman di-refresh.</div>
+            </div>
+            <div class="sec"><label>Warna tombol</label>
+                <div class="sw" id="swBtn"></div>
+            </div>
+            <div class="sec"><label>Warna tombol saat di-hover</label>
+                <div class="sw" id="swHov"></div>
+            </div>
+            <div class="sec"><label>Pratinjau</label><button class="btn">Tombol contoh (coba arahkan kursor)</button>
+            </div>
+            <button class="btn" id="closeS" style="width:100%">Selesai</button>
         </div>
-        <div class="sec">
-          <label>Warna tombol</label>
-          <div class="sw" id="swBtn"></div>
-        </div>
-        <div class="sec">
-          <label>Warna tombol saat di-hover</label>
-          <div class="sw" id="swHov"></div>
-        </div>
-        <div class="sec"><label>Pratinjau</label><button class="btn">Tombol contoh (coba arahkan kursor)</button></div>
-        <button class="btn" id="closeS" style="width: 100%">Selesai</button>
-      </div>
     </div>
 
     <script>
-      var GR = [
+    var GR = [
         ["A", 87, 4],
         ["AB", 78, 3.5],
         ["B", 69, 3],
         ["BC", 60, 2.5],
         ["C", 51, 2],
         ["D", 41, 1],
-        ["E", 0, 0],
-      ];
-      var K = [
-        [
-          "Praktikum Pemrograman Berbasis Web",
-          [
+        ["E", 0, 0]
+    ];
+    var K = [
+        ["Praktikum Pemrograman Berbasis Web", [
             ["Kehadiran", 15],
             ["Kuis", 10],
             ["Tugas", 20],
             ["UTS", 25],
-            ["UAS", 30],
-          ],
-        ],
-        [
-          "Praktikum Database",
-          [
+            ["UAS", 30]
+        ]],
+        ["Praktikum Database", [
             ["Kuis", 15],
             ["Tugas", 25],
             ["UTS", 25],
-            ["UAS", 35],
-          ],
-        ],
-        [
-          "Praktikum Gis",
-          [
+            ["UAS", 35]
+        ]],
+        ["Praktikum Sistem Informasi Geografis", [
             ["Kuis", 10],
             ["Tugas", 25],
             ["UTS", 30],
-            ["UAS", 35],
-          ],
-        ],
-        [
-          "Praktikum Sistem Informasi",
-          [
+            ["UAS", 35]
+        ]],
+        ["Praktikum Sistem Informasi", [
             ["Kehadiran", 20],
             ["Tugas", 15],
             ["UTS", 30],
-            ["UAS", 35],
-          ],
-        ],
-        [
-          "Praktikum Struktur Data",
-          [
+            ["UAS", 35]
+        ]],
+        ["Praktikum Struktur Data", [
             ["Kehadiran", 10],
             ["Tugas", 15],
             ["Kuis", 10],
             ["UTS", 30],
-            ["UAS", 35],
-          ],
-        ],
-        [
-          "Komunikasi Data Teori",
-          [
+            ["UAS", 35]
+        ]],
+        ["Komunikasi Data Teori ", [
             ["Tugas", 20],
             ["Kuis", 20],
             ["UTS", 30],
-            ["UAS", 30],
-          ],
-        ],
-        [
-          "Sig Teori",
-          [
+            ["UAS", 30]
+        ]],
+        ["Sistem Informasi Geografis Teori", [
             ["Kuis", 15],
             ["Tugas/Latihan", 25],
             ["UTS", 25],
-            ["UAS", 35],
-          ],
-        ],
-        [
-          "E-Commerce Teori",
-          [
+            ["UAS", 35]
+        ]],
+        ["E-Commerce Teori", [
             ["Kuis", 15],
             ["UTS", 35],
-            ["Proyek", 50],
-          ],
-        ],
-        [
-          "Sistem Informasi Teori",
-          [
+            ["Proyek", 50]
+        ]],
+        ["Sistem Informasi Teori", [
             ["Tugas", 15],
             ["Kuis", 10],
             ["UTS", 35],
-            ["UAS", 40],
-          ],
-        ],
-        [
-          "Database Teori",
-          [
+            ["UAS", 40]
+        ]],
+        ["Database Teori", [
             ["Praktikum", 15],
             ["Kuis", 15],
             ["Tugas/Latihan", 20],
             ["UTS", 25],
-            ["UAS", 25],
-          ],
-        ],
-        [
-          "Praktikum E-Commerce",
-          [
+            ["UAS", 25]
+        ]],
+        ["Praktikum E-Commerce", [
             ["Kehadiran", 15],
             ["Tugas", 15],
             ["Kuis", 10],
             ["UTS", 25],
-            ["UAS", 35],
-          ],
-        ],
-        [
-          "Praktikum Kewirausahaan",
-          [
+            ["UAS", 35]
+        ]],
+        ["Praktikum Kewirausahaan", [
             ["Absensi", 15],
             ["Tugas/Kuis", 20],
             ["UTS", 30],
-            ["UAS", 35],
-          ],
-        ],
-      ];
-      var DEF = [
+            ["UAS", 35]
+        ]]
+    ];
+    var DEF = [
         ["Database", 1, 0],
         ["Praktikum Database", 2, 0],
         ["Komunikasi Data", 1, 1],
@@ -745,9 +794,9 @@
         ["E-Commerce", 1, 0],
         ["Praktikum E-Commerce", 2, 0],
         ["Kewirausahaan", 2, 0],
-        ["Praktikum Kewirausahaan", 1, 0],
-      ];
-      var PAL = [
+        ["Praktikum Kewirausahaan", 1, 0]
+    ];
+    var PAL = [
         ["#6366f1", "#4f46e5"],
         ["#8b5cf6", "#7c3aed"],
         ["#ec4899", "#db2777"],
@@ -755,691 +804,680 @@
         ["#f59e0b", "#d97706"],
         ["#10b981", "#059669"],
         ["#0ea5e9", "#0284c7"],
-        ["#14b8a6", "#0d9488"],
-      ];
-      var $ = function (s) {
-        return document.querySelector(s);
-      };
-      function load(k, d) {
-        try {
-          var v = JSON.parse(localStorage.getItem(k));
-          return v == null ? d : v;
-        } catch (e) {
-          return d;
-        }
-      }
-      function save(k, v) {
-        try {
-          localStorage.setItem(k, JSON.stringify(v));
-        } catch (e) {}
-      }
-      function esc(s) {
-        return String(s).replace(/[&<>"]/g, function (c) {
-          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
-        });
-      }
-      function f(x, d) {
-        return (+x).toFixed(d == null ? 2 : d).replace(".", ",");
-      }
-      function num(v) {
-        return v === "" || v == null || isNaN(+v) ? null : +v;
-      }
+        ["#14b8a6", "#0d9488"]
+    ];
+    var $ = function(s) {
+        return document.querySelector(s)
+    };
 
-      /* ---------- Pengaturan ---------- */
-      var S = Object.assign({ theme: document.documentElement.getAttribute("data-theme"), btn: "#6366f1", hov: "#4f46e5" }, load("ipk_s", {}));
-      function contrast(h) {
+    function load(k, d) {
+        try {
+            var v = JSON.parse(localStorage.getItem(k));
+            return v == null ? d : v
+        } catch (e) {
+            return d
+        }
+    }
+
+    function save(k, v) {
+        try {
+            localStorage.setItem(k, JSON.stringify(v))
+        } catch (e) {}
+    }
+
+    function esc(s) {
+        return String(s).replace(/[&<>"]/g, function(c) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;'
+            } [c]
+        })
+    }
+
+    function f(x, d) {
+        return (+x).toFixed(d == null ? 2 : d).replace('.', ',')
+    }
+
+    function num(v) {
+        return v === '' || v == null || isNaN(+v) ? null : +v
+    }
+
+    /* ---------- Pengaturan ---------- */
+    var S = Object.assign({
+        theme: document.documentElement.getAttribute('data-theme'),
+        btn: '#6366f1',
+        hov: '#4f46e5'
+    }, load('ipk_s', {}));
+
+    function contrast(h) {
         var n = parseInt(h.slice(1), 16),
-          r = n >> 16,
-          g = (n >> 8) & 255,
-          b = n & 255;
-        return 0.299 * r + 0.587 * g + 0.114 * b > 165 ? "#111827" : "#ffffff";
-      }
-      function applyS() {
+            r = n >> 16,
+            g = n >> 8 & 255,
+            b = n & 255;
+        return (0.299 * r + 0.587 * g + 0.114 * b) > 165 ? '#111827' : '#ffffff'
+    }
+
+    function applyS() {
         var r = document.documentElement;
-        r.setAttribute("data-theme", S.theme);
-        r.style.setProperty("--btn", S.btn);
-        r.style.setProperty("--btn-h", S.hov);
-        r.style.setProperty("--btn-t", contrast(S.btn));
-        document.querySelectorAll("#themeSeg button").forEach(function (b) {
-          b.classList.toggle("on", b.dataset.th === S.theme);
+        r.setAttribute('data-theme', S.theme);
+        r.style.setProperty('--btn', S.btn);
+        r.style.setProperty('--btn-h', S.hov);
+        r.style.setProperty('--btn-t', contrast(S.btn));
+        document.querySelectorAll('#themeSeg button').forEach(function(b) {
+            b.classList.toggle('on', b.dataset.th === S.theme)
         });
-        document.querySelectorAll("#swBtn button").forEach(function (b) {
-          b.classList.toggle("on", b.dataset.c === S.btn);
+        document.querySelectorAll('#swBtn button').forEach(function(b) {
+            b.classList.toggle('on', b.dataset.c === S.btn)
         });
-        document.querySelectorAll("#swHov button").forEach(function (b) {
-          b.classList.toggle("on", b.dataset.c === S.hov);
+        document.querySelectorAll('#swHov button').forEach(function(b) {
+            b.classList.toggle('on', b.dataset.c === S.hov)
         });
-        save("ipk_s", S);
-      }
-      function buildSw() {
-        var a = "",
-          h = "";
-        PAL.forEach(function (p) {
-          a += '<button data-c="' + p[0] + '" data-h="' + p[1] + '" style="background:' + p[0] + '"></button>';
-          h += '<button data-c="' + p[1] + '" style="background:' + p[1] + '"></button>';
+        save('ipk_s', S)
+    }
+
+    function buildSw() {
+        var a = '',
+            h = '';
+        PAL.forEach(function(p) {
+            a += '<button data-c="' + p[0] + '" data-h="' + p[1] + '" style="background:' + p[0] +
+            '"></button>';
+            h += '<button data-c="' + p[1] + '" style="background:' + p[1] + '"></button>'
         });
-        $("#swBtn").innerHTML = a + '<input type="color" id="cBtn" value="' + S.btn + '" title="Warna kustom">';
-        $("#swHov").innerHTML = h + '<input type="color" id="cHov" value="' + S.hov + '" title="Warna kustom">';
-      }
-      buildSw();
-      $("#swBtn").addEventListener("click", function (e) {
-        var b = e.target.closest("button");
+        $('#swBtn').innerHTML = a + '<input type="color" id="cBtn" value="' + S.btn + '" title="Warna kustom">';
+        $('#swHov').innerHTML = h + '<input type="color" id="cHov" value="' + S.hov + '" title="Warna kustom">'
+    }
+    buildSw();
+    $('#swBtn').addEventListener('click', function(e) {
+        var b = e.target.closest('button');
         if (!b) return;
         S.btn = b.dataset.c;
         S.hov = b.dataset.h;
-        $("#cBtn").value = S.btn;
-        $("#cHov").value = S.hov;
-        applyS();
-      });
-      $("#swHov").addEventListener("click", function (e) {
-        var b = e.target.closest("button");
+        $('#cBtn').value = S.btn;
+        $('#cHov').value = S.hov;
+        applyS()
+    });
+    $('#swHov').addEventListener('click', function(e) {
+        var b = e.target.closest('button');
         if (!b) return;
         S.hov = b.dataset.c;
-        $("#cHov").value = S.hov;
-        applyS();
-      });
-      $("#swBtn").addEventListener("input", function (e) {
-        if (e.target.id === "cBtn") {
-          S.btn = e.target.value;
-          applyS();
+        $('#cHov').value = S.hov;
+        applyS()
+    });
+    $('#swBtn').addEventListener('input', function(e) {
+        if (e.target.id === 'cBtn') {
+            S.btn = e.target.value;
+            applyS()
         }
-      });
-      $("#swHov").addEventListener("input", function (e) {
-        if (e.target.id === "cHov") {
-          S.hov = e.target.value;
-          applyS();
+    });
+    $('#swHov').addEventListener('input', function(e) {
+        if (e.target.id === 'cHov') {
+            S.hov = e.target.value;
+            applyS()
         }
-      });
-      $("#themeSeg").addEventListener("click", function (e) {
-        var b = e.target.closest("button");
+    });
+    $('#themeSeg').addEventListener('click', function(e) {
+        var b = e.target.closest('button');
         if (!b) return;
         S.theme = b.dataset.th;
-        applyS();
-      });
-      $("#gear").onclick = function () {
-        $("#ov").classList.add("show");
-      };
-      $("#closeS").onclick = function () {
-        $("#ov").classList.remove("show");
-      };
-      $("#ov").addEventListener("click", function (e) {
-        if (e.target.id === "ov") $("#ov").classList.remove("show");
-      });
-      applyS();
+        applyS()
+    });
+    $('#gear').onclick = function() {
+        $('#ov').classList.add('show')
+    };
+    $('#closeS').onclick = function() {
+        $('#ov').classList.remove('show')
+    };
+    $('#ov').addEventListener('click', function(e) {
+        if (e.target.id === 'ov') $('#ov').classList.remove('show')
+    });
+    applyS();
 
-      /* ---------- Tab ---------- */
-      document.querySelectorAll(".tab").forEach(function (t) {
-        t.onclick = function () {
-          document.querySelectorAll(".tab").forEach(function (x) {
-            x.classList.toggle("on", x === t);
-          });
-          $("#t1").classList.toggle("hide", t.dataset.t !== "t1");
-          $("#t2").classList.toggle("hide", t.dataset.t !== "t2");
-        };
-      });
+    /* ---------- Tab ---------- */
+    document.querySelectorAll('.tab').forEach(function(t) {
+        t.onclick = function() {
+            document.querySelectorAll('.tab').forEach(function(x) {
+                x.classList.toggle('on', x === t)
+            });
+            $('#t1').classList.toggle('hide', t.dataset.t !== 't1');
+            $('#t2').classList.toggle('hide', t.dataset.t !== 't2')
+        }
+    });
 
-      /* ---------- Form 1: Simulasi IP/IPK ---------- */
-      var sim = Object.assign({ tIp: "", tIpk: "", pIpk: "", pSks: "", mode: "auto", sem: "2" }, load("ipk_sim", {}));
-      var oldR = sim.rows || null;
-      sim.store = sim.store || {};
-      (function () {
+    /* ---------- Form 1: Simulasi IP/IPK ---------- */
+    var sim = Object.assign({
+        tIp: '',
+        tIpk: '',
+        pIpk: '',
+        pSks: '',
+        mode: 'auto',
+        sem: '2'
+    }, load('ipk_sim', {}));
+    var oldR = sim.rows || null;
+    sim.store = sim.store || {};
+    (function() {
         if (sim.v !== 3) {
-          sim.store = {};
-          sim.v = 3;
+            sim.store = {};
+            sim.v = 3
         }
         var prev = sim.store.auto || [];
-        sim.store.auto = DEF.map(function (d) {
-          var g = null;
-          prev.forEach(function (r) {
-            if (r.n === d[0]) g = r.g;
-          });
-          return { n: d[0], s: d[1], g: g };
+        sim.store.auto = DEF.map(function(d) {
+            var g = null;
+            prev.forEach(function(r) {
+                if (r.n === d[0]) g = r.g
+            });
+            return {
+                n: d[0],
+                s: d[1],
+                g: g
+            }
         });
-        if (!sim.store.manual || !sim.store.manual.length) sim.store.manual = [{ n: "MK 1", s: 2, g: null }];
-      })();
-      sim.rows = sim.store[sim.mode] || sim.store.auto;
-      function gOpts(sel) {
-        return (
-          '<option value=""' +
-          (sel == null ? " selected" : "") +
-          ">Pilih</option>" +
-          GR.map(function (g, i) {
-            return '<option value="' + i + '"' + (i === sel ? " selected" : "") + ">" + g[0] + " (" + f(g[2], 1) + ")</option>";
-          }).join("")
-        );
-      }
-      function renderRows() {
-        var a = sim.mode === "auto";
-        $("#semPick").classList.toggle("hide", !a);
-        $("#addRow").classList.toggle("hide", a);
-        document.querySelectorAll("#simMode button").forEach(function (b) {
-          b.classList.toggle("on", b.dataset.m === sim.mode);
+        if (!sim.store.manual || !sim.store.manual.length) sim.store.manual = [{
+            n: 'MK 1',
+            s: 2,
+            g: null
+        }]
+    })();
+    sim.rows = sim.store[sim.mode] || sim.store.auto;
+
+    function gOpts(sel) {
+        return '<option value=""' + (sel == null ? ' selected' : '') + '>Pilih</option>' + GR.map(function(g, i) {
+            return '<option value="' + i + '"' + (i === sel ? ' selected' : '') + '>' + g[0] + ' (' + f(g[2],
+                1) + ')</option>'
+        }).join('')
+    }
+
+    function renderRows() {
+        var a = sim.mode === 'auto';
+        $('#semPick').classList.toggle('hide', !a);
+        $('#addRow').classList.toggle('hide', a);
+        document.querySelectorAll('#simMode button').forEach(function(b) {
+            b.classList.toggle('on', b.dataset.m === sim.mode)
         });
-        $("#hdr1").className = "row" + (a ? " a2" : "");
-        $("#hdr1").innerHTML = '<span class="hd">Nama MK</span><span class="hd">SKS</span><span class="hd">Nilai</span>' + (a ? "" : "<span></span>");
-        $("#rows").innerHTML = sim.rows
-          .map(function (r, i) {
-            return a
-              ? '<div class="row a2" data-i="' +
-                  i +
-                  '"><b style="font-size:14px">' +
-                  esc(r.n) +
-                  '</b><span class="wbadge">' +
-                  r.s +
-                  ' SKS</span><select class="rg">' +
-                  gOpts(r.g) +
-                  "</select></div>"
-              : '<div class="row" data-i="' +
-                  i +
-                  '"><input class="rn" value="' +
-                  esc(r.n) +
-                  '" placeholder="Nama MK"><input class="rs" type="number" min="0" step="1" value="' +
-                  r.s +
-                  '" placeholder="SKS"><select class="rg">' +
-                  gOpts(r.g) +
-                  '</select><button class="x" title="Hapus">✕</button></div>';
-          })
-          .join("");
-      }
-      function stats(gs) {
+        $('#hdr1').className = 'row' + (a ? ' a2' : '');
+        $('#hdr1').innerHTML =
+            '<span class="hd">Nama MK</span><span class="hd">SKS</span><span class="hd">Nilai</span>' + (a ? '' :
+                '<span></span>');
+        $('#rows').innerHTML = sim.rows.map(function(r, i) {
+            return a ? '<div class="row a2" data-i="' + i + '"><b style="font-size:14px">' + esc(r.n) +
+                '</b><span class="wbadge">' + r.s + ' SKS</span><select class="rg">' + gOpts(r.g) +
+                '</select></div>' : '<div class="row" data-i="' + i + '"><input class="rn" value="' + esc(r.n) +
+                '" placeholder="Nama MK"><input class="rs" type="number" min="0" step="1" value="' + r.s +
+                '" placeholder="SKS"><select class="rg">' + gOpts(r.g) +
+                '</select><button class="x" title="Hapus">✕</button></div>'
+        }).join('')
+    }
+
+    function stats(gs) {
         var q = 0,
-          s = 0,
-          all = 0;
-        sim.rows.forEach(function (r, i) {
-          all += r.s;
-          if (gs[i] != null) {
-            q += r.s * GR[gs[i]][2];
-            s += r.s;
-          }
+            s = 0,
+            all = 0;
+        sim.rows.forEach(function(r, i) {
+            all += r.s;
+            if (gs[i] != null) {
+                q += r.s * GR[gs[i]][2];
+                s += r.s
+            }
         });
         var ps = num(sim.pSks) || 0,
-          pi = num(sim.pIpk) || 0,
-          ip = s ? q / s : 0,
-          ipk = ps + s ? (pi * ps + q) / (ps + s) : 0;
-        return { ip: ip, ipk: ipk, s: s, all: all, q: q, ps: ps, pq: pi * ps };
-      }
-      function met(gs) {
+            pi = num(sim.pIpk) || 0,
+            ip = s ? q / s : 0,
+            ipk = (ps + s) ? (pi * ps + q) / (ps + s) : 0;
+        return {
+            ip: ip,
+            ipk: ipk,
+            s: s,
+            all: all,
+            q: q,
+            ps: ps,
+            pq: pi * ps
+        }
+    }
+
+    function met(gs) {
         var st = stats(gs),
-          a = num(sim.tIp),
-          b = num(sim.tIpk);
-        return (a == null || st.ip >= a - 1e-9) && (b == null || st.ipk >= b - 1e-9);
-      }
-      function changes(gs) {
+            a = num(sim.tIp),
+            b = num(sim.tIpk);
+        return (a == null || st.ip >= a - 1e-9) && (b == null || st.ipk >= b - 1e-9)
+    }
+
+    function changes(gs) {
         var c = [];
-        sim.rows.forEach(function (r, i) {
-          if (gs[i] !== r.g) c.push({ n: r.n, s: r.s, from: r.g, to: gs[i] });
+        sim.rows.forEach(function(r, i) {
+            if (gs[i] !== r.g) c.push({
+                n: r.n,
+                s: r.s,
+                from: r.g,
+                to: gs[i]
+            })
         });
-        return c;
-      }
-      function planA() {
-        var gs = sim.rows.map(function (r) {
-            return r.g;
-          }),
-          idx = [];
-        sim.rows.forEach(function (r, i) {
-          if (r.g > 0 && r.s > 0) idx.push(i);
+        return c
+    }
+
+    function planA() {
+        var gs = sim.rows.map(function(r) {
+                return r.g
+            }),
+            idx = [];
+        sim.rows.forEach(function(r, i) {
+            if (r.g > 0 && r.s > 0) idx.push(i)
         });
-        idx.sort(function (a, b) {
-          return sim.rows[b].s * (4 - GR[sim.rows[b].g][2]) - sim.rows[a].s * (4 - GR[sim.rows[a].g][2]);
+        idx.sort(function(a, b) {
+            return sim.rows[b].s * (4 - GR[sim.rows[b].g][2]) - sim.rows[a].s * (4 - GR[sim.rows[a].g][2])
         });
         for (var j = 0; j < idx.length; j++) {
-          var i = idx[j],
-            old = gs[i];
-          gs[i] = 0;
-          if (met(gs)) {
-            for (var k = old - 1; k >= 0; k--) {
-              gs[i] = k;
-              if (met(gs)) break;
+            var i = idx[j],
+                old = gs[i];
+            gs[i] = 0;
+            if (met(gs)) {
+                for (var k = old - 1; k >= 0; k--) {
+                    gs[i] = k;
+                    if (met(gs)) break
+                }
+                return gs
             }
-            return gs;
-          }
         }
-        return null;
-      }
-      function planStep(pick) {
-        var gs = sim.rows.map(function (r) {
-            return r.g;
-          }),
-          n = 0;
+        return null
+    }
+
+    function planStep(pick) {
+        var gs = sim.rows.map(function(r) {
+                return r.g
+            }),
+            n = 0;
         while (!met(gs) && n++ < 200) {
-          var best = -1;
-          sim.rows.forEach(function (r, i) {
-            if (gs[i] > 0 && r.s > 0 && (best < 0 || pick(i, best, gs))) best = i;
-          });
-          if (best < 0) return null;
-          gs[best]--;
+            var best = -1;
+            sim.rows.forEach(function(r, i) {
+                if (gs[i] > 0 && r.s > 0 && (best < 0 || pick(i, best, gs))) best = i
+            });
+            if (best < 0) return null;
+            gs[best]--
         }
-        return met(gs) ? gs : null;
-      }
-      function calc1() {
-        var inc =
-          !sim.rows.length ||
-          sim.rows.some(function (r) {
-            return !(r.s > 0) || !String(r.n).trim();
-          });
+        return met(gs) ? gs : null
+    }
+
+    function calc1() {
+        var inc = !sim.rows.length || sim.rows.some(function(r) {
+            return !(r.s > 0) || !String(r.n).trim()
+        });
         if (inc) {
-          $("#out1").innerHTML = '<div class="msg info">Lengkapi nama MK dan SKS dulu. Setelah semua terisi, IP, IPK, dan bobot SKS muncul di sini.</div>';
-          save("ipk_sim", sim);
-          return;
+            $('#out1').innerHTML =
+                '<div class="msg info">Lengkapi nama MK dan SKS dulu. Setelah semua terisi, IP, IPK, dan bobot SKS muncul di sini.</div>';
+            save('ipk_sim', sim);
+            return
         }
-        var base = sim.rows.map(function (r) {
-            return r.g;
-          }),
-          st = stats(base),
-          a = num(sim.tIp),
-          b = num(sim.tIpk),
-          h = "";
+        var base = sim.rows.map(function(r) {
+                return r.g
+            }),
+            st = stats(base),
+            a = num(sim.tIp),
+            b = num(sim.tIpk),
+            h = '';
         if (st.s === 0) {
-          $("#out1").innerHTML = '<div class="msg info">Pilih nilai minimal satu MK, nanti hasil sementara langsung muncul di sini.</div>';
-          save("ipk_sim", sim);
-          return;
+            $('#out1').innerHTML =
+                '<div class="msg info">Pilih nilai minimal satu MK, nanti hasil sementara langsung muncul di sini.</div>';
+            save('ipk_sim', sim);
+            return
         }
         var part = st.s < st.all;
-        h +=
-          '<div class="hero h2"><div class="stat"><b>' +
-          f(st.ip) +
-          "</b><span>IP semester ini" +
-          (part ? " (sementara)" : "") +
-          '</span></div><div class="stat"><b>' +
-          f(st.ipk) +
-          "</b><span>IPK" +
-          (part ? " (sementara)" : "") +
-          (st.ps ? "" : " (semester ini saja)") +
-          '</span></div></div><div class="hero h4"><div class="stat plain"><b>' +
-          st.s +
-          (part ? " / " + st.all : "") +
-          '</b><span>Bobot semester ini (SKS)</span></div><div class="stat plain"><b>' +
-          (st.s + st.ps) +
-          '</b><span>Bobot keseluruhan (SKS)</span></div><div class="stat plain"><b>' +
-          f(st.q, 1) +
-          '</b><span>Poin mutu semester ini</span></div><div class="stat plain"><b>' +
-          f(st.q + st.pq, 1) +
-          "</b><span>Poin mutu keseluruhan</span></div></div>";
+        h += '<div class="hero h2"><div class="stat"><b>' + f(st.ip) + '</b><span>IP semester ini' + (part ?
+                ' (sementara)' : '') + '</span></div><div class="stat"><b>' + f(st.ipk) + '</b><span>IPK' + (part ?
+                ' (sementara)' : '') + (st.ps ? '' : ' (semester ini saja)') +
+            '</span></div></div><div class="hero h4"><div class="stat plain"><b>' + st.s + (part ? ' / ' + st.all :
+            '') + '</b><span>Bobot semester ini (SKS)</span></div><div class="stat plain"><b>' + (st.s + st.ps) +
+            '</b><span>Bobot keseluruhan (SKS)</span></div><div class="stat plain"><b>' + f(st.q, 1) +
+            '</b><span>Poin mutu semester ini</span></div><div class="stat plain"><b>' + f(st.q + st.pq, 1) +
+            '</b><span>Poin mutu keseluruhan</span></div></div>';
         if (part) {
-          h +=
-            '<div class="msg info">Ini hasil sementara dari MK yang sudah diberi nilai.' +
-            (a != null || b != null ? " Isi nilai semua MK untuk melihat apakah target tercapai beserta sarannya." : "") +
-            "</div>";
+            h += '<div class="msg info">Ini hasil sementara dari MK yang sudah diberi nilai.' + ((a != null || b !=
+                    null) ? ' Isi nilai semua MK untuk melihat apakah target tercapai beserta sarannya.' : '') +
+                '</div>'
         } else if (a == null && b == null) {
-          h += '<div class="msg info">Isi target IP / IPK di atas kalau mau lihat saran agar target tercapai.</div>';
+            h += '<div class="msg info">Isi target IP / IPK di atas kalau mau lihat saran agar target tercapai.</div>'
         } else if (met(base)) {
-          h += '<div class="msg ok">🎉 Target tercapai dengan nilai saat ini!</div>';
+            h += '<div class="msg ok">🎉 Target tercapai dengan nilai saat ini!</div>'
         } else {
-          var all = base.map(function () {
-              return 0;
-            }),
-            mx = stats(all);
-          if (!met(all)) {
-            h += '<div class="msg bad">Target belum bisa dicapai semester ini. Jika semua MK mendapat A: IP ' + f(mx.ip) + " · IPK " + f(mx.ipk) + ".</div>";
-          } else {
-            h += '<div class="msg bad">Target belum tercapai. Ini opsi agar target tercapai:</div>';
-            var ps = [
-                ["Paling ringkas (sedikit MK yang dinaikkan)", planA()],
-                [
-                  "Naik satu tingkat, mulai dari MK ber-SKS besar",
-                  planStep(function (i, j, g) {
-                    return sim.rows[i].s > sim.rows[j].s || (sim.rows[i].s === sim.rows[j].s && g[i] > g[j]);
-                  }),
-                ],
-                [
-                  "Perbaiki MK yang paling lemah dulu",
-                  planStep(function (i, j, g) {
-                    return g[i] > g[j] || (g[i] === g[j] && sim.rows[i].s > sim.rows[j].s);
-                  }),
-                ],
-              ],
-              seen = {},
-              n = 0;
-            ps.forEach(function (p) {
-              if (!p[1]) return;
-              var c = changes(p[1]),
-                key = JSON.stringify(c);
-              if (seen[key]) return;
-              seen[key] = 1;
-              n++;
-              var r = stats(p[1]);
-              h +=
-                '<div class="opt"><h3><i>' +
-                n +
-                "</i>" +
-                p[0] +
-                "</h3><ul>" +
-                c
-                  .map(function (x) {
-                    return "<li>Naikkan <b>" + esc(x.n) + "</b> (" + x.s + " SKS): " + GR[x.from][0] + ' <span class="arrow">→</span> <b>' + GR[x.to][0] + "</b></li>";
-                  })
-                  .join("") +
-                '</ul><div class="res">Hasil: IP ' +
-                f(r.ip) +
-                " · IPK " +
-                f(r.ipk) +
-                "</div></div>";
-            });
-          }
+            var all = base.map(function() {
+                    return 0
+                }),
+                mx = stats(all);
+            if (!met(all)) {
+                h += '<div class="msg bad">Target belum bisa dicapai semester ini. Jika semua MK mendapat A: IP ' + f(mx
+                    .ip) + ' · IPK ' + f(mx.ipk) + '.</div>'
+            } else {
+                h += '<div class="msg bad">Target belum tercapai. Ini opsi agar target tercapai:</div>';
+                var ps = [
+                        ["Paling ringkas (sedikit MK yang dinaikkan)", planA()],
+                        ["Naik satu tingkat, mulai dari MK ber-SKS besar", planStep(function(i, j, g) {
+                            return sim.rows[i].s > sim.rows[j].s || (sim.rows[i].s === sim.rows[j].s && g[i] >
+                                g[j])
+                        })],
+                        ["Perbaiki MK yang paling lemah dulu", planStep(function(i, j, g) {
+                            return g[i] > g[j] || (g[i] === g[j] && sim.rows[i].s > sim.rows[j].s)
+                        })]
+                    ],
+                    seen = {},
+                    n = 0;
+                ps.forEach(function(p) {
+                    if (!p[1]) return;
+                    var c = changes(p[1]),
+                        key = JSON.stringify(c);
+                    if (seen[key]) return;
+                    seen[key] = 1;
+                    n++;
+                    var r = stats(p[1]);
+                    h += '<div class="opt"><h3><i>' + n + '</i>' + p[0] + '</h3><ul>' + c.map(function(x) {
+                            return '<li>Naikkan <b>' + esc(x.n) + '</b> (' + x.s + ' SKS): ' + GR[x.from][
+                                0] + ' <span class="arrow">→</span> <b>' + GR[x.to][0] + '</b></li>'
+                        }).join('') + '</ul><div class="res">Hasil: IP ' + f(r.ip) + ' · IPK ' + f(r.ipk) +
+                        '</div></div>'
+                })
+            }
         }
-        $("#out1").innerHTML = h;
-        save("ipk_sim", sim);
-      }
-      $("#rows").addEventListener("input", function (e) {
-        var row = e.target.closest(".row");
+        $('#out1').innerHTML = h;
+        save('ipk_sim', sim)
+    }
+    $('#rows').addEventListener('input', function(e) {
+        var row = e.target.closest('.row');
         if (!row) return;
         var r = sim.rows[+row.dataset.i];
-        if (e.target.classList.contains("rn")) r.n = e.target.value;
-        if (e.target.classList.contains("rs")) r.s = Math.max(0, num(e.target.value) || 0);
-        if (e.target.classList.contains("rg")) r.g = e.target.value === "" ? null : +e.target.value;
-        calc1();
-      });
-      $("#rows").addEventListener("click", function (e) {
-        if (!e.target.classList.contains("x")) return;
-        sim.rows.splice(+e.target.closest(".row").dataset.i, 1);
+        if (e.target.classList.contains('rn')) r.n = e.target.value;
+        if (e.target.classList.contains('rs')) r.s = Math.max(0, num(e.target.value) || 0);
+        if (e.target.classList.contains('rg')) r.g = e.target.value === '' ? null : +e.target.value;
+        calc1()
+    });
+    $('#rows').addEventListener('click', function(e) {
+        if (!e.target.classList.contains('x')) return;
+        sim.rows.splice(+e.target.closest('.row').dataset.i, 1);
         renderRows();
-        calc1();
-      });
-      $("#addRow").onclick = function () {
-        sim.rows.push({ n: "MK baru", s: 2, g: null });
-        renderRows();
-        calc1();
-        var l = document.querySelectorAll("#rows .rn");
-        l[l.length - 1].focus();
-        l[l.length - 1].select();
-      };
-      [
-        ["tIp", "tIp"],
-        ["tIpk", "tIpk"],
-        ["pIpk", "pIpk"],
-        ["pSks", "pSks"],
-      ].forEach(function (p) {
-        var el = $("#" + p[0]);
-        el.value = sim[p[1]];
-        el.addEventListener("input", function () {
-          sim[p[1]] = el.value;
-          calc1();
+        calc1()
+    });
+    $('#addRow').onclick = function() {
+        sim.rows.push({
+            n: 'MK baru',
+            s: 2,
+            g: null
         });
-      });
+        renderRows();
+        calc1();
+        var l = document.querySelectorAll('#rows .rn');
+        l[l.length - 1].focus();
+        l[l.length - 1].select()
+    };
+    [
+        ['tIp', 'tIp'],
+        ['tIpk', 'tIpk'],
+        ['pIpk', 'pIpk'],
+        ['pSks', 'pSks']
+    ].forEach(function(p) {
+        var el = $('#' + p[0]);
+        el.value = sim[p[1]];
+        el.addEventListener('input', function() {
+            sim[p[1]] = el.value;
+            calc1()
+        })
+    });
 
-      $("#simMode").addEventListener("click", function (e) {
-        var b = e.target.closest("button");
+    $('#simMode').addEventListener('click', function(e) {
+        var b = e.target.closest('button');
         if (!b || b.dataset.m === sim.mode) return;
         sim.store[sim.mode] = sim.rows;
         sim.mode = b.dataset.m;
         sim.rows = sim.store[sim.mode];
         renderRows();
-        calc1();
-      });
-      /* ---------- Form 2: Nilai 1 MK ---------- */
-      var k2 = load("ipk_k2", null) || {
-        mode: "auto",
+        calc1()
+    });
+    /* ---------- Form 2: Nilai 1 MK ---------- */
+    var k2 = load('ipk_k2', null) || {
+        mode: 'auto',
         key: 0,
-        tg: "",
+        tg: '',
         auto: {},
-        man: [
-          { n: "Tugas", w: 30, s: "" },
-          { n: "UTS", w: 30, s: "" },
-          { n: "UAS", w: 40, s: "" },
-        ],
-      };
-      function comps() {
-        return k2.mode === "auto"
-          ? K[k2.key][1].map(function (c, i) {
-              var s = (k2.auto[k2.key] || [])[i];
-              return { n: c[0], w: c[1], s: s == null ? "" : s };
-            })
-          : k2.man;
-      }
-      function gradeOf(x) {
-        for (var i = 0; i < GR.length; i++) if (x >= GR[i][1] - 1e-9) return GR[i];
-      }
-      function renderComps() {
-        var a = k2.mode === "auto";
-        $("#autoPick").classList.toggle("hide", !a);
-        $("#addComp").classList.toggle("hide", a);
-        document.querySelectorAll("#modeSeg button").forEach(function (b) {
-          b.classList.toggle("on", b.dataset.m === k2.mode);
+        man: [{
+            n: 'Tugas',
+            w: 30,
+            s: ''
+        }, {
+            n: 'UTS',
+            w: 30,
+            s: ''
+        }, {
+            n: 'UAS',
+            w: 40,
+            s: ''
+        }]
+    };
+
+    function comps() {
+        return k2.mode === 'auto' ? K[k2.key][1].map(function(c, i) {
+            var s = (k2.auto[k2.key] || [])[i];
+            return {
+                n: c[0],
+                w: c[1],
+                s: s == null ? '' : s
+            }
+        }) : k2.man
+    }
+
+    function gradeOf(x) {
+        for (var i = 0; i < GR.length; i++)
+            if (x >= GR[i][1] - 1e-9) return GR[i]
+    }
+
+    function renderComps() {
+        var a = k2.mode === 'auto';
+        $('#autoPick').classList.toggle('hide', !a);
+        $('#addComp').classList.toggle('hide', a);
+        document.querySelectorAll('#modeSeg button').forEach(function(b) {
+            b.classList.toggle('on', b.dataset.m === k2.mode)
         });
         var c = comps(),
-          h =
-            '<div class="row ' +
-            (a ? "a" : "m") +
+            h = '<div class="row ' + (a ? 'a' : 'm') +
             '"><span class="hd">Komponen</span><span class="hd">Bobot %</span><span class="hd">Nilai (0-100)</span><span class="hd" style="text-align:center">Sumbangan</span>' +
-            (a ? "" : "<span></span>") +
-            "</div>";
-        h += c
-          .map(function (x, i) {
-            return a
-              ? '<div class="row a" data-i="' +
-                  i +
-                  '"><b style="font-size:14px">' +
-                  esc(x.n) +
-                  '</b><span class="wbadge">' +
-                  x.w +
-                  '%</span><input class="cs" type="number" min="0" max="100" step="0.01" value="' +
-                  x.s +
-                  '" placeholder="–"><span class="ct"></span></div>'
-              : '<div class="row m" data-i="' +
-                  i +
-                  '"><input class="cn" value="' +
-                  esc(x.n) +
-                  '" placeholder="Komponen"><input class="cw" type="number" min="0" max="100" value="' +
-                  x.w +
-                  '"><input class="cs" type="number" min="0" max="100" step="0.01" value="' +
-                  x.s +
-                  '" placeholder="–"><span class="ct"></span><button class="x">✕</button></div>';
-          })
-          .join("");
-        $("#comps").innerHTML = h;
-        $("#compTitle").textContent = a ? K[k2.key][0] : "Komponen nilai manual";
-      }
-      function updCt(c) {
-        document.querySelectorAll("#comps .row[data-i]").forEach(function (row) {
-          var x = c[+row.dataset.i],
-            el = row.querySelector(".ct");
-          if (!x || !el) return;
-          el.textContent = (x.s == null ? "0" : f((x.w * x.s) / 100)) + " / " + +x.w;
+            (a ? '' : '<span></span>') + '</div>';
+        h += c.map(function(x, i) {
+            return a ? '<div class="row a" data-i="' + i + '"><b style="font-size:14px">' + esc(x.n) +
+                '</b><span class="wbadge">' + x.w +
+                '%</span><input class="cs" type="number" min="0" max="100" step="0.01" value="' + x.s +
+                '" placeholder="–"><span class="ct"></span></div>' :
+                '<div class="row m" data-i="' + i + '"><input class="cn" value="' + esc(x.n) +
+                '" placeholder="Komponen"><input class="cw" type="number" min="0" max="100" value="' + x.w +
+                '"><input class="cs" type="number" min="0" max="100" step="0.01" value="' + x.s +
+                '" placeholder="–"><span class="ct"></span><button class="x">✕</button></div>'
+        }).join('');
+        $('#comps').innerHTML = h;
+        $('#compTitle').textContent = a ? K[k2.key][0] : 'Komponen nilai manual'
+    }
+
+    function updCt(c) {
+        document.querySelectorAll('#comps .row[data-i]').forEach(function(row) {
+            var x = c[+row.dataset.i],
+                el = row.querySelector('.ct');
+            if (!x || !el) return;
+            el.textContent = (x.s == null ? '0' : f(x.w * x.s / 100)) + ' / ' + (+x.w)
+        })
+    }
+
+    function calc2() {
+        var c = comps().map(function(x) {
+                return {
+                    n: x.n,
+                    w: +x.w || 0,
+                    s: num(x.s)
+                }
+            }),
+            tw = 0,
+            earned = 0,
+            rem = 0,
+            fw = 0;
+        c.forEach(function(x) {
+            tw += x.w;
+            if (x.s == null) rem += x.w;
+            else {
+                earned += x.w * x.s;
+                fw += x.w
+            }
         });
-      }
-      function calc2() {
-        var c = comps().map(function (x) {
-            return { n: x.n, w: +x.w || 0, s: num(x.s) };
-          }),
-          tw = 0,
-          earned = 0,
-          rem = 0,
-          fw = 0;
-        c.forEach(function (x) {
-          tw += x.w;
-          if (x.s == null) rem += x.w;
-          else {
-            earned += x.w * x.s;
-            fw += x.w;
-          }
-        });
-        var h = "";
+        var h = '';
         updCt(c);
-        $("#wNote").textContent = tw === 100 ? "Total bobot 100% ✓" : "Total bobot saat ini " + f(tw, 0) + "% (idealnya 100%)";
+        $('#wNote').textContent = tw === 100 ? 'Total bobot 100% ✓' : 'Total bobot saat ini ' + f(tw, 0) +
+            '% (idealnya 100%)';
         if (!tw || !fw) {
-          $("#out2").innerHTML = '<div class="msg info">Masukkan minimal satu nilai komponen untuk melihat hasil.</div>';
-          save("ipk_k2", k2);
-          return;
+            $('#out2').innerHTML =
+                '<div class="msg info">Masukkan minimal satu nilai komponen untuk melihat hasil.</div>';
+            save('ipk_k2', k2);
+            return
         }
         earned = earned / tw;
         rem = rem / tw;
-        var tgi = k2.tg === "" ? null : +k2.tg,
-          M = tgi == null ? null : GR[tgi][1],
-          cur = gradeOf(earned),
-          done = rem < 1e-9;
-        h +=
-          '<div class="hero"><div class="stat"><b>' +
-          f(earned) +
-          "</b><span>" +
-          (done ? "Nilai akhir" : "Poin terkumpul") +
-          '</span></div><div class="stat plain"><b>' +
-          cur[0] +
-          "</b><span>" +
-          (done ? "Nilai huruf" : "Nilai huruf sementara, sisa dianggap 0") +
-          " (" +
-          f(cur[2], 1) +
-          ')</span></div><div class="stat plain"><b>' +
-          (M == null ? "–" : GR[tgi][0]) +
-          "</b><span>Target</span></div></div>";
+        var tgi = k2.tg === '' ? null : +k2.tg,
+            M = tgi == null ? null : GR[tgi][1],
+            cur = gradeOf(earned),
+            done = rem < 1e-9;
+        h += '<div class="hero"><div class="stat"><b>' + f(earned) + '</b><span>' + (done ? 'Nilai akhir' :
+                'Poin terkumpul') + '</span></div><div class="stat plain"><b>' + cur[0] + '</b><span>' + (done ?
+                'Nilai huruf' : 'Nilai huruf sementara, sisa dianggap 0') + ' (' + f(cur[2], 1) +
+            ')</span></div><div class="stat plain"><b>' + (M == null ? '–' : GR[tgi][0]) +
+            '</b><span>Target</span></div></div>';
         if (M != null) {
-          if (earned >= M - 1e-9) {
-            h += '<div class="msg ok">🎉 Target ' + GR[tgi][0] + " sudah tercapai" + (done ? "!" : " dari poin yang terkumpul!") + "</div>";
-          } else if (!done) {
-            var need = (M - earned) / rem;
-            if (need > 100 + 1e-9) {
-              h += '<div class="msg bad">Target ' + GR[tgi][0] + " tidak mungkin tercapai. Nilai maksimal jika sisa komponen 100: " + f(earned + 100 * rem) + ".</div>";
-            } else {
-              h += '<div class="msg info">Untuk meraih ' + GR[tgi][0] + " (min. " + M + "), rata-rata komponen yang belum terisi harus ≥ <b>" + f(need) + "</b>.</div>";
-              h +=
-                '<div class="opt"><h3><i>💡</i>Target per komponen</h3><ul>' +
-                c
-                  .filter(function (x) {
-                    return x.s == null;
-                  })
-                  .map(function (x) {
-                    return "<li>" + esc(x.n) + " (" + x.w + "%): minimal <b>" + f(need) + "</b> jika semua sisa rata</li>";
-                  })
-                  .join("") +
-                "</ul></div>";
-            }
-          } else {
-            var d = M - earned,
-              mx =
-                earned +
-                c.reduce(function (a, x) {
-                  return a + ((100 - x.s) * x.w) / tw;
-                }, 0);
-            if (mx < M - 1e-9) {
-              h += '<div class="msg bad">Target ' + GR[tgi][0] + " tidak terjangkau: bahkan jika semua komponen 100, nilai maksimal " + f(mx) + ".</div>";
-            } else {
-              h += '<div class="msg bad">Kurang ' + f(d) + " poin dari target " + GR[tgi][0] + ". Opsi agar tercapai:</div>";
-              var n = 0;
-              var one = c.filter(function (x) {
-                return x.w > 0 && x.s + (d * tw) / x.w <= 100 + 1e-9;
-              });
-              if (one.length) {
-                n++;
-                h +=
-                  '<div class="opt"><h3><i>' +
-                  n +
-                  "</i>Naikkan satu komponen saja</h3><ul>" +
-                  one
-                    .map(function (x) {
-                      return (
-                        "<li>Naikkan <b>" +
-                        esc(x.n) +
-                        "</b> dari " +
-                        f(x.s, 0) +
-                        ' <span class="arrow">→</span> <b>' +
-                        f(Math.ceil((x.s + (d * tw) / x.w) * 100) / 100) +
-                        "</b></li>"
-                      );
-                    })
-                    .join("") +
-                  "</ul></div>";
-              }
-              if (
-                c.every(function (x) {
-                  return x.s + d <= 100 + 1e-9;
-                })
-              ) {
-                n++;
-                h +=
-                  '<div class="opt"><h3><i>' +
-                  n +
-                  "</i>Naikkan semua komponen sama rata</h3><ul><li>Tambah sekitar <b>+" +
-                  f(Math.ceil(d * 100) / 100) +
-                  " poin</b> di setiap komponen</li></ul></div>";
-              }
-              var big = c
-                .slice()
-                .sort(function (a, b) {
-                  return b.w - a.w;
-                })
-                .slice(0, 2);
-              var left = d;
-              var parts = [];
-              big.forEach(function (x) {
-                if (left <= 0) return;
-                var gain = Math.min(100 - x.s, (left * tw) / x.w);
-                if (gain > 0) {
-                  parts.push(
-                    "<li>Naikkan <b>" +
-                      esc(x.n) +
-                      "</b> dari " +
-                      f(x.s, 0) +
-                      ' <span class="arrow">→</span> <b>' +
-                      f(Math.min(100, x.s + Math.ceil(gain * 100) / 100)) +
-                      "</b></li>",
-                  );
-                  left -= (gain * x.w) / tw;
+            if (earned >= M - 1e-9) {
+                h += '<div class="msg ok">🎉 Target ' + GR[tgi][0] + ' sudah tercapai' + (done ? '!' :
+                    ' dari poin yang terkumpul!') + '</div>'
+            } else if (!done) {
+                var need = (M - earned) / rem;
+                if (need > 100 + 1e-9) {
+                    h += '<div class="msg bad">Target ' + GR[tgi][0] +
+                        ' tidak mungkin tercapai. Nilai maksimal jika sisa komponen 100: ' + f(earned + 100 * rem) +
+                        '.</div>'
+                } else {
+                    h += '<div class="msg info">Untuk meraih ' + GR[tgi][0] + ' (min. ' + M +
+                        '), rata-rata komponen yang belum terisi harus ≥ <b>' + f(need) + '</b>.</div>';
+                    h += '<div class="opt"><h3><i>💡</i>Target per komponen</h3><ul>' + c.filter(function(x) {
+                        return x.s == null
+                    }).map(function(x) {
+                        return '<li>' + esc(x.n) + ' (' + x.w + '%): minimal <b>' + f(need) +
+                            '</b> jika semua sisa rata</li>'
+                    }).join('') + '</ul></div>'
                 }
-              });
-              if (parts.length > 1 && left <= 1e-6) {
-                n++;
-                h += '<div class="opt"><h3><i>' + n + "</i>Fokus ke komponen berbobot besar</h3><ul>" + parts.join("") + "</ul></div>";
-              }
+            } else {
+                var d = M - earned,
+                    mx = earned + c.reduce(function(a, x) {
+                        return a + (100 - x.s) * x.w / tw
+                    }, 0);
+                if (mx < M - 1e-9) {
+                    h += '<div class="msg bad">Target ' + GR[tgi][0] +
+                        ' tidak terjangkau: bahkan jika semua komponen 100, nilai maksimal ' + f(mx) + '.</div>'
+                } else {
+                    h += '<div class="msg bad">Kurang ' + f(d) + ' poin dari target ' + GR[tgi][0] +
+                        '. Opsi agar tercapai:</div>';
+                    var n = 0;
+                    var one = c.filter(function(x) {
+                        return x.w > 0 && x.s + d * tw / x.w <= 100 + 1e-9
+                    });
+                    if (one.length) {
+                        n++;
+                        h += '<div class="opt"><h3><i>' + n + '</i>Naikkan satu komponen saja</h3><ul>' + one.map(
+                            function(x) {
+                                return '<li>Naikkan <b>' + esc(x.n) + '</b> dari ' + f(x.s, 0) +
+                                    ' <span class="arrow">→</span> <b>' + f(Math.ceil((x.s + d * tw / x.w) * 100) /
+                                        100) + '</b></li>'
+                            }).join('') + '</ul></div>'
+                    }
+                    if (c.every(function(x) {
+                            return x.s + d <= 100 + 1e-9
+                        })) {
+                        n++;
+                        h += '<div class="opt"><h3><i>' + (n) +
+                            '</i>Naikkan semua komponen sama rata</h3><ul><li>Tambah sekitar <b>+' + f(Math.ceil(d *
+                                100) / 100) + ' poin</b> di setiap komponen</li></ul></div>'
+                    }
+                    var big = c.slice().sort(function(a, b) {
+                        return b.w - a.w
+                    }).slice(0, 2);
+                    var left = d;
+                    var parts = [];
+                    big.forEach(function(x) {
+                        if (left <= 0) return;
+                        var gain = Math.min(100 - x.s, left * tw / x.w);
+                        if (gain > 0) {
+                            parts.push('<li>Naikkan <b>' + esc(x.n) + '</b> dari ' + f(x.s, 0) +
+                                ' <span class="arrow">→</span> <b>' + f(Math.min(100, x.s + Math.ceil(gain *
+                                    100) / 100)) + '</b></li>');
+                            left -= gain * x.w / tw
+                        }
+                    });
+                    if (parts.length > 1 && left <= 1e-6) {
+                        n++;
+                        h += '<div class="opt"><h3><i>' + n + '</i>Fokus ke komponen berbobot besar</h3><ul>' + parts
+                            .join('') + '</ul></div>'
+                    }
+                }
             }
-          }
         }
-        $("#out2").innerHTML = h;
-        save("ipk_k2", k2);
-      }
-      $("#mkSel").innerHTML = K.map(function (k, i) {
-        return '<option value="' + i + '">' + k[0] + "</option>";
-      }).join("");
-      $("#mkSel").value = k2.key;
-      $("#tg").innerHTML += GR.map(function (g, i) {
-        return '<option value="' + i + '">' + g[0] + " (≥ " + g[1] + ")</option>";
-      }).join("");
-      $("#tg").value = k2.tg;
-      $("#mkSel").onchange = function () {
+        $('#out2').innerHTML = h;
+        save('ipk_k2', k2)
+    }
+    $('#mkSel').innerHTML = K.map(function(k, i) {
+        return '<option value="' + i + '">' + k[0] + '</option>'
+    }).join('');
+    $('#mkSel').value = k2.key;
+    $('#tg').innerHTML += GR.map(function(g, i) {
+        return '<option value="' + i + '">' + g[0] + ' (≥ ' + g[1] + ')</option>'
+    }).join('');
+    $('#tg').value = k2.tg;
+    $('#mkSel').onchange = function() {
         k2.key = +this.value;
         renderComps();
-        calc2();
-      };
-      $("#tg").onchange = function () {
+        calc2()
+    };
+    $('#tg').onchange = function() {
         k2.tg = this.value;
-        calc2();
-      };
-      $("#modeSeg").addEventListener("click", function (e) {
-        var b = e.target.closest("button");
+        calc2()
+    };
+    $('#modeSeg').addEventListener('click', function(e) {
+        var b = e.target.closest('button');
         if (!b) return;
         k2.mode = b.dataset.m;
         renderComps();
-        calc2();
-      });
-      $("#addComp").onclick = function () {
-        k2.man.push({ n: "Komponen", w: 0, s: "" });
+        calc2()
+    });
+    $('#addComp').onclick = function() {
+        k2.man.push({
+            n: 'Komponen',
+            w: 0,
+            s: ''
+        });
         renderComps();
-        calc2();
-      };
-      $("#comps").addEventListener("input", function (e) {
-        var row = e.target.closest(".row");
+        calc2()
+    };
+    $('#comps').addEventListener('input', function(e) {
+        var row = e.target.closest('.row');
         if (!row || row.dataset.i == null) return;
         var i = +row.dataset.i,
-          v = e.target.value;
-        if (e.target.classList.contains("cs")) {
-          if (k2.mode === "auto") {
-            var arr = (k2.auto[k2.key] = k2.auto[k2.key] || []);
-            arr[i] = v;
-          } else k2.man[i].s = v;
+            v = e.target.value;
+        if (e.target.classList.contains('cs')) {
+            if (k2.mode === 'auto') {
+                var arr = k2.auto[k2.key] = k2.auto[k2.key] || [];
+                arr[i] = v
+            } else k2.man[i].s = v
         }
-        if (e.target.classList.contains("cn")) k2.man[i].n = v;
-        if (e.target.classList.contains("cw")) k2.man[i].w = v;
-        calc2();
-      });
-      $("#comps").addEventListener("click", function (e) {
-        if (!e.target.classList.contains("x")) return;
-        k2.man.splice(+e.target.closest(".row").dataset.i, 1);
+        if (e.target.classList.contains('cn')) k2.man[i].n = v;
+        if (e.target.classList.contains('cw')) k2.man[i].w = v;
+        calc2()
+    });
+    $('#comps').addEventListener('click', function(e) {
+        if (!e.target.classList.contains('x')) return;
+        k2.man.splice(+e.target.closest('.row').dataset.i, 1);
         renderComps();
-        calc2();
-      });
+        calc2()
+    });
 
-      renderRows();
-      calc1();
-      renderComps();
-      calc2();
+    renderRows();
+    calc1();
+    renderComps();
+    calc2();
     </script>
-  </body>
+</body>
+
 </html>
